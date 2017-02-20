@@ -1,4 +1,8 @@
 
+body {
+  background-color: rgb(233, 235, 238);
+}
+
 /* Custom navbar style */
 .navbar-connect {
   background-color: #6D83B2;
@@ -15,4 +19,43 @@
   transform: translateX(-50%);
   left: 50%;
   position: absolute;
+}
+
+/* An item in the recent activity feed */
+.feed-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Make links within the feed item stand out */
+.feed-item a{
+  font-weight: 500;
+  color: rgb(54, 88, 153);
+}
+
+/* The title of the feed item */
+.feed-item-title {
+  color: #777;
+}
+
+/* The string containing the time of the feed item */
+.feed-item-time {
+  color: #999;
+  font-size: 11px;
+}
+
+/* Make profile image display properly within the feed item */
+.feed-item  img.profile-image {
+  float: left;
+  margin-right: 7px;
+}
+
+/* Styling for the actual content of the feed item */
+.feed-item-content {
+  margin: 10px 0px;
+}
+.feed-item-content img{
+  border: 1px solid #333;
+  width: 100%;
 }

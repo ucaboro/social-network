@@ -7,7 +7,7 @@
     <?php echo getHtmlForTopNavbar(); ?>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-8">
           <!-- Add new post component -->
           <div class="panel panel-primary">
             <div class="panel-heading">
@@ -35,11 +35,45 @@
             <div class="panel-heading">
               <h4 class="panel-title">Recent activity</h4>
             </div>
+
+            <div class="panel-body">
+              <div class="feed-item">
+                <div>
+                  <img class="profile-image" src="img/ex_profile1_thumb.jpg">
+                  <span class="feed-item-title"><a href="#">Bob Berenstain</a> sent a <a href="#">message</a> to <a href="#">Family</a></span><br>
+                  <span class="feed-item-time">01 Apr 2017 13:42</span>
+                </div>
+                <div class="feed-item-content">
+                  It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out? <a href="#">Continue reading...</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <div class="feed-item">
+                <div>
+                  <img class="profile-image" src="img/ex_profile1_thumb.jpg">
+                  <span class="feed-item-title"><a href="#">Bob Berenstain</a> uploaded a <a href="#">photo</a>.</span><br>
+                  <span class="feed-item-time">01 Apr 2017 13:45</span>
+                </div>
+                <div class="feed-item-content">
+                  <img src="img/ex_photo1.jpg">
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /END Recent activity component -->
+        </div>
+        <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4 class="panel-title">Circles</h4>
+            </div>
             <div class="panel-body">
               stuff goes here...
             </div>
           </div>
-          <!-- /END Recent activity component -->
         </div>
       </div>
     </div>
