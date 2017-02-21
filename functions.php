@@ -1,5 +1,4 @@
 <?php
-
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
  * $keyColumn: the name of the column to use as the key in the array.
@@ -341,6 +340,4 @@ function requestFriendship(int $userID) {
   $stmt->bind_param("ii", $thisUserID, $userID);
   $stmt->execute();
 }
-
-
 ?>
