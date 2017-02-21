@@ -57,11 +57,13 @@ function getHtmlForTopNavbar() {
 }
 
 /*
- * Returns the HTML for a clickable circle containing some text.
+ * Returns the HTML for a clickable circle representing a 'Circle' (group).
  */
-function getHtmlForCircleButton($text, $href) {
+function getHtmlForCircleButton($circle) {
+  $url = getUrlToCircle($circle->id);
+  $name = $circle->name;
   return "<div class=\"circle-container\">
-            <a class=\"no-underline\" href=\"$href\"><div class=\"circle\"><div class=\"circle-text\">$text</div></div></a>
+            <a class=\"no-underline\" href=\"$url\"><div class=\"circle\"><div class=\"circle-text\">$name</div></div></a>
           </div>";
 }
 
@@ -114,6 +116,30 @@ function getUrlToCircle($circleID) {
  */
 function getUrlToProfile($userID) {
   return "profile.php?u=$userID";
+}
+
+/*
+ * Returns the HTML for the sidebar panel which displays a list of circles.
+ */
+function getHtmlForCirclePanel() {
+  // Generate the start of the HTML (setting up the panel, panel title)
+  $html = "<div class=\"panel panel-primary\">
+            <div class=\"panel-heading\">
+              <h4 class=\"panel-title\">Circles</h4>
+            </div>
+            <div class=\"panel-body\">
+              <div class=\"row\">";
+
+  // Add a button for each circle
+  foreach (getCirclesForUser(getUserID()) as $id => $circle) {
+    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
+  }
+
+  // Close div tags and return the HTML
+  return $html . "
+              </div>
+          </div>
+        </div>";
 }
 
 ?>

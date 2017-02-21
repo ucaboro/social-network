@@ -1,3 +1,4 @@
 <?php
-include "templates.php"; 
+include "functions.php";
+include "templates.php";
 ?>
