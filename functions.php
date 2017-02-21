@@ -330,6 +330,4 @@ function requestFriendship(int $userID) {
   $stmt->bind_param("ii", $thisUserID, $userID);
   $stmt->execute();
 }
-
-
 ?>
