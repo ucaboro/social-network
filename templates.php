@@ -1,6 +1,9 @@
 <?php
+include "cls/circle.php";
+include "cls/user.php";
+include "cls/message.php";
 
-
+/* Gets the HTML for the head tag for every page */
 function getHtmlForHead() {
   return "<head>
     <meta charset=\"utf-8\">
@@ -52,4 +55,65 @@ function getHtmlForTopNavbar() {
     </div>
   </nav>";
 }
+
+/*
+ * Returns the HTML for a clickable circle containing some text.
+ */
+function getHtmlForCircleButton($text, $href) {
+  return "<div class=\"circle-container\">
+            <a class=\"no-underline\" href=\"$href\"><div class=\"circle\"><div class=\"circle-text\">$text</div></div></a>
+          </div>";
+}
+
+/*
+ * Returns the HTML for a single photo item in the activity feed.
+ */
+function getHtmlForPhotoFeedItem($user, $time, $photoSrc, $photoID) {
+  $photoUrl = "photo.php?p=$photoID";
+  echo getHtmlForFeedItem($user, "uploaded a <a href=\"$photoUrl\">photo</a>.", $time, "<a href=\"$photoUrl\"><img src=\"$photoSrc\"></a>");
+}
+
+/*
+ * Returns the HTML for a new circle message item in the activity feed.
+ */
+function getHtmlForCircleMessageItem($user, $time, $message) {
+  $circleUrl = getUrlToCircle($message->circle->id);
+  $circleName = $message->circle->name;
+  $messageText = strlen($message->text) > 400 ? substr($message->text, 0, 350) . "... <a href=\"$circleUrl\">Continue reading</a>" : $message->text;
+  echo getHtmlForFeedItem($user, "sent a message to <a href=\"$circleUrl\">$circleName</a>.", $time, $messageText);
+}
+
+/*
+ * Returns the HTML for a single generic item in the activity feed.
+ */
+function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
+  $profileUrl = getUrlToProfile($user->id);
+  return "<div class=\"panel-body\">
+            <div class=\"feed-item\">
+              <div>
+                <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
+                <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a> $titleHtml</span><br>
+                <span class=\"feed-item-time\">$time</span>
+              </div>
+              <div class=\"feed-item-content\">
+                $bodyHtml
+              </div>
+            </div>
+          </div>";
+}
+
+/*
+ * Returns the URL to the main page for a specific circle.
+ */
+function getUrlToCircle($circleID) {
+  return "circle.php?c=$circleID";
+}
+
+/*
+ * Returns the URL to the profile page for a specific user.
+ */
+function getUrlToProfile($userID) {
+  return "profile.php?u=$userID";
+}
+
 ?>

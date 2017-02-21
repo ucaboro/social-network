@@ -35,43 +35,61 @@
             <div class="panel-heading">
               <h4 class="panel-title">Recent activity</h4>
             </div>
-
-            <div class="panel-body">
-              <div class="feed-item">
-                <div>
-                  <img class="profile-image" src="img/ex_profile1_thumb.jpg">
-                  <span class="feed-item-title"><a href="#">Bob Berenstain</a> sent a <a href="#">message</a> to <a href="#">Family</a></span><br>
-                  <span class="feed-item-time">01 Apr 2017 13:42</span>
-                </div>
-                <div class="feed-item-content">
-                  It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out? <a href="#">Continue reading...</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel-body">
-              <div class="feed-item">
-                <div>
-                  <img class="profile-image" src="img/ex_profile1_thumb.jpg">
-                  <span class="feed-item-title"><a href="#">Bob Berenstain</a> uploaded a <a href="#">photo</a>.</span><br>
-                  <span class="feed-item-time">01 Apr 2017 13:45</span>
-                </div>
-                <div class="feed-item-content">
-                  <img src="img/ex_photo1.jpg">
-                </div>
-              </div>
-            </div>
-
+            <?php
+            // Create some dummy objects, this is just to demo the layout
+            $user = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg");
+            $circle = new circle(0, "Family", "blue", array($user));
+            $message = new message(0, $circle, $user, "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
+            $message2 = new message(0, $circle, $user, "Just signed up for Connect. This website is way better than Facebook!");
+            echo getHtmlForCircleMessageItem($user, "01 Apr 2017 13:42", $message);
+            echo getHtmlForPhotoFeedItem($user, "01 Apr 2017 13:45", "img/ex_photo1.jpg", 0);
+            echo getHtmlForCircleMessageItem($user, "01 Apr 2017 11:59", $message2);
+            ?>
           </div>
           <!-- /END Recent activity component -->
         </div>
         <div class="col-md-4">
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h4 class="panel-title">Circles</h4>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-primary">
+                <div class="panel-body">
+                  <ul>
+                   <li><a href="index.php">Home</a></li>
+                   <li><a href="me.php">My Profile</a></li>
+                   <li><a href="photos.php">Photos</a></li>
+                   <li><a href="blogs.php">Blogs</a></li>
+                   <li><a href="friends.php">Friends</a></li>
+                 </ul>
+                </div>
+              </div>
             </div>
-            <div class="panel-body">
-              stuff goes here...
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Circles</h4>
+                </div>
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-xs-4">
+                      <?php echo getHtmlForCircleButton("Family", "#"); ?>
+                    </div>
+                    <div class="col-xs-4">
+                      <?php echo getHtmlForCircleButton("Friends", "#"); ?>
+                    </div>
+                    <div class="col-xs-4">
+                      <?php echo getHtmlForCircleButton("Work", "#"); ?>
+                    </div>
+                    <div class="col-xs-4">
+                      <?php echo getHtmlForCircleButton("Students", "#"); ?>
+                    </div>
+                    <div class="col-xs-4">
+                      <?php echo getHtmlForCircleButton("Hackers", "#"); ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

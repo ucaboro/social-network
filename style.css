@@ -49,6 +49,8 @@ body {
 .feed-item  img.profile-image {
   float: left;
   margin-right: 7px;
+  width: 40px;
+  height: 40px;
 }
 
 /* Styling for the actual content of the feed item */
@@ -58,4 +60,36 @@ body {
 .feed-item-content img{
   border: 1px solid #333;
   width: 100%;
+}
+
+.circle-container {
+  padding: 5px;
+}
+
+/* A circle which contains some text */
+.circle {
+  width: 100%;
+  height: 0;
+  padding: 50% 0%;
+  border-radius: 250px;
+  text-align: center;
+  background-color: #337ab7;
+  border: 1px solid #999;
+  color: #fff;
+}
+
+.circle:hover {
+  background-color: rgb(40, 96, 144);
+}
+
+/* The text inside the circle */
+.circle-text {
+  font-size: 18px;
+  margin-top: -10%;
+  vertical-align: middle;
+}
+
+/* Removes text decoration from an element */
+.no-underline:hover, .no-underline:visited {
+  text-decoration: none;
 }
