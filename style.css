@@ -26,6 +26,23 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* The container for a circle message */
+.message-container {
+  margin-bottom: 15px;
+}
+
+/* Style links within the message container */
+.message-container a {
+  font-weight: 500;
+  color: #000;
+}
+
+/* The container for the name, time and message (not incl the profile image) */
+.message-content {
+  margin-left: 50px; /* Offset past the profile image and incl a gap */
 }
 
 /* Make links within the feed item stand out */
@@ -46,7 +63,7 @@ body {
 }
 
 /* Make profile image display properly within the feed item */
-.feed-item  img.profile-image {
+img.profile-image {
   float: left;
   margin-right: 7px;
   width: 40px;
@@ -78,7 +95,7 @@ body {
   color: #fff;
 }
 
-.circle:hover {
+a .circle:hover {
   background-color: rgb(40, 96, 144);
 }
 
@@ -92,4 +109,33 @@ body {
 /* Removes text decoration from an element */
 .no-underline:hover, .no-underline:visited {
   text-decoration: none;
+}
+
+/* Crops and centers an image into a square. Used for profile images.
+    Note: to make a thumbnail, use this class in conjunction with another which sets the
+    background-image to be the image you want scaled. */
+.img-thumb {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size:cover;
+  width: 100%;
+  height: 0;
+  padding: 50% 0%;
+  border-radius: 10px;
+}
+
+/* The name underneath a profile picture in various views */
+.profile-name {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+
+/* The title of a circle page */
+.circle-title {
+  padding-bottom: 15px;
 }

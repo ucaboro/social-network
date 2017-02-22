@@ -35,6 +35,17 @@ class user {
     $this->photoSrc = $photoSrc;
   }
 
+  /*
+   * Returns the full name of this user as a string.
+   */
+  public function getFullName() {
+    return $this->firstName . " " . $this->lastName;
+  }
+
+  public function getUrlToProfile() {
+    return "profile.php?u=" . $this->id;
+  }
+
 }
 
 ?>

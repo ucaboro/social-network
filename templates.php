@@ -26,7 +26,7 @@ function getHtmlForTopNavbar() {
   return "<nav class=\"navbar navbar-connect\">
     <div class=\"container-fluid\">
       <div class=\"navbar-header\">
-        <a class=\"navbar-brand navbar-brand-center\" href=\"#\">
+        <a class=\"navbar-brand navbar-brand-center\" href=\"index.php\">
           <img alt=\"Connect\" src=\"img/logo.png\" >
         </a>
       </div>
@@ -68,6 +68,15 @@ function getHtmlForCircleButton($circle) {
 }
 
 /*
+ * Returns the HTML for a non-clickable circle representing a 'Circle' (group).
+ */
+function getHtmlForCircleShape($circle) {
+  return "<div class=\"circle-container\">
+            <div class=\"circle\"><div class=\"circle-text hidden-xs\">$circle->name</div></div></a>
+          </div>";
+}
+
+/*
  * Returns the HTML for a single photo item in the activity feed.
  */
 function getHtmlForPhotoFeedItem($user, $time, $photoSrc, $photoID) {
@@ -78,11 +87,11 @@ function getHtmlForPhotoFeedItem($user, $time, $photoSrc, $photoID) {
 /*
  * Returns the HTML for a new circle message item in the activity feed.
  */
-function getHtmlForCircleMessageItem($user, $time, $message) {
+function getHtmlForCircleMessageFeedItem($user, $message) {
   $circleUrl = getUrlToCircle($message->circle->id);
   $circleName = $message->circle->name;
   $messageText = strlen($message->text) > 400 ? substr($message->text, 0, 350) . "... <a href=\"$circleUrl\">Continue reading</a>" : $message->text;
-  echo getHtmlForFeedItem($user, "sent a message to <a href=\"$circleUrl\">$circleName</a>.", $time, $messageText);
+  echo getHtmlForFeedItem($user, "sent a message to <a href=\"$circleUrl\">$circleName</a>.", $message->time, $messageText);
 }
 
 /*
@@ -90,16 +99,29 @@ function getHtmlForCircleMessageItem($user, $time, $message) {
  */
 function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
   $profileUrl = getUrlToProfile($user->id);
-  return "<div class=\"panel-body\">
-            <div class=\"feed-item\">
-              <div>
-                <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
-                <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a> $titleHtml</span><br>
-                <span class=\"feed-item-time\">$time</span>
-              </div>
-              <div class=\"feed-item-content\">
-                $bodyHtml
-              </div>
+  return "<div class=\"feed-item\">
+            <div>
+              <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
+              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a> $titleHtml</span><br>
+              <span class=\"feed-item-time\">$time</span>
+            </div>
+            <div class=\"feed-item-content\">
+              $bodyHtml
+            </div>
+          </div>";
+}
+
+function getHtmlForCircleMessage($message) {
+  $user = $message->user;
+  $profileUrl = getUrlToProfile($user->id);
+  return "<div class=\"message-container\">
+            <div>
+              <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
+            </div>
+            <div class=\"message-content\">
+              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a></span>
+              <span class=\"feed-item-time\">$message->time</span><br>
+              $message->text
             </div>
           </div>";
 }
@@ -119,6 +141,34 @@ function getUrlToProfile($userID) {
 }
 
 /*
+ * Returns the HTML for the sidebar panel which displays a list of the users in a particular circle.
+ */
+function getHtmlForCircleUsersPanel($circle) {
+  // Generate the start of the HTML (setting up the panel, panel title)
+  $html = "<div class=\"panel panel-primary\">
+            <div class=\"panel-heading\">
+              <h4 class=\"panel-title\">People in this circle</h4>
+            </div>
+            <div class=\"panel-body\">
+              <div class=\"row\">";
+
+  // Add a button for each circle
+  foreach ($circle->users as $id => $user) {
+    $html = $html .
+                "<div class=\"col-xs-3\">
+                  <a href=\"{$user->getUrlToProfile()}\"><div class=\"img-thumb\" style=\"background-image:url('$user->photoSrc')\"></div></a>
+                  <a href=\"{$user->getUrlToProfile()}\" class=\"no-underline\"><div class=\"profile-name\">{$user->getFullName()}</div></a>
+                </div>";
+  }
+
+  // Close div tags and return the HTML
+  return $html . "
+              </div>
+          </div>
+        </div>";
+}
+
+/*
  * Returns the HTML for the sidebar panel which displays a list of circles.
  */
 function getHtmlForCirclePanel() {
@@ -131,7 +181,7 @@ function getHtmlForCirclePanel() {
               <div class=\"row\">";
 
   // Add a button for each circle
-  foreach (getCirclesForUser(getUserID()) as $id => $circle) {
+  foreach (getCirclesForUser(getUser()) as $id => $circle) {
     $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
   }
 
