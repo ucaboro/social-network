@@ -2,6 +2,7 @@
 include "cls/circle.php";
 include "cls/user.php";
 include "cls/message.php";
+include "cls/blogPost.php";
 
 /* Gets the HTML for the head tag for every page */
 function getHtmlForHead() {
@@ -98,7 +99,7 @@ function getHtmlForCircleMessageFeedItem($user, $message) {
  * Returns the HTML for a single generic item in the activity feed.
  */
 function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
-  $profileUrl = getUrlToProfile($user->id);
+  $profileUrl = $user->getUrlToProfile();
   return "<div class=\"feed-item\">
             <div>
               <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
@@ -113,7 +114,7 @@ function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
 
 function getHtmlForCircleMessage($message) {
   $user = $message->user;
-  $profileUrl = getUrlToProfile($user->id);
+  $profileUrl = $user->getUrlToProfile();
   return "<div class=\"message-container\">
             <div>
               <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
@@ -134,13 +135,6 @@ function getUrlToCircle($circleID) {
 }
 
 /*
- * Returns the URL to the profile page for a specific user.
- */
-function getUrlToProfile($userID) {
-  return "profile.php?u=$userID";
-}
-
-/*
  * Returns the HTML for the sidebar panel which displays a list of the users in a particular circle.
  */
 function getHtmlForCircleUsersPanel($circle) {
@@ -152,20 +146,55 @@ function getHtmlForCircleUsersPanel($circle) {
             <div class=\"panel-body\">
               <div class=\"row\">";
 
-  // Add a button for each circle
+  // Add a button for each user
   foreach ($circle->users as $id => $user) {
+    $img = getHtmlForSquareImage($user->photoSrc);
     $html = $html .
                 "<div class=\"col-xs-3\">
-                  <a href=\"{$user->getUrlToProfile()}\"><div class=\"img-thumb\" style=\"background-image:url('$user->photoSrc')\"></div></a>
+                  <a href=\"{$user->getUrlToProfile()}\">$img</a>
                   <a href=\"{$user->getUrlToProfile()}\" class=\"no-underline\"><div class=\"profile-name\">{$user->getFullName()}</div></a>
                 </div>";
   }
+
+// Close div tags and return the HTML
+return $html . "
+            </div>
+        </div>
+      </div>";
+}
+
+  /*
+   * Returns the HTML for the sidebar panel which displays a list of the friends of a particular user.
+   */
+  function getHtmlForUsersFriendsPanel($user) {
+    // Generate the start of the HTML (setting up the panel, panel title)
+    $html = "<div class=\"panel panel-primary\">
+              <div class=\"panel-heading\">
+                <h4 class=\"panel-title\">Friends of this person</h4>
+              </div>
+              <div class=\"panel-body\">
+                <div class=\"row\">";
+
+    // Add a button for each user
+    $friends = $user->getFriends();
+    foreach ($friends as $id => $friend) {
+      $img = getHtmlForSquareImage($friend->photoSrc);
+      $html = $html .
+                  "<div class=\"col-xs-3\">
+                    <a href=\"{$friend->getUrlToProfile()}\">$img</a>
+                    <a href=\"{$friend->getUrlToProfile()}\" class=\"no-underline\"><div class=\"profile-name\">{$friend->getFullName()}</div></a>
+                  </div>";
+    }
 
   // Close div tags and return the HTML
   return $html . "
               </div>
           </div>
         </div>";
+}
+
+function getHtmlForSquareImage($src) {
+  return "<div class=\"img-thumb\" style=\"background-image:url('$src')\"></div>";
 }
 
 /*

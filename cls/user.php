@@ -26,13 +26,30 @@ class user {
   public $photoSrc;
 
   /*
+   * The date of birth of this user.
+   */
+  public $dateOfBirth;
+
+  /*
+   * The user's location.
+   */
+  public $location;
+
+  /*
+   * An array of users who are friends with this user. Key is user ID, value is user object.
+   */
+  private $friends;
+
+  /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct($id, $firstName, $lastName, $photoSrc) {
+  public function __construct($id, $firstName, $lastName, $photoSrc, $dateOfBirth, $location) {
     $this->id = $id;
     $this->firstName = $firstName;
     $this->lastName = $lastName;
     $this->photoSrc = $photoSrc;
+    $this->dateOfBirth = $dateOfBirth;
+    $this->location = $location;
   }
 
   /*
@@ -42,10 +59,34 @@ class user {
     return $this->firstName . " " . $this->lastName;
   }
 
+  /*
+   * Returns the URL to the profile of this user.
+   */
   public function getUrlToProfile() {
     return "profile.php?u=" . $this->id;
   }
 
+  /*
+   * Returns a string containing the current age of the user.
+   */
+  public function getAge() {
+    return $this->dateOfBirth->diff(new DateTime())->format('%y');
+  }
+
+  /*
+   * Get an array of the friends of this user. Key is user ID, value is user object.
+   */
+  public function getFriends() {
+    //TODO: Not yet implemented.
+    // Get the array of friends from the database the first time.
+    if (is_null($this->friends)) {
+      $user1 = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg", new DateTime("1980-06-02"), "London");
+      $user2 = new user(0, "Carrie", "Mathison", "img/profile2.jpg", new DateTime("1982-11-01"), "Pakistan");
+      $this->friends = array($user1, $user2);
+    }
+    // Return the saved array
+    return $this->friends;
+  }
 }
 
 ?>
