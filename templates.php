@@ -92,6 +92,15 @@ function getHtmlForCircleMessageFeedItem(message $message) {
 }
 
 /*
+ * Returns the HTML for a blog post item in the activity feed.
+ */
+function getHtmlForBlogPostFeedItem(blogPost $blogPost) {
+  $blogUrl = $blogPost->getURLToBlog();
+  $blogBody = strlen($blogPost->body) > 400 ? substr($blogPost->body, 0, 350) . "... <a href=\"$blogUrl\">Continue reading</a>" : $blogPost->body;
+  return getHtmlForFeedItem($blogPost, "wrote a new post on their <a href=\"$blogUrl\">blog</a>.", $blogBody);
+}
+
+/*
  * Returns the HTML for a single generic item in the activity feed.
  */
 function getHtmlForFeedItem(interaction $item, string $titleHtml, string $bodyHtml) {

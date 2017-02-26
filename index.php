@@ -43,6 +43,8 @@
                   echo getHtmlForCircleMessageFeedItem($item);
                 } elseif ($item instanceof photo) {
                   echo getHtmlForPhotoFeedItem($item);
+                } elseif ($item instanceof blogPost) {
+                  echo getHtmlForBlogPostFeedItem($item);
                 }
               }
               ?>
