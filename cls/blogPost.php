@@ -3,7 +3,7 @@
 /*
  * Represents a single blog post.
  */
-class blogPost {
+class blogPost extends interaction {
 
   /*
    * The ID assigned to this blog post in the database.

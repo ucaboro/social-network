@@ -3,7 +3,7 @@
 /*
  * Represents a single message in a circle.
  */
-class message {
+class message extends interaction {
 
   /*
    * The ID assigned to this message in the database.
@@ -33,7 +33,7 @@ class message {
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct($id, $circle, $user, $time, $text) {
+  public function __construct(int $id, circle $circle, user $user, DateTime $time, string $text) {
     $this->id = $id;
     $this->circle = $circle;
     $this->user = $user;

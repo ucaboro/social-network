@@ -43,7 +43,7 @@ class user {
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct($id, $firstName, $lastName, $photoSrc, $dateOfBirth, $location) {
+  public function __construct(int $id, string $firstName, string $lastName, string $photoSrc, DateTime $dateOfBirth, string $location) {
     $this->id = $id;
     $this->firstName = $firstName;
     $this->lastName = $lastName;

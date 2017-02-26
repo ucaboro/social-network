@@ -63,7 +63,7 @@ body {
 }
 
 /* Make profile image display properly within the feed item */
-img.profile-image {
+.feed-profile-image {
   float: left;
   margin-right: 7px;
   width: 40px;

@@ -39,8 +39,8 @@ function getCircleWithID($id) {
 function getMessagesInCircle($circle) {
   // TODO: Not yet implemented.
   $user = getUserWithID(0);
-  $message = new message(0, $circle, $user, "01 Apr 2017 13:42", "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
-  $message2 = new message(0, $circle, $user, "01 Apr 2017 11:59", "Just signed up for Connect. This website is way better than Facebook!");
+  $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
+  $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
   return array($message, $message2);
 }
 
@@ -81,6 +81,22 @@ function getBlogPostsByUser($user) {
   $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
   $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
   return array($post1, $post2);
+}
+
+/*
+ * Returns an array of feed items represeting the recent activity feed for the currently logged in user.
+ * Items are in date-descending order. Values are interaction objects.
+ */
+function getRecentActivityFeed() {
+  // TODO: Not yet implemented.
+  // Create some dummy objects, this is just to demo the layout
+  $user = getUserWithID(1);
+  $circle = new circle(0, "Family", "blue", array($user));
+  $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
+  $photo = new photo(0, $user, new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
+  $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
+  return array($message, $photo, $message2);
+
 }
 
 

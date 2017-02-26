@@ -1,8 +1,4 @@
 <?php
-include "cls/circle.php";
-include "cls/user.php";
-include "cls/message.php";
-include "cls/blogPost.php";
 
 /* Gets the HTML for the head tag for every page */
 function getHtmlForHead() {
@@ -80,30 +76,34 @@ function getHtmlForCircleShape($circle) {
 /*
  * Returns the HTML for a single photo item in the activity feed.
  */
-function getHtmlForPhotoFeedItem($user, $time, $photoSrc, $photoID) {
-  $photoUrl = "photo.php?p=$photoID";
-  echo getHtmlForFeedItem($user, "uploaded a <a href=\"$photoUrl\">photo</a>.", $time, "<a href=\"$photoUrl\"><img src=\"$photoSrc\"></a>");
+function getHtmlForPhotoFeedItem(photo $photo) {
+  $photoUrl = $photo->getURLToPhoto();
+  return getHtmlForFeedItem($photo, "uploaded a <a href=\"$photoUrl\">photo</a>.", "<a href=\"$photoUrl\"><img src=\"$photo->src\"></a>");
 }
 
 /*
  * Returns the HTML for a new circle message item in the activity feed.
  */
-function getHtmlForCircleMessageFeedItem($user, $message) {
-  $circleUrl = getUrlToCircle($message->circle->id);
-  $circleName = $message->circle->name;
+function getHtmlForCircleMessageFeedItem(message $message) {
+  $circle = $message->circle;
+  $circleUrl = $circle->getUrlToCircle();
   $messageText = strlen($message->text) > 400 ? substr($message->text, 0, 350) . "... <a href=\"$circleUrl\">Continue reading</a>" : $message->text;
-  echo getHtmlForFeedItem($user, "sent a message to <a href=\"$circleUrl\">$circleName</a>.", $message->time, $messageText);
+  return getHtmlForFeedItem($message, "sent a message to <a href=\"$circleUrl\">$circle->name</a>.", $message->text);
 }
 
 /*
  * Returns the HTML for a single generic item in the activity feed.
  */
-function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
+function getHtmlForFeedItem(interaction $item, string $titleHtml, string $bodyHtml) {
+  $user = $item->user;
+  $name = $user->getFullName();
   $profileUrl = $user->getUrlToProfile();
+  $time = $item->time->format("d M Y H:i");
+  $img = getHtmlForSquareImage($user->photoSrc);
   return "<div class=\"feed-item\">
             <div>
-              <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
-              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a> $titleHtml</span><br>
+              <div class=\"feed-profile-image\"><a href=\"$profileUrl\">$img</a></div>
+              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$name</a> $titleHtml</span><br>
               <span class=\"feed-item-time\">$time</span>
             </div>
             <div class=\"feed-item-content\">
@@ -114,14 +114,17 @@ function getHtmlForFeedItem($user, $titleHtml, $time, $bodyHtml) {
 
 function getHtmlForCircleMessage($message) {
   $user = $message->user;
+  $name = $user->getFullName();
   $profileUrl = $user->getUrlToProfile();
+  $img = getHtmlForSquareImage($user->photoSrc);
+  $time = $message->time->format("d M Y H:i");
   return "<div class=\"message-container\">
             <div>
-              <a href=\"$profileUrl\"><img class=\"profile-image\" src=\"$user->photoSrc\"></a>
+              <div class=\"feed-profile-image\"><a href=\"$profileUrl\">$img</a></div>
             </div>
             <div class=\"message-content\">
-              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$user->firstName $user->lastName</a></span>
-              <span class=\"feed-item-time\">$message->time</span><br>
+              <span class=\"feed-item-title\"><a href=\"$profileUrl\">$name</a></span>
+              <span class=\"feed-item-time\">$time</span><br>
               $message->text
             </div>
           </div>";
