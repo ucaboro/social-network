@@ -38,7 +38,7 @@ class photo extends interaction {
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct($id, $user, $time, $src) {
+  public function __construct(int $id, user $user, DateTime $time, string $src) {
     $this->id = $id;
     $this->user = $user;
     $this->time = $time;
@@ -48,7 +48,7 @@ class photo extends interaction {
   /*
    * Returns an array of users who have annotated this photo. Key is user ID, value is user object.
    */
-  public function getAnnotations() {
+  public function getAnnotations(): array {
     // Check if we already got the annotations for this photo
     if (is_null($this->annotations)) {
       // Get the annotations from the database
@@ -59,21 +59,26 @@ class photo extends interaction {
   }
 
   /*
-   * Returns an array of comments for this photo. Key is comment ID, value is comment object.
+   * Returns an array of comments for this photo. Key is comment ID, value is comment object. Comments are in date-descending order.
    */
-  public function getComments() {
+  public function getComments(): array {
     // Check if we already got the comments for this photo
     if (is_null($this->comments)) {
       // Get the comments from the database
       // TODO: Not yet implemented.
       $comment1 = new comment(0, $this, getUserWithID(2), new DateTime("2017-04-01 11:57"), "Great photo, really nice.");
-      $this->comments = array($comment1);
+      $comment2 = new comment(0, $this, getUserWithID(0), new DateTime("2017-04-01 11:58"), "Please upload more! I love your photos!");
+      $comment3 = new comment(0, $this, getUserWithID(1), new DateTime("2017-04-01 13:00"), "I hate this photo. It's the worst photo I've ever seen. Please leave this website and never return.");
+      $this->comments = array($comment3, $comment2, $comment1);
     }
-    return $this->annotations;
+    return $this->comments;
   }
 
-  public function getURLToPhoto() {
-    return "photo.php?p=$photo->id";
+  /*
+   * Returns the URL to the page which displays this photo.
+   */
+  public function getURLToPhoto(): string {
+    return "photo.php?p=" . $this->id;
   }
 
 }

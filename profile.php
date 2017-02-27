@@ -47,9 +47,9 @@
                 // Get the array of photos
                 $photos = getPhotosOwnedByUser($user);
                 // Output each one
-                foreach ($photos as $photoID => $photoSrc) {
+                foreach ($photos as $photoID => $photo) {
                   echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                          <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photoSrc) . "</a>
+                          <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
                         </div>";
                 }
                 // Output the see more icon

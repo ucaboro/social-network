@@ -88,11 +88,15 @@ function getHtmlForFeedItem(interaction $item, string $titleHtml, string $bodyHt
 }
 
 function getHtmlForCircleMessage($message) {
-  $user = $message->user;
+  return getHtmlForComment($message);
+}
+
+function getHtmlForComment($comment) {
+  $user = $comment->user;
   $name = $user->getFullName();
   $profileUrl = $user->getUrlToProfile();
   $img = getHtmlForSquareImage($user->photoSrc);
-  $time = $message->time->format("d M Y H:i");
+  $time = $comment->time->format("d M Y H:i");
   return "<div class=\"message-container\">
             <div>
               <div class=\"feed-profile-image\"><a href=\"$profileUrl\">$img</a></div>
@@ -100,7 +104,7 @@ function getHtmlForCircleMessage($message) {
             <div class=\"message-content\">
               <span class=\"feed-item-title\"><a href=\"$profileUrl\">$name</a></span>
               <span class=\"feed-item-time\">$time</span><br>
-              $message->text
+              $comment->text
             </div>
           </div>";
 }

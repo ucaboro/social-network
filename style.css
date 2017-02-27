@@ -139,3 +139,29 @@ a .circle:hover {
 .circle-title {
   padding-bottom: 15px;
 }
+
+/* Contains a user's photo displayed at full size */
+.photo-container {
+  margin: 0px 5px 20px 5px;
+}
+
+.photo-container img {
+  border: 1px solid #666;
+}
+
+/* Buttons which just contain a single emoji */
+.btn-emoji {
+  width: 100%;
+  font-size: 2em;
+  padding: 0px;
+}
+
+/* The 'leave a comment' form on every photo page */
+.comment-form {
+  margin: 10px 0px;
+  overflow: hidden;
+}
+
+.form-control-inline {
+  width: 300px;
+}

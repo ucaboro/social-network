@@ -66,15 +66,16 @@ function getUserWithID(int $id) {
 }
 
 /*
- * Gets an array of the photos that the specified user has uploaded. Key is photo ID, value is relative URL to photo as a string.
+ * Gets an array of the photos that the specified user has uploaded. Key is photo ID, value is photo object.
  */
-function getPhotosOwnedByUser(user $user) {
+function getPhotosOwnedByUser(user $user): array {
   // TODO: Not yet implemented.
-  return array("img/ex_photo1.jpg", "img/ex_photo1.jpg", "img/ex_photo1.jpg", "img/ex_photo1.jpg", "img/ex_photo1.jpg", "img/ex_photo1.jpg", "img/ex_photo1.jpg");
+  $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
+  return array($photo, $photo, $photo, $photo, $photo, $photo, $photo);
 }
 
 /*
- * Gets an array of the photos that the specified user has uploaded. Key is photo ID, value is relative URL to photo as a string.
+ * Returns an array of the photos that the specified user has uploaded. Key is photo ID, value is relative URL to photo as a string.
  */
 function getBlogPostsByUser(user $user) {
   // TODO: Not yet implemented.
@@ -97,7 +98,27 @@ function getRecentActivityFeed() {
   $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
   $blogPost = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
   return array($message, $blogPost, $photo, $message2);
+}
 
+/*
+ * Returns the photo object with the specified ID from the database.
+ */
+function getPhotoWithID(int $photoID) {
+  // TODO: Not yet implemented.
+  return new photo(0, getUserWithID(1), new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
+}
+
+/*
+ * Picks a specified number of photos at random from a user's uploaded photos.
+ */
+function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
+  // TODO: Not yet implemented.
+  $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
+  $toReturn = [];
+  for ($i=0; $i < $numberOfPhotos; $i++) {
+    $toReturn[] = $photo;
+  }
+  return $toReturn;
 }
 
 
