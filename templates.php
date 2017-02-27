@@ -203,4 +203,33 @@ function getHtmlForCirclePanel() {
         </div>";
 }
 
+/*
+ * Returns the HTML for a single user on the friends and search pages.
+ */
+function getHtmlForUserSummary(user $user, bool $isFriend): string {
+  $profileUrl = $user->getUrlToProfile();
+  $img = getHtmlForSquareImage($user->photoSrc);
+  $name = $user->getFullName();
+  $age = $user->getAge();
+  if ($isFriend) {
+    $buttonHtml = "<button class=\"btn btn-link\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
+  } else {
+    $buttonHtml = "<button class=\"btn btn-link\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
+  }
+  return "<div class=\"friend\">
+          <div class=\"row\">
+            <div class=\"col-xs-2\" style=\"padding-right:5px\">
+                <div class=\"friend-profile-image\"><a href=\"$profileUrl\">$img</a></div>
+            </div>
+            <div class=\"col-xs-9\">
+              <a href=\"$profileUrl\"><span class=\"h4\">$name</span></a><br>
+              <span class=\"subtitle\">$age years old, $user->location</span>
+            </div>
+            <div class=\"col-xs-1\">
+              $buttonHtml
+            </div>
+          </div>
+        </div>";
+}
+
 ?>

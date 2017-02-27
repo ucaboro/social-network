@@ -162,6 +162,25 @@ a .circle:hover {
   overflow: hidden;
 }
 
-.form-control-inline {
-  width: 300px;
+/* Make profile image display properly within the friends list */
+.friend-profile-image {
+  float: left;
+  margin-right: 7px;
+  width: 100%;
+}
+
+/* Container element for a single friend in the friends list */
+.friend {
+  margin-bottom: 20px;
+  color: #666;
+  font-weight: 400;
+}
+
+.friend a {
+  text-decoration: none;
+}
+
+.btn-emoji:hover {
+  text-decoration: none;
+  background-color: #f9f9f9;
 }

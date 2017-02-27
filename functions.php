@@ -121,5 +121,34 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
   return $toReturn;
 }
 
+/*
+ * Returns an array of users who are friends with the given user.
+ * Optionally filters the list based on a search string.
+ */
+function getFriendsOfUser(user $user, string $filter = NULL): array {
+  // TODO: Not yet implemented.
+  if (is_null($filter)) {
+    return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
+  } else {
+    return array(getUserWithID(0));
+  }
+}
+
+/*
+ * Returns an array of users who match the given search string.
+ */
+function getUsers(string $filter): array {
+  // TODO: Not yet implemented.
+  return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
+}
+
+/*
+ * Returns true if the users are friends, false otherwise.
+ */
+function areUsersFriends(user $user1, user $user2): bool {
+  // TODO: Not yet implemented.
+  return false;
+}
+
 
 ?>
