@@ -92,17 +92,7 @@
         <div class="col-md-4">
           <div class="row">
             <div class="col-xs-12">
-              <div class="panel panel-primary">
-                <div class="panel-body">
-                  <ul>
-                   <li><a href="index.php">Home</a></li>
-                   <li><a href="me.php">My Profile</a></li>
-                   <li><a href="photos.php">Photos</a></li>
-                   <li><a href="blogs.php">Blogs</a></li>
-                   <li><a href="friends.php">Friends</a></li>
-                 </ul>
-                </div>
-              </div>
+              <?php echo getHtmlForNavigationPanel(); ?>
             </div>
           </div>
           <div class="row">

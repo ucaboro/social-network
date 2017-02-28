@@ -232,4 +232,21 @@ function getHtmlForUserSummary(user $user, bool $isFriend): string {
         </div>";
 }
 
+/*
+ * Returns the HTML for the navigation panel at the side of every page.
+ */
+function getHtmlForNavigationPanel() {
+  echo "<div class=\"panel panel-primary\">
+          <div class=\"panel-body\">
+            <ul>
+             <li><a href=\"index.php\">Home</a></li>
+             <li><a href=\"me.php\">My Profile</a></li>
+             <li><a href=\"photos.php\">Photos</a></li>
+             <li><a href=\"blogs.php\">Blogs</a></li>
+             <li><a href=\"friends.php\">Friends</a></li>
+           </ul>
+          </div>
+        </div>";
+}
+
 ?>

@@ -1,6 +1,17 @@
 <?php
 
 /*
+ * Returns the specified value from the GET request, or NULL if no such value was passed.
+ */
+function getValueFromGET(string $key) {
+  if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET[$key])) {
+    return $_GET[$key];
+  } else {
+    return NULL;
+  }
+}
+
+/*
  * Returns the a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUser() {
