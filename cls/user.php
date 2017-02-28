@@ -80,8 +80,8 @@ class user {
     //TODO: Not yet implemented.
     // Get the array of friends from the database the first time.
     if (is_null($this->friends)) {
-      $user1 = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg", new DateTime("1980-06-02"), "London");
-      $user2 = new user(0, "Carrie", "Mathison", "img/profile2.jpg", new DateTime("1982-11-01"), "Pakistan");
+      $user1 = new user(1, "Carrie", "Mathison", "img/profile1.jpg", new DateTime("1982-11-01"), "Pakistan");
+      $user2 = new user(2, "Walter", "White", "img/profile2.jpg", new DateTime("1969-06-02"), "London");
       $this->friends = array($user1, $user2);
     }
     // Return the saved array

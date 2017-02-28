@@ -25,9 +25,9 @@ function getCirclesForUser(user $user) {
  */
 function getCircleWithID(int $id) {
   // TODO: Not yet implemented.
-  $user1 = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg", new DateTime("1980-06-02"), "London");
-  $user2 = new user(0, "Carrie", "Mathison", "img/profile2.jpg", new DateTime("1982-11-01"), "Pakistan");
-  $user3 = new user(0, "Elliot", "Alderson", "img/profile3.jpg", new DateTime("1985-04-17"), "New York");
+  $user1 = getUserWithID(0);
+  $user2 = getUserWithID(1);
+  $user3 = getUserWithID(2);
   return new circle(0, "Family", "blue", array($user1, $user2, $user3, $user1, $user2, $user3));
 }
 
@@ -52,13 +52,13 @@ function getUserWithID(int $id) {
   // Return an example user
   switch ($id) {
     case 0:
-      return new user(2, "Elliot", "Alderson", "img/profile3.jpg", new DateTime("1985-04-17"), "New York");
+      return new user(0, "Elliot", "Alderson", "img/profile0.jpg", new DateTime("1985-04-17"), "New York");
       break;
     case 1:
-      return new user(1, "Carrie", "Mathison", "img/profile2.jpg", new DateTime("1982-11-01"), "Pakistan");
+      return new user(1, "Carrie", "Mathison", "img/profile1.jpg", new DateTime("1982-11-01"), "Pakistan");
       break;
     case 2:
-    return new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg", new DateTime("1980-06-02"), "London");
+    return new user(2, "Walter", "White", "img/profile2.jpg", new DateTime("1969-06-02"), "London");
     default:
       break;
   }
@@ -67,11 +67,17 @@ function getUserWithID(int $id) {
 
 /*
  * Gets an array of the photos that the specified user has uploaded. Key is photo ID, value is photo object.
+ * Optional limit on the number of items returned. Set $limit to 0 for no limit. Photos are returned in date-descending order.
  */
-function getPhotosOwnedByUser(user $user): array {
+function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   // TODO: Not yet implemented.
+  if ($limit == 0) { $limit = 18; }
   $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
-  return array($photo, $photo, $photo, $photo, $photo, $photo, $photo);
+  $photos = [];
+  for ($i = 0; $i < $limit; $i++) {
+    $photos[] = $photo;
+  }
+  return $photos;
 }
 
 /*
@@ -148,6 +154,16 @@ function getUsers(string $filter): array {
 function areUsersFriends(user $user1, user $user2): bool {
   // TODO: Not yet implemented.
   return false;
+}
+
+/*
+ * Returns an array of a particular user's photo collections.
+ */
+function getPhotoCollectionsByUser(user $user): array {
+  // TODO: Not yet implemented.
+  $collection1 = new collection(1, $user, new DateTime("2017-03-01 08:53"), "Photos of trees");
+  $collection2 = new collection(1, $user, new DateTime("2017-03-01 08:57"), "My favourite tree photos");
+  return array($collection1, $collection2, $collection1, $collection2, $collection1, $collection2);
 }
 
 

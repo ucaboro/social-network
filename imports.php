@@ -5,6 +5,7 @@ include "cls/user.php";
 include "cls/message.php";
 include "cls/blogPost.php";
 include "cls/photo.php";
+include "cls/collection.php";
 include "cls/comment.php";
 include "functions.php";
 include "templates.php";

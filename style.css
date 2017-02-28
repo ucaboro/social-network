@@ -184,3 +184,9 @@ a .circle:hover {
   text-decoration: none;
   background-color: #f9f9f9;
 }
+
+.photo-collection {
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
