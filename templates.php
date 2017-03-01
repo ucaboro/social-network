@@ -25,9 +25,12 @@ function getHtmlForJavascriptImports() {
 function getHtmlForCircleButton($circle) {
   $url = getUrlToCircle($circle->id);
   $name = $circle->name;
+  $color = getCircleColor($circle);
   return "<div class=\"circle-container\">
-            <a class=\"no-underline\" href=\"$url\"><div class=\"circle\"><div class=\"circle-text\">$name</div></div></a>
+            <a class=\"no-underline\" href=\"$url\"><div class=\"circle\" style=\"background-color:$color; \"><div class=\"circle-text\">$name</div></div></a>
           </div>";
+
+
 }
 
 /*
@@ -38,15 +41,6 @@ function getHtmlForCircleShape($circle) {
             <div class=\"circle\"><div class=\"circle-text hidden-xs\">$circle->name</div></div></a>
           </div>";
 }
-
-/*
- * Returns the color of the circle.
- */
- function getCircleColor($circle) {
-   $color = $circle->color;
-   return "$color";
- }
-
 
 /*
  * Returns the HTML for a single photo item in the activity feed.
@@ -207,12 +201,10 @@ function getHtmlForCirclePanel() {
   $CircleIDs =$id;
 
 
-  foreach (getCircleNames($CircleIDs) as $id => $circle) {
-    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
 
-    if (getCircleColor($circle) == "RED"){
-      echo '<circle style="background-color:red">';
-    }
+  foreach (getCircleNames($CircleIDs) as $id => $circle) {
+
+    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
 
   }
 }
@@ -222,6 +214,29 @@ function getHtmlForCirclePanel() {
           </div>
         </div>";
 }
+
+/*
+ * Returns the color of the circle.
+ * The colors are changed to a more bright, appealing versions
+ */
+ function getCircleColor($circle) {
+   $color = $circle->color;
+
+if($color=="BLUE"){
+  $color = "#337ab7";
+} elseif ($color=="RED") {
+  $color = "#FF4136";
+} elseif ($color=="GREEN") {
+  $color = "#2ECC40";
+} elseif ($color=="YELLOW") {
+  $color = "#FFB90F";
+} elseif ($color=="ORANGE") {
+  $color = "#FF851B";
+}elseif ($color=="GRAY") {
+  $color = "#DDDDDD";
+}
+return "$color";
+ }
 
 /*
  * Returns the HTML for a single user on the friends and search pages.
