@@ -35,6 +35,13 @@ class circle {
     $this->users = $users;
   }
 
+  /*
+   * Returns the URL to the page for this circle.
+   */
+  public function getUrlToCircle() {
+    return "circle.php?c=" . $this->id;
+  }
+
 }
 
 ?>

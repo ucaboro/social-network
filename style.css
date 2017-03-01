@@ -63,7 +63,7 @@ body {
 }
 
 /* Make profile image display properly within the feed item */
-img.profile-image {
+.feed-profile-image {
   float: left;
   margin-right: 7px;
   width: 40px;
@@ -138,4 +138,60 @@ a .circle:hover {
 /* The title of a circle page */
 .circle-title {
   padding-bottom: 15px;
+}
+
+/* Contains a user's photo displayed at full size */
+.photo-container {
+  margin: 0px 5px 20px 5px;
+}
+
+.photo-container img {
+  border: 1px solid #666;
+}
+
+/* Buttons which just contain a single emoji */
+.btn-emoji {
+  width: 100%;
+  font-size: 2em;
+  padding: 0px;
+}
+
+/* The 'leave a comment' form on every photo page */
+.comment-form {
+  margin: 10px 0px;
+  overflow: hidden;
+}
+
+/* Make profile image display properly within the friends list */
+.friend-profile-image {
+  float: left;
+  margin-right: 7px;
+  width: 100%;
+}
+
+/* Container element for a single friend in the friends list */
+.friend {
+  margin-bottom: 20px;
+  color: #666;
+  font-weight: 400;
+}
+
+.friend a {
+  text-decoration: none;
+}
+
+.btn-emoji:hover {
+  text-decoration: none;
+  background-color: #f9f9f9;
+}
+
+.photo-collection {
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* The container of a post on the blog post list */
+.blog-post-summary {
+  margin-bottom: 20px;
 }
