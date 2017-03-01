@@ -41,8 +41,18 @@ class blogPost extends interaction {
     $this->time = $time;
   }
 
+  /*
+   * Returns the URL to the blog which this post is contained on.
+   */
   public function getURLToBlog() {
     return "blog.php?u=" . $this->user->id;
+  }
+
+  /*
+   * Returns the URL to this blog post.
+   */
+  public function getURLToPost() {
+    return "post.php?p=" . $this->id;
   }
 
 }

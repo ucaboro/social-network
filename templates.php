@@ -206,7 +206,7 @@ function getHtmlForCirclePanel() {
 /*
  * Returns the HTML for a single user on the friends and search pages.
  */
-function getHtmlForUserSummary(user $user, bool $isFriend): string {
+function getHtmlForUserSummarySearchResult(user $user, bool $isFriend): string {
   $profileUrl = $user->getUrlToProfile();
   $img = getHtmlForSquareImage($user->photoSrc);
   $name = $user->getFullName();
@@ -242,11 +242,92 @@ function getHtmlForNavigationPanel() {
              <li><a href=\"index.php\">Home</a></li>
              <li><a href=\"me.php\">My Profile</a></li>
              <li><a href=\"photos.php\">Photos</a></li>
-             <li><a href=\"blogs.php\">Blogs</a></li>
+             <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
            </ul>
           </div>
         </div>";
+}
+
+/*
+ * Returns the HTML for the smaller version of the user summary panel, which appears at the top of the photos and blog pages.
+ */
+function getHtmlForSmallUserSummaryPanel(user $user, string $title) {
+  $profileUrl = $user->getUrlToProfile();
+  $img = getHtmlForSquareImage($user->photoSrc);
+  $name = $user->getFullName();
+  return "<div class=\"panel panel-primary\">
+    <div class=\"panel-body\">
+      <div class=\"row\">
+        <div class=\"col-xs-2\">
+          <a href=\"$profileUrl\">$img</a>
+        </div>
+        <div class=\"col-xs-10\">
+          <div class=\"row\">
+            <div class=\"col-xs-12\">
+              <span class=\"h2\">$name</span><br>
+              <span class=\"h4\">$title</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>";
+}
+
+/*
+ * Returns the HTML for the list of the blog posts for a user, limited to $limit entries.
+ * When $isSummary is set to true, the blog previews are hidden and the show more link is visible.
+ */
+function getHtmlForBlogPostsListPanel(user $user, int $limit, bool $isSummary) {
+  // Get the array of blog posts by this user
+  $posts = getBlogPostsByUser($user, $limit);
+
+  $postsHtml = "";
+  if (count($posts) > 0) {
+    // Get the html for each blog post
+    foreach ($posts as $postID => $post) {
+      $postsHtml = $postsHtml . getHtmlForBlogPostSummary($post, !$isSummary);
+    }
+    if ($isSummary) {
+      // Output the see more icon
+      $postsHtml = $postsHtml . "
+              <div class=\"col-xs-12\">
+                <a href=\"blog.php?u=$user->id\">See more</a>
+              </div>";
+    }
+  } else {
+    // If there's no blog posts yet
+    $postsHtml = $postsHtml . "
+            <div class=\"col-xs-12\">
+              This user hasn't posted on their blog yet!
+            </div>";
+  }
+
+  return "<div class=\"panel panel-primary\">
+            <div class=\"panel-heading\">
+              <h4 class=\"panel-title\">Blog posts</h4>
+            </div>
+            <div class=\"panel-body\">
+              <div class=\"row\">
+                $postsHtml
+              </div>
+            </div>
+          </div>";
+}
+
+function getHtmlForBlogPostSummary(blogPost $post, bool $includePreview) {
+  $url = $post->getURLToPost();
+  $time = $post->time->format('d M Y H:i');
+  if ($includePreview) {
+    $preview = "<p>$post->body <a href=\"$url\">Continue reading</a></p>";
+  }
+  return "<div class=\"col-xs-12\">
+            <div class=\"blog-post-summary\">
+              <a href=\"$url\"><span class=\"h4\">$post->headline</span></a><br>
+              <span class=\"feed-item-time\">$time</span>$preview
+            </div>
+          </div>";
 }
 
 ?>

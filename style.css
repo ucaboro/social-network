@@ -190,3 +190,8 @@ a .circle:hover {
   text-align: center;
   font-weight: 500;
 }
+
+/* The container of a post on the blog post list */
+.blog-post-summary {
+  margin-bottom: 20px;
+}

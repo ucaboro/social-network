@@ -9,31 +9,11 @@
       <div class="row">
         <div class="col-md-8">
           <!-- Profile summary -->
-          <div class="panel panel-primary">
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-xs-2">
-                  <?php
-                  $userID = getValueFromGET("u");
-                  if ($userID == NULL) {
-
-                  }
-                  $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
-                  $profileUrl = $user->getUrlToProfile();
-                  echo "<a href=\"$profileUrl\">" . getHtmlForSquareImage($user->photoSrc) . "</a>";
-                  ?>
-                </div>
-                <div class="col-xs-10">
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <span class="h2"><?php echo $user->getFullName(); ?></span><br>
-                      <span class="h4">Photos</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <?php
+          $userID = getValueFromGET("u");
+          $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+          echo getHtmlForSmallUserSummaryPanel($user, "Photos");
+          ?>
           <!-- /END Profile summary -->
           <!-- Photos -->
           <div class="panel panel-primary">

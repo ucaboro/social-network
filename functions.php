@@ -92,13 +92,14 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
 }
 
 /*
- * Returns an array of the photos that the specified user has uploaded. Key is photo ID, value is relative URL to photo as a string.
+ * Returns an array of the blog posts that the specified user has posted. Key is photo ID, value is blogPost object.
+ * Optional limit on the number of items returned. Set $limit to 0 for no limit. Posts are returned in date-descending order.
  */
-function getBlogPostsByUser(user $user) {
+function getBlogPostsByUser(user $user, int $limit) {
   // TODO: Not yet implemented.
   $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
   $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
-  return array($post1, $post2);
+  return array($post1, $post2, $post1, $post2, $post1, $post2);
 }
 
 /*

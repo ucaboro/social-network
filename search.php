@@ -39,7 +39,7 @@
               // Output each result
               $thisUser = getUser();
               foreach ($results as $user) {
-                echo getHtmlForUserSummary($user, areUsersFriends($thisUser, $user));
+                echo getHtmlForUserSummarySearchResult($user, areUsersFriends($thisUser, $user));
               }
               ?>
             </div>

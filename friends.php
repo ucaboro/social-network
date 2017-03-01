@@ -39,7 +39,7 @@
               $friends = getFriendsOfUser(getUser(), $searchTerm);
               // Output each one
               foreach ($friends as $friend) {
-                echo getHtmlForUserSummary($friend, true);
+                echo getHtmlForUserSummarySearchResult($friend, true);
               }
               ?>
             </div>

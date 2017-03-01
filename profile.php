@@ -14,8 +14,8 @@
               <div class="row">
                 <div class="col-xs-3">
                   <?php
-                  $userID = $_GET["u"];
-                  $user = getUserWithID($userID);
+                  $userID = getValueFromGET("u");
+                  $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
                   echo getHtmlForSquareImage($user->photoSrc);
                   ?>
                 </div>
@@ -62,31 +62,7 @@
           </div>
           <!-- /END Photos -->
           <!-- Blog Posts -->
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h4 class="panel-title">Blog posts</h4>
-            </div>
-            <div class="panel-body">
-              <div class="row">
-                <?php
-                // Get the array of blog posts by this user
-                $posts = getBlogPostsByUser($user);
-                // Output each one
-                foreach ($posts as $postID => $post) {
-                  $time = $post->time->format('d M Y H:i');
-                  echo "<div class=\"col-xs-12\">
-                          <a href=\"posts.php?p=$postID\"><span class=\"h4\">" . $post->headline . "</span></a><br>
-                          <p class=\"feed-item-time\">$time</p>
-                        </div>";
-                }
-                // Output the see more icon
-                echo "<div class=\"col-xs-12\">
-                        <a href=\"blog.php?u=$user->id\">See more</a>
-                      </div>";
-                ?>
-              </div>
-            </div>
-          </div>
+          <?php echo getHtmlForBlogPostsListPanel($user, 6, true); ?>
           <!-- /END Photos -->
         </div>
         <div class="col-md-4">
