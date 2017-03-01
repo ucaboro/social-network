@@ -1,6 +1,6 @@
 <?php include "imports.php"; ?>
 <!DOCTYPE html>
-
+<?php include "db.php"; ?>
 <html lang="en-gb">
   <?php echo getHtmlForHead(); ?>
   <body>
@@ -38,7 +38,8 @@
             <div class="panel-body">
               <?php
               // Create some dummy objects, this is just to demo the layout
-              $user = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg");
+              //$user = new user(0, "Bob", "Berenstain", "img/ex_profile1_thumb.jpg");
+              $user = getUser();
               $circle = new circle(0, "Family", "blue", array($user));
               $message = new message(0, $circle, $user, "01 Apr 2017 13:42", "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
               $message2 = new message(0, $circle, $user, "01 Apr 2017 11:59", "Just signed up for Connect. This website is way better than Facebook!");

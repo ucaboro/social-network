@@ -77,6 +77,15 @@ function getHtmlForCircleShape($circle) {
 }
 
 /*
+ * Returns the color of the circle.
+ */
+ function getCircleColor($circle) {
+   $color = $circle->color;
+   return "$color";
+ }
+
+
+/*
  * Returns the HTML for a single photo item in the activity feed.
  */
 function getHtmlForPhotoFeedItem($user, $time, $photoSrc, $photoID) {
@@ -180,11 +189,22 @@ function getHtmlForCirclePanel() {
             <div class=\"panel-body\">
               <div class=\"row\">";
 
-  // Add a button for each circle
-  foreach (getCirclesForUser(getUser()) as $id => $circle) {
-    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
-  }
+  //Add a button for each circle
+  //change 1 to getUserID after login is implemented
 
+  foreach (getUserCircles(1) as $id => $value) {
+  $CircleIDs =$id;
+
+
+  foreach (getCircleNames($CircleIDs) as $id => $circle) {
+    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
+
+    if (getCircleColor($circle) == "RED"){
+      echo '<circle style="background-color:red">';
+    }
+
+  }
+}
   // Close div tags and return the HTML
   return $html . "
               </div>
