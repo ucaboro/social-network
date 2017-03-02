@@ -1,0 +1,18 @@
+
+/* Custom navbar style */
+.navbar-connect {
+  background-color: #6D83B2;
+  border-color: #6D83B2;
+  border-radius: 0px;
+}
+
+/* Make the logo fit inside the navbar */
+.navbar-brand > img {
+  height: 100%;
+}
+
+.navbar-brand-center {
+  transform: translateX(-50%);
+  left: 50%;
+  position: absolute;
+}
