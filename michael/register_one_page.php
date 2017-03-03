@@ -78,7 +78,7 @@
             $firstName = mysqli_real_escape_string($connection, $firstName);
             $lastName = mysqli_real_escape_string($connection, $lastName);
             $email = mysqli_real_escape_string($connection, $email);
-            $hashedPassword = passwordEncrypt($password);
+            $hashedPassword = passwordEncrypt($password); //Not neccessary to escape as it will be hashed
             //$password = mysqli_real_escape_string($connection, $password);
             //$confirmPassword = mysqli_real_escape_string($connection, $confirmPassword);
 
@@ -99,7 +99,7 @@
         }
         else{
             debug_to_console($errors);
-            echo "Login unsuccessful <br>";
+            echo "Registration unsuccessful <br>";
             print_r($errors);
         }
 

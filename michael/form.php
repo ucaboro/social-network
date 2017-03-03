@@ -7,21 +7,22 @@
     if(isset($_POST['submit']))
     {
         //form has been submitted
-        $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
         $password = trim($_POST['password']);
-        //$message = "Logging in : {$username}";
-        if(checkLogin($username, $password, $connection)){
+        //$message = "Logging in : {$email}";
+        if(checkLogin($email, $password, $connection)){
             $message = "Logging in!";
             //redirectTo("homepage.php");
         }
         else{
-            $message = "Incorrect username password pair";
+            $message = "Incorrect email password pair";
         }
     }
     else{
-        $username = "";
+        $email = "";
         $message = "Please log in";
     }
+
 ?>
 
     <!DOCTYPE html>
@@ -35,7 +36,7 @@
     echo $message;
     ?><br />
     <form action="form.php" method="post">
-        Email: <input type="text" name="username" value ="<?php echo htmlspecialchars($username) ?>" /><br/>
+        Email: <input type="text" name="email" value ="<?php echo htmlspecialchars($email) ?>" /><br/>
         Password: <input type="password" name="password" value=""/><br/>
         <br />
         <input type="submit" name="submit" value="Submit" />
