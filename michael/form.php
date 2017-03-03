@@ -10,8 +10,8 @@
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
         //$message = "Logging in : {$email}";
-        if(checkLogin($email, $password, $connection)){
-            $message = "Logging in!";
+        if(checkLogin($email, $password)){
+            $message = "Logging in";
             //redirectTo("homepage.php");
         }
         else{
@@ -44,8 +44,3 @@
 
     </body>
     </html>
-
-
-<?php
-mysqli_close($connection);
-?>

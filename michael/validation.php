@@ -34,13 +34,15 @@
     }
 
     //Check entered value is not already stored in database, i.e. is unique
-    function uniqueEmail($email, $connection){
-        //Get all email addresses currently stored in database
-        $query = "SELECT email FROM User ";
-        $result = mysqli_query($connection, $query);
+    function uniqueEmail($email){
+        //Get connection to database
+        $database = new db();
+        $database->connect();
+        //Get all emails stored in database with SQL query
+        $result = $database->query("SELECT email FROM User ");
         //Check if query failed
         if (!$result) {
-            printf("Errormessage: %s\n", mysqli_error($connection));
+            printf("Errormessage: %s\n", $database->getError());
             die("Database query failed.");
         }
         else{
@@ -86,10 +88,10 @@
 
     /////////////////EMAIL//////////////
     //Full validation for email address for register page
-    function validateSignUpEmail($email, $connection){
+    function validateSignUpEmail($email){
         $presence = presence($email);
         $isEmail = validEmail($email);
-        $uniqueness = uniqueEmail($email, $connection);
+        $uniqueness = uniqueEmail($email);
         return array($presence, $isEmail, $uniqueness);
     }
 

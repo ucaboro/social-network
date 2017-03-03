@@ -7,24 +7,26 @@
     <?php echo getHtmlForTopNavbar(); ?>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-offset-3 col-sm-6 col-xs-12">
+        <div class="col-md-8">
+          <!-- Profile summary -->
           <?php
-          // Get the variables passed through POST
-          $firstName = $_POST["first-name"]; // using the 'name' attribute in the <input> tags on register.php
-          $lastName = $_POST["last-name"];
-          $email = $_POST["email"];
-          $password = $_POST["password"];
-          $confirmPassword = $_POST["confirm-password"];
-
-          // TODO: Do stuff with variables here, e.g. write to database
-
-          // Just outputting for now to prove it works
-          echo "First name: $firstName<br>
-                Last name: $lastName<br>
-                Email: $email<br>
-                Password: $password<br>
-                Confirm password: $confirmPassword";
+          $userID = getValueFromGET("u");
+          $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+          echo getHtmlForSmallUserSummaryPanel($user, "Blog");
           ?>
+          <!-- /END Profile summary -->
+          <!-- Blog Posts -->
+          <?php
+          echo getHtmlForBlogPostsListPanel($user, 0, false);
+          ?>
+          <!-- /END Photos -->
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-xs-12">
+              <?php echo getHtmlForNavigationPanel(); ?>
+            </div>
+          </div>
         </div>
       </div>
     </div>

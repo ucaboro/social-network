@@ -1,12 +1,12 @@
 <?php
+    require_once "funct.php";
     require_once "imports.php";
     require_once "validation.php";
     require_once "db.php";
 
-    ///////////If form submitted
+    //////////If form submitted
     if(isset($_POST['submit']))
     {
-        debug_to_console("Submit is set");
         //Retrieve values from post and trim whitespace
         $firstName = trim($_POST["first-name"]); // using the 'name' attribute in the <input> tags on register.php
         $lastName = trim($_POST["last-name"]);
@@ -36,7 +36,7 @@
                 $errors[] = "Please provide a valid email address.";
             }
             //
-            if (!uniqueEmail($email, $connection)) {
+            if (!uniqueEmail($email)) {
                 $errors[] = "There already exists and account for this email address";
             }
         }
@@ -66,39 +66,9 @@
         //If no validation errors, upload to database //Should really do email confirmation or something
         if(empty($errors))
         {
-            debug_to_console("No validation errors");
-            /*echo "Login successful <br>
-                First name: $firstName<br>
-                Last name: $lastName<br>
-                Email: $email<br>
-                Password: $password<br>
-                Confirm password: $confirmPassword";*/
-
-            //Escape values to avoid SQL  //Prepared statements would be better
-            $firstName = mysqli_real_escape_string($connection, $firstName);
-            $lastName = mysqli_real_escape_string($connection, $lastName);
-            $email = mysqli_real_escape_string($connection, $email);
-            $hashedPassword = passwordEncrypt($password); //Not neccessary to escape as it will be hashed
-            //$password = mysqli_real_escape_string($connection, $password);
-            //$confirmPassword = mysqli_real_escape_string($connection, $confirmPassword);
-
-            $query  = "INSERT INTO User ";
-            $query .= "  (email, firstName, lastName, password)";
-            $query .= " VALUES ";
-            $query .= "('{$email}', '{$firstName}', '{$lastName}', '{$hashedPassword}')";
-
-            $result = mysqli_query($connection, $query);
-
-            if (!$result) {
-                printf("Errormessage: %s\n", mysqli_error($connection));
-                die("Database query failed.");
-            }
-            else{
-                redirectTo("regSuccess.php");
-            }
+            register($firstName, $lastName, $email, $password);
         }
         else{
-            debug_to_console($errors);
             echo "Registration unsuccessful <br>";
             print_r($errors);
         }
@@ -106,7 +76,7 @@
 
     }
     else{
-        debug_to_console("Submit isnt set");
+        //debug_to_console("Submit isnt set");
     }
 ?>
 <!DOCTYPE html>
@@ -115,6 +85,9 @@
   <?php echo getHtmlForHead(); ?>
   <body>
     <?php echo getHtmlForTopNavbar(); ?>
+    <?php
+
+    ?>
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-offset-3 col-sm-6 col-xs-12">
