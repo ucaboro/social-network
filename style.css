@@ -217,3 +217,8 @@ a.no-formatting {
   color: inherit;
   text-decoration: inherit;
 }
+
+/* Simple vertical spacer div */
+.spacer-v {
+  margin-top: 20px;
+}

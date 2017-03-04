@@ -379,4 +379,46 @@ function getHtmlForBlogPostSummary(blogPost $post, bool $includePreview) {
           </div>";
 }
 
+/*
+ * Returns the HTML for the current user's friend requests panel, or an empty string if there are no friend requests.
+ */
+function getHtmlForFriendRequestsPanel() {
+  // Get top of panel
+  $html = "<div class=\"panel panel-primary\">
+            <div class=\"panel-heading\">
+              <h4 class=\"panel-title\">Friend requests</h4>
+            </div>
+            <div class=\"panel-body\">";
+
+  // Get requests
+  $requests = getFriendRequests();
+
+  // If there's no requests, return an empty string.
+  if (count($requests) == 0) { return ""; }
+
+  // Create HTML for each request
+  $requestHtmls = [];
+  foreach ($requests as $userID => $time) {
+    $user = getUserWithID($userID);
+    $url = $user->getUrlToProfile();
+    $img = getHtmlForSquareImage($user->photoSrc);
+    $name = $user->getFullName();
+    $strTime = $time->format("d M y H:i");
+    $requestHtmls[] = "<div class=\"row\">
+                        <div class=\"col-xs-8\">
+                          <div class=\"feed-profile-image\"><a href=\"$url\">$img</a></div>
+                          <span class=\"feed-item-title\"><a href=\"$url\">$name</a></span><br>
+                          <span class=\"feed-item-time\">Request sent on $strTime</span>
+                        </div>
+                        <div class=\"col-xs-4\">
+                          <button class=\"btn btn-success btn-xs btn-block\">Accept</button>
+                          <button class=\"btn btn-danger btn-xs btn-block\">Decline</button>
+                        </div>
+                      </div>";
+  }
+
+  return $html . join("<div class=\"spacer-v\"></div>", $requestHtmls) . "</div></div>";
+
+}
+
 ?>

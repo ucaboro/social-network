@@ -256,6 +256,18 @@ function getBlogPostWithID($id) {
   return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
 }
 
+/*
+ * Returns an array containing the friend requests for the current user.
+ * Key is the ID of the user who sent the request, value is a DateTime object representing the time the request was sent.
+ */
+function getFriendRequests() {
+  // TODO: Not yet implemented.
+  $requests = [];
+  $requests[1] = new DateTime("01 Apr 2017 13:42");
+  $requests[2] = new DateTime("01 Apr 2017 13:42");
+  return $requests;
+}
+
 
 
 ?>
