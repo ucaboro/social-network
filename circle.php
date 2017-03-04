@@ -1,6 +1,6 @@
 <?php include "imports.php"; ?>
 <!DOCTYPE html>
-<?php include "db.php"; ?>
+
 <html lang="en-gb">
   <?php echo getHtmlForHead(); ?>
   <body>

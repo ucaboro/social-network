@@ -2,21 +2,32 @@
 
 /* Gets the HTML for the head tag for every page */
 function getHtmlForHead() {
-  return file_get_contents("templates/head.php");
+  return getHtmlFromPHPFile("templates/head.php");
 }
 
 /*
  * Gets the HTML for the navbar at the top of every page.
  */
 function getHtmlForTopNavbar() {
-  return file_get_contents("templates/navbar.php");
+  return getHtmlFromPHPFile("templates/navbar.php");
 }
 
 /*
  * Gets the HTML for the script tags loaded at the end of every page.
  */
 function getHtmlForJavascriptImports() {
-  return file_get_contents("templates/script.php");
+  return getHtmlFromPHPFile("templates/script.php");
+}
+
+/*
+ * Reads the contents of a PHP file and returns it as a string.
+ */
+function getHtmlFromPHPFile($filename) {
+  ob_start();
+  include($filename);
+  $str = ob_get_contents();
+  ob_end_clean();
+  return $str;
 }
 
 /*
@@ -133,7 +144,7 @@ function getHtmlForCircleUsersPanel($circle) {
               <div class=\"row\">";
 
   // Add a button for each user
-  foreach ($circle->users as $id => $user) {
+  foreach ($circle->getUsers() as $id => $user) {
     $img = getHtmlForSquareImage($user->photoSrc);
     $html = $html .
                 "<div class=\"col-xs-3\">
@@ -184,9 +195,10 @@ function getHtmlForSquareImage($src) {
 }
 
 /*
- * Returns the HTML for the sidebar panel which displays a list of circles.
+ * Returns the HTML for the panel which displays a list of circles.
  */
-function getHtmlForCirclePanel() {
+function getHtmlForCirclePanel(bool $mainPanel = false) {
+  $bootstrapClass = $mainPanel ? "col-xs-3" : "col-xs-4";
   // Generate the start of the HTML (setting up the panel, panel title)
   $html = "<div class=\"panel panel-primary\">
             <div class=\"panel-heading\">
@@ -205,7 +217,7 @@ function getHtmlForCirclePanel() {
 
   foreach (getCircleNames($CircleIDs) as $id => $circle) {
 
-    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
+    $html = $html . "<div class=\"$bootstrapClass\">" . getHtmlForCircleButton($circle) . "</div>";
 
   }
 }
@@ -276,10 +288,11 @@ function getHtmlForNavigationPanel() {
           <div class=\"panel-body\">
             <ul>
              <li><a href=\"index.php\">Home</a></li>
-             <li><a href=\"me.php\">My Profile</a></li>
+             <li><a href=\"search.php\">Search</a></li>
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
+             <li><a href=\"circles.php\">Circles</a></li>
            </ul>
           </div>
         </div>";
@@ -301,7 +314,7 @@ function getHtmlForSmallUserSummaryPanel(user $user, string $title) {
         <div class=\"col-xs-10\">
           <div class=\"row\">
             <div class=\"col-xs-12\">
-              <span class=\"h2\">$name</span><br>
+              <span class=\"h2\"><a class=\"no-formatting\" href=\"$profileUrl\">$name</a></span><br>
               <span class=\"h4\">$title</span>
             </div>
           </div>
@@ -364,6 +377,48 @@ function getHtmlForBlogPostSummary(blogPost $post, bool $includePreview) {
               <span class=\"feed-item-time\">$time</span>$preview
             </div>
           </div>";
+}
+
+/*
+ * Returns the HTML for the current user's friend requests panel, or an empty string if there are no friend requests.
+ */
+function getHtmlForFriendRequestsPanel() {
+  // Get top of panel
+  $html = "<div class=\"panel panel-primary\">
+            <div class=\"panel-heading\">
+              <h4 class=\"panel-title\">Friend requests</h4>
+            </div>
+            <div class=\"panel-body\">";
+
+  // Get requests
+  $requests = getFriendRequests();
+
+  // If there's no requests, return an empty string.
+  if (count($requests) == 0) { return ""; }
+
+  // Create HTML for each request
+  $requestHtmls = [];
+  foreach ($requests as $userID => $time) {
+    $user = getUserWithID($userID);
+    $url = $user->getUrlToProfile();
+    $img = getHtmlForSquareImage($user->photoSrc);
+    $name = $user->getFullName();
+    $strTime = $time->format("d M y H:i");
+    $requestHtmls[] = "<div class=\"row\">
+                        <div class=\"col-xs-8\">
+                          <div class=\"feed-profile-image\"><a href=\"$url\">$img</a></div>
+                          <span class=\"feed-item-title\"><a href=\"$url\">$name</a></span><br>
+                          <span class=\"feed-item-time\">Request sent on $strTime</span>
+                        </div>
+                        <div class=\"col-xs-4\">
+                          <button class=\"btn btn-success btn-xs btn-block\">Accept</button>
+                          <button class=\"btn btn-danger btn-xs btn-block\">Decline</button>
+                        </div>
+                      </div>";
+  }
+
+  return $html . join("<div class=\"spacer-v\"></div>", $requestHtmls) . "</div></div>";
+
 }
 
 ?>

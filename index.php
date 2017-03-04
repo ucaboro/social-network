@@ -1,6 +1,6 @@
 <?php include "imports.php"; ?>
 <!DOCTYPE html>
-<?php include "db.php"; ?>
+
 <html lang="en-gb">
   <?php echo getHtmlForHead(); ?>
   <body>
@@ -56,6 +56,11 @@
           <div class="row">
             <div class="col-xs-12">
               <?php echo getHtmlForNavigationPanel(); ?>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <?php echo getHtmlForFriendRequestsPanel(); ?>
             </div>
           </div>
           <div class="row">

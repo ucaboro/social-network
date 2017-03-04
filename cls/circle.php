@@ -23,16 +23,15 @@ class circle {
   /*
    * An array of the users who are in the circle. Key is user ID, value is user object.
    */
-  public $users;
+  private $users;
 
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct($id, $name, $color, $users) {
+  public function __construct($id, $name, $color) {
     $this->id = $id;
     $this->name = $name;
     $this->color = $color;
-    $this->users = $users;
   }
 
   /*
@@ -41,6 +40,34 @@ class circle {
   public function getUrlToCircle() {
     return "circle.php?c=" . $this->id;
   }
+
+  /*
+   * Returns an array of the users who are in the circle. Key is circle ID, value is user object.
+   */
+  public function getUsers() {
+    // Check if we already got the users for this circle
+    if (is_null($this->users)) {
+      // Get the annotations from the database
+
+      $db = new db();
+      $db->connect();
+      $stmt = $db->prepare
+      ("SELECT u.userID, firstName, lastName, photoID, date, location
+        FROM user u
+        JOIN circlemembership c ON c.userID = u.userID
+        WHERE circleID = ?;");
+      $stmt->bind_param("i", $this ->id);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $this ->users = array();
+      while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+
+      $this ->users[] = new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
+
+    }
+    return $this ->users;
+  }
+}
 
 }
 

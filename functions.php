@@ -51,11 +51,11 @@ function getCirclesForUser(user $user) {
 
 
 
-  return array(new circle(0, "Family", "blue", NULL),
-                new circle(0, "Friends", "blue", NULL),
-                new circle(0, "Work", "blue", NULL),
-                new circle(0, "Students", "blue", NULL),
-                new circle(0, "Hackers", "blue", NULL));
+  return array(new circle(0, "Family", "blue"),
+                new circle(0, "Friends", "blue"),
+                new circle(0, "Work", "blue"),
+                new circle(0, "Students", "blue"),
+                new circle(0, "Hackers", "blue"));
 }
 /*
  *Returns an array of all associated circles IDs from the database.
@@ -85,8 +85,8 @@ function getCirclesForUser(user $user) {
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
-    return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"], NULL));
-
+  //foreach ($result as $result => $value) {
+    return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"]));
 
 }
 
@@ -106,35 +106,11 @@ function getCircleWithID(int $id) {
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
-  return new circle($row["circleID"], $row["circleName"], $row["circleColor"], getCircleMembers($id));
+
+  return new circle($row["circleID"], $row["circleName"], $row["circleColor"]);
 
 }
 
-/*
- * Returns an array of circle members from a specific circleID
- * $id: the ID of the circle to return.
- */
-function getCircleMembers(int $id) {
-
-  $db = new db();
-  $db->connect();
-  $stmt = $db->prepare
-  ("SELECT u.userID, firstName, lastName, photoID, date, location
-    FROM user u
-    JOIN circlemembership c ON c.userID = u.userID
-    WHERE circleID = ?;");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  $users = array();
-  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-
-    $users[] = new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
-}
-
-    return $users;
-
-}
 
 /*
  * Returns an array of message objects consisting of all the messages in a particular circle, in date descending order.
@@ -201,7 +177,7 @@ function getRecentActivityFeed() {
   // TODO: Not yet implemented.
   // Create some dummy objects, this is just to demo the layout
   $user = getUserWithID(1);
-  $circle = new circle(0, "Family", "blue", array($user));
+  $circle = new circle(0, "Family", "blue");
   $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
   $photo = new photo(0, $user, new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
   $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
@@ -237,9 +213,9 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 function getFriendsOfUser(user $user, string $filter = NULL): array {
   // TODO: Not yet implemented.
   if (is_null($filter)) {
-    return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
+    return array(getUserWithID(1), getUserWithID(2), getUserWithID(3));
   } else {
-    return array(getUserWithID(0));
+    return array(getUserWithID(1));
   }
 }
 
@@ -267,6 +243,27 @@ function getPhotoCollectionsByUser(user $user): array {
   $collection1 = new collection(1, $user, new DateTime("2017-03-01 08:53"), "Photos of trees");
   $collection2 = new collection(1, $user, new DateTime("2017-03-01 08:57"), "My favourite tree photos");
   return array($collection1, $collection2, $collection1, $collection2, $collection1, $collection2);
+}
+
+/*
+ * Returns the blog post with the specified ID.
+ */
+function getBlogPostWithID($id) {
+  // TODO: Not yet implemented.
+  $user = getUserWithID(1);
+  return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
+}
+
+/*
+ * Returns an array containing the friend requests for the current user.
+ * Key is the ID of the user who sent the request, value is a DateTime object representing the time the request was sent.
+ */
+function getFriendRequests() {
+  // TODO: Not yet implemented.
+  $requests = [];
+  $requests[1] = new DateTime("01 Apr 2017 13:42");
+  $requests[2] = new DateTime("01 Apr 2017 13:42");
+  return $requests;
 }
 
 
