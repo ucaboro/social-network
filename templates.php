@@ -133,7 +133,7 @@ function getHtmlForCircleUsersPanel($circle) {
               <div class=\"row\">";
 
   // Add a button for each user
-  foreach ($circle->users as $id => $user) {
+  foreach ($circle->getUsers() as $id => $user) {
     $img = getHtmlForSquareImage($user->photoSrc);
     $html = $html .
                 "<div class=\"col-xs-3\">
@@ -184,9 +184,10 @@ function getHtmlForSquareImage($src) {
 }
 
 /*
- * Returns the HTML for the sidebar panel which displays a list of circles.
+ * Returns the HTML for the panel which displays a list of circles.
  */
-function getHtmlForCirclePanel() {
+function getHtmlForCirclePanel(bool $mainPanel = false) {
+  $bootstrapClass = $mainPanel ? "col-xs-3" : "col-xs-4";
   // Generate the start of the HTML (setting up the panel, panel title)
   $html = "<div class=\"panel panel-primary\">
             <div class=\"panel-heading\">
@@ -205,7 +206,7 @@ function getHtmlForCirclePanel() {
 
   foreach (getCircleNames($CircleIDs) as $id => $circle) {
 
-    $html = $html . "<div class=\"col-xs-4\">" . getHtmlForCircleButton($circle) . "</div>";
+    $html = $html . "<div class=\"$bootstrapClass\">" . getHtmlForCircleButton($circle) . "</div>";
 
   }
 }
@@ -276,10 +277,11 @@ function getHtmlForNavigationPanel() {
           <div class=\"panel-body\">
             <ul>
              <li><a href=\"index.php\">Home</a></li>
-             <li><a href=\"me.php\">My Profile</a></li>
+             <li><a href=\"profile.php\">My Profile</a></li>
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
+             <li><a href=\"circles.php\">Circles</a></li>
            </ul>
           </div>
         </div>";

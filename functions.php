@@ -51,11 +51,11 @@ function getCirclesForUser(user $user) {
 
 
 
-  return array(new circle(0, "Family", "blue", NULL),
-                new circle(0, "Friends", "blue", NULL),
-                new circle(0, "Work", "blue", NULL),
-                new circle(0, "Students", "blue", NULL),
-                new circle(0, "Hackers", "blue", NULL));
+  return array(new circle(0, "Family", "blue"),
+                new circle(0, "Friends", "blue"),
+                new circle(0, "Work", "blue"),
+                new circle(0, "Students", "blue"),
+                new circle(0, "Hackers", "blue"));
 }
 /*
  *Returns an array of all associated circles IDs from the database.
@@ -86,7 +86,7 @@ function getCirclesForUser(user $user) {
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
   //foreach ($result as $result => $value) {
-    return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"], NULL));
+    return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"]));
 
 
 }
@@ -107,10 +107,7 @@ function getCircleWithID(int $id) {
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
-  $user1 = getUserWithID(0);
-  $user2 = getUserWithID(1);
-  $user3 = getUserWithID(2);
-  return new circle($row["circleID"], $row["circleName"], $row["circleColor"], array($user1, $user2, $user3, $user1, $user2, $user3));
+  return new circle($row["circleID"], $row["circleName"], $row["circleColor"]);
 
 }
 
@@ -182,7 +179,7 @@ function getRecentActivityFeed() {
   // TODO: Not yet implemented.
   // Create some dummy objects, this is just to demo the layout
   $user = getUserWithID(1);
-  $circle = new circle(0, "Family", "blue", array($user));
+  $circle = new circle(0, "Family", "blue");
   $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
   $photo = new photo(0, $user, new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
   $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
