@@ -1,6 +1,6 @@
 <?php include "imports.php"; ?>
 <!DOCTYPE html>
-
+<?php include "db.php"; ?>
 <html lang="en-gb">
   <?php echo getHtmlForHead(); ?>
   <body>
@@ -53,7 +53,7 @@
               $messages = getMessagesInCircle($circle);
               // Output each one
               foreach ($messages as $messageID => $message) {
-                echo getHtmlForCircleMessage($message);
+                //echo getHtmlForCircleMessage($message);
               }
               ?>
             </div>
