@@ -16,12 +16,10 @@
                   <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                     <?php
-                    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["search"])) {
-                      $searchTerm = $_GET["search"];
-                      $results = getUsers($searchTerm);
-                    }
+                    $searchTerm = getValueFromGET("search");
+                    $isSearch = !is_null($searchTerm);
                     ?>
-                    <input class="form-control" name="search" placeholder="Search all users..." value="<?php echo $searchTerm; ?>">
+                    <input class="form-control" name="search" placeholder="Search all users..." value="<?php if ($isSearch) { echo $searchTerm; } ?>">
                   </div>
                 </div>
                 <button class="btn btn-primary" action"submit">Search</button>
@@ -29,21 +27,28 @@
             </div>
           </div>
           <!-- /END Search bar -->
-          <!-- Friends list -->
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h4 class="panel-title"><?php echo count($results); ?> users found</h4>
+          <?php
+          if ($isSearch) {
+            $results = getUsers($searchTerm);
+          ?>
+            <!-- Friends list -->
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h4 class="panel-title"><?php echo count($results); ?> users found</h4>
+              </div>
+              <div class="panel-body">
+                <?php
+                // Output each result
+                $thisUser = getUser();
+                foreach ($results as $user) {
+                  echo getHtmlForUserSummarySearchResult($user, areUsersFriends($thisUser, $user));
+                }
+                ?>
+              </div>
             </div>
-            <div class="panel-body">
-              <?php
-              // Output each result
-              $thisUser = getUser();
-              foreach ($results as $user) {
-                echo getHtmlForUserSummarySearchResult($user, areUsersFriends($thisUser, $user));
-              }
-              ?>
-            </div>
-          </div>
+          <?php
+          }
+          ?>
           <!-- /END Friends list -->
         </div>
         <div class="col-md-4">

@@ -2,21 +2,32 @@
 
 /* Gets the HTML for the head tag for every page */
 function getHtmlForHead() {
-  return file_get_contents("templates/head.php");
+  return getHtmlFromPHPFile("templates/head.php");
 }
 
 /*
  * Gets the HTML for the navbar at the top of every page.
  */
 function getHtmlForTopNavbar() {
-  return file_get_contents("templates/navbar.php");
+  return getHtmlFromPHPFile("templates/navbar.php");
 }
 
 /*
  * Gets the HTML for the script tags loaded at the end of every page.
  */
 function getHtmlForJavascriptImports() {
-  return file_get_contents("templates/script.php");
+  return getHtmlFromPHPFile("templates/script.php");
+}
+
+/*
+ * Reads the contents of a PHP file and returns it as a string.
+ */
+function getHtmlFromPHPFile($filename) {
+  ob_start();
+  include($filename);
+  $str = ob_get_contents();
+  ob_end_clean();
+  return $str;
 }
 
 /*
@@ -277,7 +288,7 @@ function getHtmlForNavigationPanel() {
           <div class=\"panel-body\">
             <ul>
              <li><a href=\"index.php\">Home</a></li>
-             <li><a href=\"profile.php\">My Profile</a></li>
+             <li><a href=\"search.php\">Search</a></li>
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
