@@ -35,7 +35,7 @@
     <?php
     echo $message;
     ?><br />
-    <form action="form.php" method="post">
+    <form action="login.php" method="post">
         Email: <input type="text" name="email" value ="<?php echo htmlspecialchars($email) ?>" /><br/>
         Password: <input type="password" name="password" value=""/><br/>
         <br />

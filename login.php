@@ -12,7 +12,7 @@
         //$message = "Logging in : {$email}";
         if(checkLogin($email, $password)){
             $message = "Logging in";
-            redirectTo("page.php");
+            redirectTo("success.php");
         }
         else{
             $message = "Incorrect email password pair";
@@ -35,7 +35,7 @@
     <?php
     echo $message;
     ?><br />
-    <form action="form.php" method="post">
+    <form action="login.php" method="post">
         Email: <input type="text" name="email" value ="<?php echo htmlspecialchars($email) ?>" /><br/>
         Password: <input type="password" name="password" value=""/><br/>
         <br />

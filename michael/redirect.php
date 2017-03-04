@@ -2,6 +2,7 @@
     //header("Location: page.php");
    // exit;
     require_once("funct.php");
+    require_once("dp.php");
     redirectTo("page.php");
 ?>
 

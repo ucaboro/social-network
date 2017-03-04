@@ -8,22 +8,9 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-offset-3 col-sm-6 col-xs-12">
+            <h1>Success!</h1>
           <?php
-          // Get the variables passed through POST
-          $firstName = $_POST["first-name"]; // using the 'name' attribute in the <input> tags on register.php
-          $lastName = $_POST["last-name"];
-          $email = $_POST["email"];
-          $password = $_POST["password"];
-          $confirmPassword = $_POST["confirm-password"];
 
-          // TODO: Do stuff with variables here, e.g. write to database
-
-          // Just outputting for now to prove it works
-          echo "First name: $firstName<br>
-                Last name: $lastName<br>
-                Email: $email<br>
-                Password: $password<br>
-                Confirm password: $confirmPassword";
           ?>
         </div>
       </div>
