@@ -20,14 +20,10 @@
       // Only set up the connection the first time this is called.
       if (!isset(self::$mysqli)) {
         // Details to use for connection
-        /*$host = "eu-cdbr-azure-west-d.cloudapp.net";
+        $host = "eu-cdbr-azure-west-d.cloudapp.net";
         $username = "b572eae4b8201c";
         $password = "e865fdac";
-        $dbname = "social_media";*/
-        $host = "Localhost";
-        $username = "michael";
-        $password = "aQRpuC5GqyTFCHwD";
-        $dbname = "networking";
+        $dbname = "social_media";
 
 
         // Create connection object and assign it to property
