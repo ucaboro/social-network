@@ -250,6 +250,15 @@ function getPhotoCollectionsByUser(user $user): array {
   return array($collection1, $collection2, $collection1, $collection2, $collection1, $collection2);
 }
 
+/*
+ * Returns the blog post with the specified ID.
+ */
+function getBlogPostWithID($id) {
+  // TODO: Not yet implemented.
+  $user = getUserWithID(1);
+  return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
+}
+
 
 
 ?>

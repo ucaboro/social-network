@@ -195,3 +195,25 @@ a .circle:hover {
 .blog-post-summary {
   margin-bottom: 20px;
 }
+
+/* The line of metadata that appears under the blog post headline */
+.subtitle {
+  color: #666;
+}
+
+/* Text which should stand out in the blog post headline */
+.subtitle-bold{
+  color: #333;
+  font-weight: 500;
+}
+
+/* The main text of the blog post */
+.blog-post-body {
+  margin: 20px 0px;
+}
+
+/* Removes link formatting from a tags */
+a.no-formatting {
+  color: inherit;
+  text-decoration: inherit;
+}

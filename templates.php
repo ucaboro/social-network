@@ -301,7 +301,7 @@ function getHtmlForSmallUserSummaryPanel(user $user, string $title) {
         <div class=\"col-xs-10\">
           <div class=\"row\">
             <div class=\"col-xs-12\">
-              <span class=\"h2\">$name</span><br>
+              <span class=\"h2\"><a class=\"no-formatting\" href=\"$profileUrl\">$name</a></span><br>
               <span class=\"h4\">$title</span>
             </div>
           </div>
