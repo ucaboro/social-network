@@ -96,11 +96,22 @@ function getCirclesForUser(user $user) {
  * $id: the ID of the circle to return.
  */
 function getCircleWithID(int $id) {
-  // TODO: Not yet implemented.
+  // TODO: Not fully implemented.
+
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("SELECT circleID, circleName, circleColor FROM circle WHERE circleID = ?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+
+  $result = $stmt->get_result();
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
   $user1 = getUserWithID(0);
   $user2 = getUserWithID(1);
   $user3 = getUserWithID(2);
-  return new circle(0, "Family", "blue", array($user1, $user2, $user3, $user1, $user2, $user3));
+  return new circle($row["circleID"], $row["circleName"], $row["circleColor"], array($user1, $user2, $user3, $user1, $user2, $user3));
+
 }
 
 /*
