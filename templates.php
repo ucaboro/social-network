@@ -37,8 +37,9 @@ function getHtmlForCircleButton($circle) {
  * Returns the HTML for a non-clickable circle representing a 'Circle' (group).
  */
 function getHtmlForCircleShape($circle) {
+  $color = getCircleColor($circle);
   return "<div class=\"circle-container\">
-            <div class=\"circle\"><div class=\"circle-text hidden-xs\">$circle->name</div></div></a>
+            <div class=\"circle\" style=\"background-color: $color;\"><div class=\"circle-text hidden-xs\">$circle->name</div></div></a>
           </div>";
 }
 
