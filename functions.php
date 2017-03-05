@@ -31,7 +31,7 @@ function getValueFromGET(string $key) {
  * Returns the a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUser() {
-  return getUserWithID(0);
+  return getUserWithID(1);
 
 }
 /*
@@ -88,7 +88,6 @@ function getCirclesForUser(user $user) {
   //foreach ($result as $result => $value) {
     return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"]));
 
-
 }
 
 /*
@@ -107,9 +106,11 @@ function getCircleWithID(int $id) {
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
+
   return new circle($row["circleID"], $row["circleName"], $row["circleColor"]);
 
 }
+
 
 /*
  * Returns an array of message objects consisting of all the messages in a particular circle, in date descending order.
@@ -118,7 +119,7 @@ function getCircleWithID(int $id) {
  */
 function getMessagesInCircle(circle $circle) {
   // TODO: Not yet implemented.
-  $user = getUserWithID(0);
+  $user = getUserWithID(1);
   $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
   $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
   return array($message, $message2);
@@ -128,20 +129,17 @@ function getMessagesInCircle(circle $circle) {
  * Returns a user object for the user with the specified ID.
  */
 function getUserWithID(int $id) {
-  // TODO: Not yet implemented.
-  // Return an example user
-  switch ($id) {
-    case 0:
-      return new user(0, "Elliot", "Alderson", "img/profile0.jpg", new DateTime("1985-04-17"), "New York");
-      break;
-    case 1:
-      return new user(1, "Carrie", "Mathison", "img/profile1.jpg", new DateTime("1982-11-01"), "Pakistan");
-      break;
-    case 2:
-    return new user(2, "Walter", "White", "img/profile2.jpg", new DateTime("1969-06-02"), "London");
-    default:
-      break;
-  }
+
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+
+  $result = $stmt->get_result();
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
+  return new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
 
 }
 
@@ -215,9 +213,9 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 function getFriendsOfUser(user $user, string $filter = NULL): array {
   // TODO: Not yet implemented.
   if (is_null($filter)) {
-    return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
+    return array(getUserWithID(1), getUserWithID(2), getUserWithID(3));
   } else {
-    return array(getUserWithID(0));
+    return array(getUserWithID(1));
   }
 }
 
