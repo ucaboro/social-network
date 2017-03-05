@@ -418,7 +418,7 @@ function getHtmlForFriendRequestsPanel() {
   }
 
   // Concatenate the strings
-  $html .= $html . join("<div class=\"spacer-v\"></div>", $requestHtmls) . "</div></div>";
+  $html .= join("<div class=\"spacer-v\"></div>", $requestHtmls) . "</div></div>";
 
   return $html; //TODO: work out why this line takes a few seconds to run
 
