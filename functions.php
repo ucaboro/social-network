@@ -1,12 +1,11 @@
 <?php
 
 /* Returns the mysqli_result object as an array.
-* $result: the mysqli_result object.
-* $keyColumn: the name of the column to use as the key in the array.
-* $valueColumn: the name of the column to use as the value in the array.
-* Returns an array containing the result.
-*/
-
+ * $result: the mysqli_result object.
+ * $keyColumn: the name of the column to use as the key in the array.
+ * $valueColumn: the name of the column to use as the value in the array.
+ * Returns an array containing the result.
+ */
 function getArrayFromResult($result, $keyColumn, $valueColumn) {
   // Loop through the result and return an array
   $array = array();
@@ -28,18 +27,18 @@ function getValueFromGET(string $key) {
 }
 
 /*
- * Returns the a user object representing the currently logged-in user, or NULL if no user is logged in.
+ * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUser() {
-  return getUserWithID(1);
+  return getUserWithID(getUserID());
 
 }
 /*
- * Returns the a user ID representing the currently logged-in user, or NULL if no user is logged in.
+ * Returns a user ID representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUserID() {
   //TODO: to modify according to log in and session
-  return new user(1, "Steve", "Smith", "img/ex_profile1_thumb.jpg");
+  return 1;
 }
 
 
@@ -259,13 +258,78 @@ function getBlogPostWithID($id) {
  * Key is the ID of the user who sent the request, value is a DateTime object representing the time the request was sent.
  */
 function getFriendRequests() {
-  // TODO: Not yet implemented.
-  $requests = [];
-  $requests[1] = new DateTime("01 Apr 2017 13:42");
-  $requests[2] = new DateTime("01 Apr 2017 13:42");
-  return $requests;
+  // // TODO: Not yet implemented.
+  // $requests = [];
+  // $requests[1] = new DateTime("01 Apr 2017 13:42");
+  // $requests[2] = new DateTime("01 Apr 2017 13:42");
+  // return $requests;
+
+  // Get all non-confirmed friendships that this user is on the receiving end of
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("SELECT * FROM friendship WHERE userID2 = ? AND isConfirmed = 0");
+  $stmt->bind_param("i", getUser()->id);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  // Loop through the result and return an array of users
+  $users = [];
+  while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+    // Get this user's ID
+    $userID = $row["userID1"];
+    // Get the time the request was made
+    //TODO: add a date column to the friendship table
+    $time = new DateTime("01 Apr 2017 13:42");
+    // Add it to the array
+    $users[$userID] = $time;
+  }
+  return $users;
+
 }
 
+/*
+ * Accepts an existing friend request.
+ */
+function acceptFriendRequest(int $requestingUserID) {
+  $thisUserID = getUserID();
+  // First, confirm the request
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("UPDATE friendship SET isConfirmed = 1 WHERE userID1 = ? AND userID2 = ?");
+  $stmt->bind_param("ii", $requestingUserID, $thisUserID);
+  $stmt->execute();
+
+  // Second, add the friendship in reverse
+  $stmt = $db->prepare("INSERT INTO friendship (userID1, userID2, isConfirmed) VALUES (?, ?, 1)");
+  $stmt->bind_param("ii", $thisUserID, $requestingUserID);
+  $stmt->execute();
+
+}
+
+/*
+ * Declines an existing friend request.
+ */
+function declineFriendRequest(int $requestingUserID) {
+  $thisUserID = getUserID();
+  // Delete the request
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("DELETE FROM friendship WHERE userID1 = ? AND userID2 = ?");
+  $stmt->bind_param("ii", $requestingUserID, $thisUserID);
+  $stmt->execute();
+}
+
+/*
+ * Requests a friendship between the current user and the user with the specified ID.
+ */
+function requestFriendship(int $userID) {
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO friendship (userID1, userID2, isConfirmed) VALUES (?, ?, 0)");
+  $stmt->bind_param("ii", $thisUserID, $userID);
+  $stmt->execute();
+}
 
 
 ?>

@@ -392,7 +392,6 @@ function getHtmlForFriendRequestsPanel() {
 
   // Get requests
   $requests = getFriendRequests();
-
   // If there's no requests, return an empty string.
   if (count($requests) == 0) { return ""; }
 
@@ -412,8 +411,8 @@ function getHtmlForFriendRequestsPanel() {
                         </div>
                         <div class=\"col-xs-4\">
                           <div class=\"text-center\">
-                            <button class=\"btn btn-success btn-xs btn-block\" onclick=\"respondToFriendRequest(this, true)\">Accept</button>
-                            <button class=\"btn btn-danger btn-xs btn-block\" onclick=\"respondToFriendRequest(this, false)\">Decline</button>
+                            <button class=\"btn btn-success btn-xs btn-block\" onclick=\"respondToFriendRequest(this, $userID, true)\">Accept</button>
+                            <button class=\"btn btn-danger btn-xs btn-block\" onclick=\"respondToFriendRequest(this, $userID, false)\">Decline</button>
                           </div>
                         </div>
                       </div>";
