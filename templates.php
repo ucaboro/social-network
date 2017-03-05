@@ -411,8 +411,10 @@ function getHtmlForFriendRequestsPanel() {
                           <span class=\"feed-item-time\">Request sent on $strTime</span>
                         </div>
                         <div class=\"col-xs-4\">
-                          <button class=\"btn btn-success btn-xs btn-block\">Accept</button>
-                          <button class=\"btn btn-danger btn-xs btn-block\">Decline</button>
+                          <div class=\"text-center\">
+                            <button class=\"btn btn-success btn-xs btn-block\" onclick=\"respondToFriendRequest(this, true)\">Accept</button>
+                            <button class=\"btn btn-danger btn-xs btn-block\" onclick=\"respondToFriendRequest(this, false)\">Decline</button>
+                          </div>
                         </div>
                       </div>";
   }
