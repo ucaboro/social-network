@@ -293,6 +293,9 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
  */
 function getFriendsOfUser(user $user, string $filter = NULL): array {
 
+  $userId = $user->getUserID();
+  $searchTerm = '%'.$filter.'%';  
+
   $db = new db();
   $db->connect();
 
@@ -303,10 +306,11 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
     $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN
                                 (SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? union
                                   SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ? )
-                                  AND firstName LIKE '%?%'
-                                  OR lastName LIKE '%?%'
-                                  OR email LIKE '%?%' ");
-    $statement->bind_param("iiiii", $user->getUserID,$user->getUserID,$filter,$filter,$filter);
+                                  AND firstName LIKE ?
+                                  OR lastName LIKE ?
+                                  OR email LIKE ?
+                                  OR location LIKE ? ");
+    $statement->bind_param("iiiii",$userId,$userId,$searchTerm,$searchTerm,$searchTerm);
   }
 
   $statement->execute();
@@ -334,13 +338,14 @@ function getUsers(string $filter): array {
 
   $db = new db();
   $db->connect();
+  $searchTerm = '%'.$filter.'%';
 
   $statement = $db -> prepare(" SELECT userID FROM user WHERE
-                                  firstName LIKE '%?%'
-                                OR lastName LIKE '%?%'
-                                OR email LIKE '%?%'
-                                OR location LIKE '%?%' ");
-  $statement->bind_param("iiii",$filter,$filter,$filter,$filter);
+                                  firstName LIKE ?
+                                OR lastName LIKE ?
+                                OR email LIKE ?
+                                OR location LIKE ? ");
+  $statement->bind_param("ssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm);
 
   $statement->execute();
   $result = $statement->get_result();
@@ -362,20 +367,23 @@ function areUsersFriends(user $user1, user $user2): bool {
   $db = new db();
   $db->connect();
 
+  $userID1 = $user1->getUserID();
+  $userID2 = $user2->getUserID();
+
   $statement = $db -> prepare(" SELECT (CASE
-                                WHEN (userID1 = '?' and userID2 = '?') THEN 1
-                                WHEN (userID2 = '?' and userID1 = '?') THEN 1
+                                WHEN (userID1 = ? and userID2 = ?) THEN 1
+                                WHEN (userID2 = ? and userID1 = ?) THEN 1
                                 ELSE 0 END) as 'result', isConfirmed
                                 from friendship
                                 where isConfirmed = 1");
-  $statement->bind_param("iiii",$user1->getUserID,$user2->getUserID,$user1->getUserID,$user2->getUserID);
+  $statement->bind_param("iiii",$userID1,$userID2,$userID1,$userID2);
 
   $statement->execute();
   $result = $statement->get_result();
 
   $isfriend = false;
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    if ($row["result"]==1){$isfriend = true}
+    if ($row["result"]==1){$isfriend = true;}
   }
   return $isfriend;
 }
