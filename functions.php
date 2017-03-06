@@ -162,7 +162,7 @@ function getMessagesInCircle(circle $circle) {
   $statement = $db -> prepare("SELECT * FROM circlemessage WHERE circleID = ? ORDER BY time DESC");
   $statement ->bind_param("i", $circle.getCircleID);
 
-  $statememt->execute();
+  $statement->execute();
   $result = $statement->get_result();
 
   $messagesArray = array();
@@ -190,6 +190,7 @@ function getUserWithID(int $id) {
   $stmt->bind_param("i", $id);
   $stmt->execute();
 
+<<<<<<< HEAD
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
@@ -203,6 +204,21 @@ function getUserWithID(int $id) {
   // $user = new user($row["userID"],$row["firstName"],$row["lastName"],$row["filename"],$row["date"],$row["location"]);
   }
   return $user;
+=======
+  $statement = $db -> prepare("SELECT * FROM user WHERE userID = ?");
+  $statement->bind_param("i", $id);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  // $user;
+  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+  // $user = new user($row["userID"],$row["firstName"],$row["lastName"],getPhotoWithID($row["photoID"]).getPhotoSrc,new DateTime($row["date"]),$row["location"]);
+  // }
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  return new user($row["userID"],$row["firstName"],$row["lastName"],getPhotoWithID($row["photoID"]).getPhotoSrc,new DateTime($row["date"]),$row["location"]);
+>>>>>>> Fixed bugs with functions and added getPhotoSrc to Photo class
 }
 
 /*
@@ -225,12 +241,10 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
 
   $photosArray = array();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $photosArray[$row["photoID"]] = new photo($row["photoID"], $user, new DateTime("01 Apr 2017 13:42"), $row["filename"] );
+    $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
   }
 
   return $photosArray;
-
-  // TODO: Not yet implemented.
 
   // $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
   // $photos = [];
@@ -263,12 +277,12 @@ function getBlogPostsByUser(user $user, int $limit) {
 
   $blogPostsArray = array();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $blogPostsArray[$row["postID"]] = new blogPost($row["postID"], "Welcome to my blog", $row["post"], $user, new DateTime($row["time"])) );
+    // TODO: Need to retreive the Headline from the database
+    $blogPostsArray[$row["postID"]] = new blogPost($row["postID"], "Welcome to my blog", $row["post"], $user, new DateTime($row["time"]));
   }
 
   return $blogPostsArray;
 
-  // // TODO: Not yet implemented.
   // $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
   // $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
   // return array($post1, $post2, $post1, $post2, $post1, $post2);
@@ -279,6 +293,9 @@ function getBlogPostsByUser(user $user, int $limit) {
  * Items are in date-descending order. Values are interaction objects. The last 20 items only are returned.
  */
 function getRecentActivityFeed() {
+
+
+
   // TODO: Not yet implemented.
   // Create some dummy objects, this is just to demo the layout
   $user = getUserWithID(1);
@@ -294,8 +311,26 @@ function getRecentActivityFeed() {
  * Returns the photo object with the specified ID from the database.
  */
 function getPhotoWithID(int $photoID) {
-  // TODO: Not yet implemented.
-  return new photo(0, getUserWithID(1), new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ?");
+  $statement->bind_param("i", $photoID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  // $photoToReturn;
+  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+  //   // TODO: Need to make it retreive the date from the database.
+  //   $photoToReturn = new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime("01 Apr 2017 13:42"), $row["filename"] );
+  // }
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime("01 Apr 2017 13:42"), $row["filename"] );
+
+  // return new photo(0, getUserWithID(1), new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
 }
 
 /*
