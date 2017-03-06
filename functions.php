@@ -45,9 +45,23 @@ function getUserID() {
  * Returns an array of the circles that a user is a member of. Key is circle ID, value is circle object.
  */
 function getCirclesForUser(user $user) {
-  //TODO: Not yet implemented.
-
-
+  // $db = new db();
+  // $db->connect();
+  //
+  // $statement = $db -> prepare("SELECT circleID FROM circle, circlemembership WHERE circle.circleID = circlemembership.circleID AND userId = ?");
+  // $statement ->bind_param("i", $user.getUserID);
+  //
+  // $statememt->execute();
+  // $result = $statement->get_result();
+  //
+  // $circles=array();
+  // while($row = $result->fetch_array(MYSQLI_ASSOC)){
+  //   // $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"],getUsersInCircleWithID($row["circleID"]));
+  //   $circles[$row["circleID"]] = getCircleWithID($row["circleID"]);
+  // }
+  //
+  // return $circles;
+  // }
 
   return array(new circle(0, "Family", "blue"),
                 new circle(0, "Friends", "blue"),
@@ -93,20 +107,44 @@ function getCirclesForUser(user $user) {
  * $id: the ID of the circle to return.
  */
 function getCircleWithID(int $id) {
-  // TODO: Not fully implemented.
+  $db = new db();
+  $db->connect();
+
+  $statement = $db->prepare("SELECT circleID, circleName, circleColor FROM circle WHERE circleID = ?");
+  $statement ->bind_param("i", $id);
+
+  $statememt->execute();
+  $result = $statement->get_result();
+
+  $circle;
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"],getUsersInCircleWithID($row["circleID"]));
+  }
+
+  return $circle;
+}
+
+/*
+ * Returns an array of User Object. Key is user ID and Value is User object.
+ * $id: the ID of the circle from which the user list is returned.
+ */
+function getUsersInCircleWithID(int $id) {
 
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("SELECT circleID, circleName, circleColor FROM circle WHERE circleID = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
 
-  $result = $stmt->get_result();
-  $row = $result->fetch_array(MYSQLI_ASSOC);
+  $statement = $db -> prepare("SELECT userID FROM circlemembership WHERE circleID = ?");
+  $statement ->bind_param("i", $id);
 
+  $statememt->execute();
+  $result = $statement->get_result();
 
-  return new circle($row["circleID"], $row["circleName"], $row["circleColor"]);
+  $users = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $users[$row["userID"]] = getUserWithID($row["userID"]);
+  }
 
+  return $users;
 }
 
 
@@ -116,27 +154,27 @@ function getCircleWithID(int $id) {
  * $circle: a circle object representing the circle for which the messages should be returned.
  */
 function getMessagesInCircle(circle $circle) {
-$circleID = $circle -> id;
-//get all messages in a specific circle
-
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("SELECT messageID, userID, time, message FROM circlemessage WHERE circleID = ?");
-  $stmt->bind_param("i", $circleID);
-  $stmt->execute();
 
-  $result = $stmt->get_result();
+  $statement = $db -> prepare("SELECT * FROM circlemessage WHERE circleID = ? ORDER BY time DESC");
+  $statement ->bind_param("i", $circle.getCircleID);
 
-  $user = array();
-  $message = array();
-  $allmessages = new ArrayObject();
-  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-    $user = getUserWithID($row["userID"]);
-    $message = new message ($row["messageID"], $circle, $user, new DateTime($row["time"]), $row["message"]);
-    $allmessages -> append($message);
+  $statememt->execute();
+  $result = $statement->get_result();
+
+  $messagesArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $message = new message($row["messageID"],$circle,getUserWithID($row["userID"], new DateTime($row["time"],$row["message"])));
+    $messagesArray[$row["messageID"]] = $message;
   }
 
-  return $allmessages;
+  return $messagesArray;
+
+  // $user = getUserWithID(0);
+  // $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
+  // $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
+  // return array($message, $message2);
 }
 
 /*
@@ -155,6 +193,14 @@ function getUserWithID(int $id) {
 
   return new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
 
+  // $statement = $db -> $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
+  // $statement->bind_param("i", $id);
+  //
+  // $user;
+  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+  // $user = new user($row["userID"],$row["firstName"],$row["lastName"],$row["filename"],$row["date"],$row["location"]);
+  }
+  return $user;
 }
 
 /*
@@ -162,25 +208,68 @@ function getUserWithID(int $id) {
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Photos are returned in date-descending order.
  */
 function getPhotosOwnedByUser(user $user, int $limit = 0): array {
-  // TODO: Not yet implemented.
+
+// Sets a default number of photos to be returned if no limit is specified.
   if ($limit == 0) { $limit = 18; }
-  $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
-  $photos = [];
-  for ($i = 0; $i < $limit; $i++) {
-    $photos[] = $photo;
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? LIMIT ?");
+  $statement ->bind_param("ii", $user.getUserID, $limit);
+
+  $statememt->execute();
+  $result = $statement->get_result();
+
+  $photosArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $photosArray[$row["photoID"]] = new photo($row["photoID"], $user, new DateTime("01 Apr 2017 13:42"), $row["filename"] );
   }
-  return $photos;
+
+  return $photosArray;
+
+  // TODO: Not yet implemented.
+
+  // $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
+  // $photos = [];
+  // for ($i = 0; $i < $limit; $i++) {
+  //   $photos[] = $photo;
+  // }
+  // return $photos;
 }
 
 /*
- * Returns an array of the blog posts that the specified user has posted. Key is photo ID, value is blogPost object.
+ * Returns an array of the blog posts that the specified user has posted. Key is blogPost ID, value is blogPost object.
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Posts are returned in date-descending order.
  */
 function getBlogPostsByUser(user $user, int $limit) {
-  // TODO: Not yet implemented.
-  $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
-  $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
-  return array($post1, $post2, $post1, $post2, $post1, $post2);
+
+  $db = new db();
+  $db->connect();
+
+  $statement;
+  if (!isset($limit)) {
+    $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC");
+    $statement ->bind_param("i", $user.getUserID);
+  } else {
+    $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC LIMIT ?");
+    $statement ->bind_param("ii", $user.getUserID, $limit);
+  }
+
+  $statememt->execute();
+  $result = $statement->get_result();
+
+  $blogPostsArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $blogPostsArray[$row["postID"]] = new blogPost($row["postID"], "Welcome to my blog", $row["post"], $user, new DateTime($row["time"])) );
+  }
+
+  return $blogPostsArray;
+
+  // // TODO: Not yet implemented.
+  // $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
+  // $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
+  // return array($post1, $post2, $post1, $post2, $post1, $post2);
 }
 
 /*

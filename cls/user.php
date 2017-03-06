@@ -53,6 +53,13 @@ class user {
   }
 
   /*
+   * Returns the user ID of this user.
+   */
+  public function getUserID() {
+    return $this->id;
+  }
+
+  /*
    * Returns the full name of this user as a string.
    */
   public function getFullName() {
