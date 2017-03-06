@@ -77,6 +77,13 @@ class photo extends interaction {
   /*
    * Returns the URL to the page which displays this photo.
    */
+  public function getPhotoSrc() {
+    return $this->src;
+  }
+
+  /*
+   * Returns the URL to the page which displays this photo.
+   */
   public function getURLToPhoto(): string {
     return "photo.php?p=" . $this->id;
   }
