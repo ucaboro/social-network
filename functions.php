@@ -51,7 +51,7 @@ function getCirclesForUser(user $user) {
   // $statement = $db -> prepare("SELECT circleID FROM circle, circlemembership WHERE circle.circleID = circlemembership.circleID AND userId = ?");
   // $statement ->bind_param("i", $user.getUserID);
   //
-  // $statememt->execute();
+  // $statement->execute();
   // $result = $statement->get_result();
   //
   // $circles=array();
@@ -113,7 +113,7 @@ function getCircleWithID(int $id) {
   $statement = $db->prepare("SELECT circleID, circleName, circleColor FROM circle WHERE circleID = ?");
   $statement ->bind_param("i", $id);
 
-  $statememt->execute();
+  $statement->execute();
   $result = $statement->get_result();
 
   $circle;
@@ -136,7 +136,7 @@ function getUsersInCircleWithID(int $id) {
   $statement = $db -> prepare("SELECT userID FROM circlemembership WHERE circleID = ?");
   $statement ->bind_param("i", $id);
 
-  $statememt->execute();
+  $statement->execute();
   $result = $statement->get_result();
 
   $users = array();
@@ -184,39 +184,24 @@ function getUserWithID(int $id) {
 
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
 
-<<<<<<< HEAD
-  $result = $stmt->get_result();
-  $row = $result->fetch_array(MYSQLI_ASSOC);
-
-  return new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
-
-  // $statement = $db -> $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
-  // $statement->bind_param("i", $id);
+  // $stmt = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
+  // $stmt->bind_param("i", $id);
+  // $stmt->execute();
   //
-  // $user;
-  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-  // $user = new user($row["userID"],$row["firstName"],$row["lastName"],$row["filename"],$row["date"],$row["location"]);
-  }
-  return $user;
-=======
-  $statement = $db -> prepare("SELECT * FROM user WHERE userID = ?");
+  // $result = $stmt->get_result();
+  // $row = $result->fetch_array(MYSQLI_ASSOC);
+  //
+  // return new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
+
+  $statement = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
   $statement->bind_param("i", $id);
 
   $statement->execute();
   $result = $statement->get_result();
 
-  // $user;
-  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-  // $user = new user($row["userID"],$row["firstName"],$row["lastName"],getPhotoWithID($row["photoID"]).getPhotoSrc,new DateTime($row["date"]),$row["location"]);
-  // }
-
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new user($row["userID"],$row["firstName"],$row["lastName"],getPhotoWithID($row["photoID"]).getPhotoSrc,new DateTime($row["date"]),$row["location"]);
->>>>>>> Fixed bugs with functions and added getPhotoSrc to Photo class
+  return new user($row["userID"],$row["firstName"],$row["lastName"],"img/profile" . $row["photoID"] . ".jpg",new DateTime($row["date"]),$row["location"]);
 }
 
 /*
@@ -232,9 +217,9 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   $db->connect();
 
   $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? LIMIT ?");
-  $statement ->bind_param("ii", $user.getUserID, $limit);
+  $statement ->bind_param("ii", $user->getUserID, $limit);
 
-  $statememt->execute();
+  $statement->execute();
   $result = $statement->get_result();
 
   $photosArray = array();
@@ -264,13 +249,13 @@ function getBlogPostsByUser(user $user, int $limit) {
   $statement;
   if (!isset($limit)) {
     $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC");
-    $statement ->bind_param("i", $user.getUserID);
+    $statement ->bind_param("i", $user->getUserID);
   } else {
     $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC LIMIT ?");
-    $statement ->bind_param("ii", $user.getUserID, $limit);
+    $statement ->bind_param("ii", $user->getUserID, $limit);
   }
 
-  $statememt->execute();
+  $statement->execute();
   $result = $statement->get_result();
 
   $blogPostsArray = array();
