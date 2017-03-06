@@ -45,29 +45,21 @@ function getUserID() {
  * Returns an array of the circles that a user is a member of. Key is circle ID, value is circle object.
  */
 function getCirclesForUser(user $user) {
-  // $db = new db();
-  // $db->connect();
-  //
-  // $statement = $db -> prepare("SELECT circleID FROM circle, circlemembership WHERE circle.circleID = circlemembership.circleID AND userId = ?");
-  // $statement ->bind_param("i", $user.getUserID);
-  //
-  // $statement->execute();
-  // $result = $statement->get_result();
-  //
-  // $circles=array();
-  // while($row = $result->fetch_array(MYSQLI_ASSOC)){
-  //   // $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"],getUsersInCircleWithID($row["circleID"]));
-  //   $circles[$row["circleID"]] = getCircleWithID($row["circleID"]);
-  // }
-  //
-  // return $circles;
-  // }
+  $db = new db();
+  $db->connect();
 
-  return array(new circle(0, "Family", "blue"),
-                new circle(0, "Friends", "blue"),
-                new circle(0, "Work", "blue"),
-                new circle(0, "Students", "blue"),
-                new circle(0, "Hackers", "blue"));
+  $statement = $db -> prepare("SELECT circleID FROM circle, circlemembership WHERE circle.circleID = circlemembership.circleID AND userId = ?");
+  $statement ->bind_param("i", $user.getUserID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $circles=array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $circles[$row["circleID"]] = getCircleWithID($row["circleID"]);
+  }
+
+  return $circles;
 }
 /*
  *Returns an array of all associated circles IDs from the database.
@@ -97,8 +89,7 @@ function getCirclesForUser(user $user) {
   $result = $stmt->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
 
-  //foreach ($result as $result => $value) {
-    return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"]));
+  return array (new circle($row["circleID"], $row["circleName"], $row["circleColor"]));
 
 }
 
@@ -170,11 +161,6 @@ function getMessagesInCircle(circle $circle) {
   }
 
   return $messagesArray;
-
-  // $user = getUserWithID(0);
-  // $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
-  // $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
-  // return array($message, $message2);
 }
 
 /*
@@ -184,15 +170,6 @@ function getUserWithID(int $id) {
 
   $db = new db();
   $db->connect();
-
-  // $stmt = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
-  // $stmt->bind_param("i", $id);
-  // $stmt->execute();
-  //
-  // $result = $stmt->get_result();
-  // $row = $result->fetch_array(MYSQLI_ASSOC);
-  //
-  // return new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
 
   $statement = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
   $statement->bind_param("i", $id);
@@ -228,13 +205,6 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   }
 
   return $photosArray;
-
-  // $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
-  // $photos = [];
-  // for ($i = 0; $i < $limit; $i++) {
-  //   $photos[] = $photo;
-  // }
-  // return $photos;
 }
 
 /*
@@ -265,10 +235,6 @@ function getBlogPostsByUser(user $user, int $limit) {
   }
 
   return $blogPostsArray;
-
-  // $post1 = new blogPost(0, "Welcome to my blog", "Hello, this is my blog. I have written it because I was required to do so. Have a great day.", $user, new DateTime("2017-04-01 09:12"));
-  // $post2 = new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
-  // return array($post1, $post2, $post1, $post2, $post1, $post2);
 }
 
 /*
@@ -304,24 +270,16 @@ function getPhotoWithID(int $photoID) {
   $statement->execute();
   $result = $statement->get_result();
 
-  // $photoToReturn;
-  // while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-  //   // TODO: Need to make it retreive the date from the database.
-  //   $photoToReturn = new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime("01 Apr 2017 13:42"), $row["filename"] );
-  // }
-
   $row = $result->fetch_array(MYSQLI_ASSOC);
+  // TODO: Need to make it retreive the date from the database.
   return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime("01 Apr 2017 13:42"), $row["filename"] );
-
-  // return new photo(0, getUserWithID(1), new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
 }
 
 /*
  * Picks a specified number of photos at random from a user's uploaded photos.
  */
 function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
-  // TODO: Not yet implemented.
-  $photo = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
+
   $toReturn = [];
   for ($i=0; $i < $numberOfPhotos; $i++) {
     $toReturn[] = $photo;
@@ -334,28 +292,92 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
  * Optionally filters the list based on a search string.
  */
 function getFriendsOfUser(user $user, string $filter = NULL): array {
-  // TODO: Not yet implemented.
+
+  $db = new db();
+  $db->connect();
+
   if (is_null($filter)) {
-    return array(getUserWithID(1), getUserWithID(2), getUserWithID(3));
+    $statement = $db -> prepare("select userID2 as 'userID' from friendship where isConfirmed = true and userID1 = ? union select userID1 as 'userID' from friendship where isConfirmed = true and userID2 = ?");
+    $statement->bind_param("ii", $user->getUserID,$user->getUserID);
   } else {
-    return array(getUserWithID(1));
+    $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN
+                                (SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? union
+                                  SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ? )
+                                  AND firstName LIKE '%?%'
+                                  OR lastName LIKE '%?%'
+                                  OR email LIKE '%?%' ");
+    $statement->bind_param("iiiii", $user->getUserID,$user->getUserID,$filter,$filter,$filter);
   }
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $friendsArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $friendsArray[$row["userID"]] = getUserWithID($row["userID"]);
+  }
+
+  return $friendsArray;
+
+  // TODO: Not yet implemented.
+  // if (is_null($filter)) {
+  //   return array(getUserWithID(1), getUserWithID(2), getUserWithID(3));
+  // } else {
+  //   return array(getUserWithID(1));
+  // }
 }
 
 /*
  * Returns an array of users who match the given search string.
  */
 function getUsers(string $filter): array {
-  // TODO: Not yet implemented.
-  return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare(" SELECT userID FROM user WHERE
+                                  firstName LIKE '%?%'
+                                OR lastName LIKE '%?%'
+                                OR email LIKE '%?%'
+                                OR location LIKE '%?%' ");
+  $statement->bind_param("iiii",$filter,$filter,$filter,$filter);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $usersArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $usersArray[$row["userID"]] = getUserWithID($row["userID"]);
+  }
+
+  return $usersArray;
+  // return array(getUserWithID(0), getUserWithID(1), getUserWithID(2));
 }
 
 /*
  * Returns true if the users are friends, false otherwise.
  */
 function areUsersFriends(user $user1, user $user2): bool {
-  // TODO: Not yet implemented.
-  return false;
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare(" SELECT (CASE
+                                WHEN (userID1 = '?' and userID2 = '?') THEN 1
+                                WHEN (userID2 = '?' and userID1 = '?') THEN 1
+                                ELSE 0 END) as 'result', isConfirmed
+                                from friendship
+                                where isConfirmed = 1");
+  $statement->bind_param("iiii",$user1->getUserID,$user2->getUserID,$user1->getUserID,$user2->getUserID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $isfriend = false;
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    if ($row["result"]==1){$isfriend = true}
+  }
+  return $isfriend;
 }
 
 /*
