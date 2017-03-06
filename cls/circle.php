@@ -35,6 +35,13 @@ class circle {
   }
 
   /*
+   * Returns the user ID of this circle.
+   */
+  public function getCircleID() {
+    return $this->id;
+  }
+
+  /*
    * Returns the URL to the page for this circle.
    */
   public function getUrlToCircle() {
