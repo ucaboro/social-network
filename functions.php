@@ -243,7 +243,11 @@ function getBlogPostsByUser(user $user, int $limit) {
  */
 function getRecentActivityFeed() {
 
+  // Get ther currently logged in user.
+  // TODO: Neet to make sure the function is actually returning the currently logged-in user.
+  $user = getUserWithID(1);
 
+  
 
   // TODO: Not yet implemented.
   // Create some dummy objects, this is just to demo the layout
@@ -276,9 +280,32 @@ function getPhotoWithID(int $photoID) {
 }
 
 /*
+ * Returns an array of the photo objects with the specified collection ID from the database.
+ */
+function getPhotosInCollectionWithID(int $collectionID) {
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");
+  $statement->bind_param("i", $collectionID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $photosArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+  }
+
+  return $photosArray;
+}
+
+/*
  * Picks a specified number of photos at random from a user's uploaded photos.
  */
 function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
+  // TODO: Not yet implemented.
 
   $toReturn = [];
   for ($i=0; $i < $numberOfPhotos; $i++) {
@@ -392,19 +419,45 @@ function areUsersFriends(user $user1, user $user2): bool {
  * Returns an array of a particular user's photo collections.
  */
 function getPhotoCollectionsByUser(user $user): array {
-  // TODO: Not yet implemented.
-  $collection1 = new collection(1, $user, new DateTime("2017-03-01 08:53"), "Photos of trees");
-  $collection2 = new collection(1, $user, new DateTime("2017-03-01 08:57"), "My favourite tree photos");
-  return array($collection1, $collection2, $collection1, $collection2, $collection1, $collection2);
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");
+  $statement->bind_param("i", $collectionID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $photocollectionsArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user, new DateTime("2017-04-20 14:44"),$row["name"]);
+  }
+
+  return $photocollectionsArray;
 }
 
 /*
  * Returns the blog post with the specified ID.
  */
-function getBlogPostWithID($id) {
-  // TODO: Not yet implemented.
-  $user = getUserWithID(1);
-  return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
+function getBlogPostWithID($postID) {
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT * FROM blogpost WHERE postID = ?");
+  $statement->bind_param("i", $postID);
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  // TODO: Need to make it retreive the headline from the database.
+  return new blogPost($row["postID"], "A headline for a post on this, my blog." , getUserWithID($row["userID"]), new DateTime("time"));
+
+  // // TODO: Not yet implemented.
+  // $user = getUserWithID(1);
+  // return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
 }
 
 /*
