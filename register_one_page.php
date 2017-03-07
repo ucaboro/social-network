@@ -1,13 +1,14 @@
 <?php
     require_once "funct.php";
     require_once "validation.php";
-    require_once "db.php";
+    //require_once "db.php";
+    require_once "imports.php";
 
     //////////If form submitted
     if(isset($_POST['submit']))
     {
         //Retrieve values from post and trim whitespace
-        $firstName = trim($_POST["first-name"]); // using the 'name' attribute in the <input> tags on register.php
+        $firstName = trim($_POST["first-name"]); // using the 'name' attribute in the <input> tags
         $lastName = trim($_POST["last-name"]);
         $email = trim($_POST["email"]);
         $password = trim($_POST["password"]);
@@ -67,15 +68,20 @@
         {
             register($firstName, $lastName, $email, $password);
         }
-        else{
-            echo "Registration unsuccessful <br>";
-            print_r($errors);
-        }
+        /*if(empty($errors))
+        {
+            echo "<div class=\"alert alert-danger\" role=\"alert\">Registration unsuccessful: <br>";
+            foreach ($errors as $error){
+                echo $error . "<br>";
+            }
+             echo   "</div>";
+            //print_r($errors);
+        }*/
 
 
     }
 
-    require_once "imports.php"; // I don't know what's in here so i put it here, in case there is anything that is anything sent that would stop the redirect
+    //require_once "imports.php"; // I don't know what's in here so i put it here, in case there is anything that is anything sent that would stop the redirect
 ?>
 <!DOCTYPE html>
 
@@ -83,9 +89,6 @@
   <?php echo getHtmlForHead(); ?>
   <body>
     <?php echo getHtmlForTopNavbar(); ?>
-    <?php
-
-    ?>
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-offset-3 col-sm-6 col-xs-12">
@@ -121,6 +124,22 @@
               <button class="btn btn-primary" type="submit" name="submit" value="Submit" form="registration-form">Register</button>
             </div>
           </div>
+            <?php
+                //If registration form submitted
+                if(isset($_POST['submit']))
+                {
+                    //And if errors occured, display errors as alerts
+                    if(!empty($errors))
+                    {
+                        echo "<div class=\"alert alert-danger\" role=\"alert\">Registration unsuccessful: <br>";
+                        foreach ($errors as $error)
+                        {
+                            echo $error . "<br>";
+                        }
+                        echo "</div>";
+                    }
+                }
+            ?>
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@
     if(isset($_POST['submit']))
     {
         //Retrieve values from post and trim whitespace
-        $firstName = trim($_POST["first-name"]); // using the 'name' attribute in the <input> tags on register.php
+        $firstName = trim($_POST["first-name"]); // using the 'name' attribute in the <input> tags on
         $lastName = trim($_POST["last-name"]);
         $email = trim($_POST["email"]);
         $password = trim($_POST["password"]);

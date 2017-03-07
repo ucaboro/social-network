@@ -26,9 +26,19 @@
     }
 
     //Check if the user is logged in by checking if the session value for the userID has been set
-    function isLoggedIn(){
+    function checkLoggedIn(){
         if (!isset($_SESSION['userID'])){
             redirectTo("login.php");
+        }
+    }
+
+    //Check if user logged in and return a boolean
+    function isLoggedIn(){
+        if(!isset($_SESSION['userID'])){
+            return false;
+        }
+        else{
+            return true;
         }
     }
 
@@ -69,6 +79,11 @@
 
     }
 
+    function getUserIDFromEmail($email){
+        $user = getUserFromEmail($email);
+        return $user['userID'];
+    }
+
     function register($firstName, $lastName, $email, $password){
         //Encrypt password
         $hashedPassword = passwordEncrypt($password);
@@ -87,9 +102,9 @@
         }
         else{
             //If successful redirect
-            $_SESSION["userID"] = 1; //Need to update this
+            $_SESSION["userID"] = getUserIDFromEmail($email);
             $database->closeConnection();
-            redirectTo("success.php");
+            redirectTo("index.php");
         }
     }
 

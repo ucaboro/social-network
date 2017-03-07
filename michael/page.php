@@ -3,8 +3,6 @@
 //Include functions file
 require_once("funct.php");
 
-//isLoggedIn();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
