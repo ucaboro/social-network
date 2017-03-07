@@ -58,7 +58,6 @@ function getCirclesForUser(user $user) {
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
     $circles[$row["circleID"]] = getCircleWithID($row["circleID"]);
   }
-
   return $circles;
 }
 
@@ -351,7 +350,7 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 function getFriendsOfUser(user $user, string $filter = NULL): array {
 
   $userId = $user->getUserID();
-  $searchTerm = '%'.$filter.'%';  
+  $searchTerm = '%'.$filter.'%';
 
   $db = new db();
   $db->connect();
