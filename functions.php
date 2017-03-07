@@ -296,7 +296,7 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 function getFriendsOfUser(user $user, string $filter = NULL): array {
 
   $userId = $user->getUserID();
-  $searchTerm = '%'.$filter.'%';  
+  $searchTerm = '%'.$filter.'%';
 
   $db = new db();
   $db->connect();
