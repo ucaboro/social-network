@@ -324,6 +324,14 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
     while($row = $result->fetch_array(MYSQLI_ASSOC)){
       $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
     }
+  } else {
+
+    $count = 0;
+
+    while ($count <= $numberOfPhotos) {
+
+    }
+
   }
 
 
