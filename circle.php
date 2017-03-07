@@ -50,10 +50,12 @@
             <div class="panel-body">
               <?php
               // Get the array of messages
+
               $messages = getMessagesInCircle($circle);
+
               // Output each one
               foreach ($messages as $messageID => $message) {
-                //echo getHtmlForCircleMessage($message);
+                echo getHtmlForCircleMessage($message);
               }
               ?>
             </div>

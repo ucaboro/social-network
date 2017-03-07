@@ -117,11 +117,27 @@ function getCircleWithID(int $id) {
  * $circle: a circle object representing the circle for which the messages should be returned.
  */
 function getMessagesInCircle(circle $circle) {
-  // TODO: Not yet implemented.
-  $user = getUserWithID(1);
-  $message = new message(0, $circle, $user, new DateTime("01 Apr 2017 13:42"), "It's one thing to question your mind. It's another to question your eyes and ears. But then again, isn't it all the same? Our senses just mediocre inputs for our brain? Sure, we rely on them, trust they accurately portray the real world around us. But what if the haunting truth is they can't? That what we perceive isn't the real world at all, but just our mind's best guess? That all we really have is a garbled reality, a fuzzy picture we will never truly make out?");
-  $message2 = new message(0, $circle, $user, new DateTime("01 Apr 2017 11:59"), "Just signed up for Connect. This website is way better than Facebook!");
-  return array($message, $message2);
+$circleID = $circle -> id;
+//get all messages in a specific circle
+
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("SELECT messageID, userID, time, message FROM circlemessage WHERE circleID = ?");
+  $stmt->bind_param("i", $circleID);
+  $stmt->execute();
+
+  $result = $stmt->get_result();
+
+  $user = array();
+  $message = array();
+  $allmessages = new ArrayObject();
+  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+    $user = getUserWithID($row["userID"]);
+    $message = new message ($row["messageID"], $circle, $user, new DateTime($row["time"]), $row["message"]);
+    $allmessages -> append($message);
+  }
+
+  return $allmessages;
 }
 
 /*
