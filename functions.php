@@ -49,7 +49,7 @@ function getCirclesForUser(user $user) {
   $db = new db();
   $db->connect();
 
-  $statement = $db -> prepare("SELECT circleID FROM circle, circlemembership WHERE circle.circleID = circlemembership.circleID AND userId = ?");
+  $statement = $db -> prepare("SELECT circleID FROM circlemembership WHERE userId = ?");
   $statement ->bind_param("i", $user.getUserID);
 
   $statement->execute();
@@ -62,6 +62,7 @@ function getCirclesForUser(user $user) {
 
   return $circles;
 }
+
 /*
  *Returns an array of all associated circles IDs from the database.
  */
@@ -249,7 +250,7 @@ function getRecentActivityFeed() {
   // TODO: Neet to make sure the function is actually returning the currently logged-in user.
   $user = getUserWithID(1);
 
-  
+
 
   // TODO: Not yet implemented.
   // Create some dummy objects, this is just to demo the layout
@@ -307,13 +308,34 @@ function getPhotosInCollectionWithID(int $collectionID) {
  * Picks a specified number of photos at random from a user's uploaded photos.
  */
 function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
-  // TODO: Not yet implemented.
 
-  $toReturn = [];
-  for ($i=0; $i < $numberOfPhotos; $i++) {
-    $toReturn[] = $photo;
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ?");
+  $statement->bind_param("i", $user->getUserID());
+
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $availableNoOfPhotos = $result->num_rows;
+
+  $photosArray = array();
+
+  if ($availableNoOfPhotos<=$numberOfPhotos){
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+      $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+    }
   }
-  return $toReturn;
+
+
+  return $photosArray;
+
+  // $toReturn = [];
+  // for ($i=0; $i < $numberOfPhotos; $i++) {
+  //   $toReturn[] = $photo;
+  // }
+  // return $toReturn;
 }
 
 /*
@@ -337,9 +359,9 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
                                   SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ? )
                                   AND firstName LIKE ?
                                   OR lastName LIKE ?
-                                  OR email LIKE ?
+                                  OR email = ?
                                   OR location LIKE ? ");
-    $statement->bind_param("iiiii",$userId,$userId,$searchTerm,$searchTerm,$searchTerm);
+    $statement->bind_param("iissss",$userId,$userId,$searchTerm,$searchTerm,$filter,$searchTerm);
   }
 
   $statement->execute();
@@ -351,13 +373,6 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
   }
 
   return $friendsArray;
-
-  // TODO: Not yet implemented.
-  // if (is_null($filter)) {
-  //   return array(getUserWithID(1), getUserWithID(2), getUserWithID(3));
-  // } else {
-  //   return array(getUserWithID(1));
-  // }
 }
 
 /*
@@ -372,9 +387,9 @@ function getUsers(string $filter): array {
   $statement = $db -> prepare(" SELECT userID FROM user WHERE
                                   firstName LIKE ?
                                 OR lastName LIKE ?
-                                OR email LIKE ?
+                                OR email = ?
                                 OR location LIKE ? ");
-  $statement->bind_param("ssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm);
+  $statement->bind_param("ssss",$searchTerm,$searchTerm,$filter,$searchTerm);
 
   $statement->execute();
   $result = $statement->get_result();
@@ -456,10 +471,6 @@ function getBlogPostWithID($postID) {
   $row = $result->fetch_array(MYSQLI_ASSOC);
   // TODO: Need to make it retreive the headline from the database.
   return new blogPost($row["postID"], "A headline for a post on this, my blog." , getUserWithID($row["userID"]), new DateTime("time"));
-
-  // // TODO: Not yet implemented.
-  // $user = getUserWithID(1);
-  // return new blogPost(0, "A headline for a post on this, my blog.", "Welcome to Fight Club. The first rule of Fight Club is: you do not talk about Fight Club. The second rule of Fight Club is: you DO NOT talk about Fight Club! Third rule of Fight Club: someone yells stop, goes limp, taps out, the fight is over.", $user, new DateTime("2017-04-20 14:44"));
 }
 
 /*
@@ -467,11 +478,6 @@ function getBlogPostWithID($postID) {
  * Key is the ID of the user who sent the request, value is a DateTime object representing the time the request was sent.
  */
 function getFriendRequests() {
-  // // TODO: Not yet implemented.
-  // $requests = [];
-  // $requests[1] = new DateTime("01 Apr 2017 13:42");
-  // $requests[2] = new DateTime("01 Apr 2017 13:42");
-  // return $requests;
 
   // Get all non-confirmed friendships that this user is on the receiving end of
   $db = new db();
