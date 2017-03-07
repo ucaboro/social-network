@@ -292,16 +292,11 @@ function getFriendRequests() {
  */
 function acceptFriendRequest(int $requestingUserID) {
   $thisUserID = getUserID();
-  // First, confirm the request
+  // Confirm the request
   $db = new db();
   $db->connect();
   $stmt = $db->prepare("UPDATE friendship SET isConfirmed = 1 WHERE userID1 = ? AND userID2 = ?");
   $stmt->bind_param("ii", $requestingUserID, $thisUserID);
-  $stmt->execute();
-
-  // Second, add the friendship in reverse
-  $stmt = $db->prepare("INSERT INTO friendship (userID1, userID2, isConfirmed) VALUES (?, ?, 1)");
-  $stmt->bind_param("ii", $thisUserID, $requestingUserID);
   $stmt->execute();
 
 }
