@@ -30,6 +30,7 @@
           <?php
           if ($isSearch) {
             $results = getUsers($searchTerm);
+            $blogResults = getBlogFromSearchTerm($searchTerm);
           ?>
             <!-- Friends list -->
             <div class="panel panel-primary">
@@ -42,6 +43,10 @@
                 $thisUser = getUser();
                 foreach ($results as $user) {
                   echo getHtmlForUserSummarySearchResult($user, areUsersFriends($thisUser, $user));
+                }
+                echo "<hr><br>";
+                foreach ($blogResults as $blog) {
+                    echo getHtmlForBlogPostSummary($blog, true);
                 }
                 ?>
               </div>

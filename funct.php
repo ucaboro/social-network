@@ -135,33 +135,22 @@
         $statement->bind_param("ss",$searchTerm,$searchTerm);
         $statement->execute();
         $result = $statement->get_result();
-
+        $blogArray = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $blogArray[$row["postID"]] = createBlogObject($row); //Do i want to get this to output in a certain order?
+        }
 
     }
+
 
     function getBlogFromUserSearch(string $term){
 
     }
     /*
-    * Returns an array of users who match the given search string.
-    */
-    function getUsers(string $filter): array {
-        $db = new db();
-        $db->connect();
-        $searchTerm = '%'.$filter.'%';
-        $statement = $db -> prepare(" SELECT userID FROM user WHERE
-                                      firstName LIKE ?
-                                    OR lastName LIKE ?
-                                    OR email = ?
-                                    OR location LIKE ? ");
-        $statement->bind_param("ssss",$searchTerm,$searchTerm,$filter,$searchTerm);
-        $statement->execute();
-        $result = $statement->get_result();
-
-        $usersArray = array();
-        while($row = $result->fetch_array(MYSQLI_ASSOC)){
-            $usersArray[$row["userID"]] = getUserWithID($row["userID"]);
-        }
-
-        return $usersArray;
+     * Create and return a new blog object from the associative array produced by a SQL query
+     */
+    function createBlogObject($row){
+        return new blogPost($row["postID"], $row["headline"] , getUserWithID($row["userID"]), new DateTime("time"));
     }
+
+
