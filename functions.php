@@ -267,16 +267,51 @@ function getRecentActivityFeed() {
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
-  $statement = $db -> prepare("SELECT * from circlemessage
-                                where circleID in
-                                (Select circleID from circlemembership where userID = ?)
-                                ORDER BY time Desc
-                                LIMIT 20");
-  $statement ->bind_param("i",$userID);
+  $statement = $db -> prepare("SELECT * from photo where photoID in
+                              (select photoID from photo where userID in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              union
+                              select photoID from photocollectionassignment where collectionID in
+                              (select collectionID from photocollection where isVisibleToFriendsOfFriends = 1
+                              and userID in
+                              (select userID from user where userID != ? and
+                              userID not in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              and userID in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?))))
+                              union
+                              select photoID from photocollectionassignment where collectionID in
+                              (select collectionID from photocollection where
+                                isVisibleToCircles = 1 and userID in
+                              (select userID from circlemembership
+                              where circleID in
+                              (Select circleID from circlemembership where userID = ?))))");
+  $statement ->bind_param("iiiiiiiiii",$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $sortArray[strtotime($row["time"])] = new message($row["messageID"], getCircleWithID($row["circleID"]), getUserWithID($row["userID"]), new DateTime($row["time"]), $row["message"]);
+    // TODO: Update to receive the time from db once updated.
+    $sortArray[strtotime("01 Apr 2017 13:45")] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime("01 Apr 2017 13:45"), $row["filename"]);
   }
 
   $mainArray[] = new photo(0, $user, new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
