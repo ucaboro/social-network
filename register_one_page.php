@@ -1,5 +1,5 @@
 <?php
-    require_once "funct.php";
+    //require_once "funct.php";
     require_once "validation.php";
     //require_once "db.php";
     require_once "imports.php";
@@ -68,20 +68,7 @@
         {
             register($firstName, $lastName, $email, $password);
         }
-        /*if(empty($errors))
-        {
-            echo "<div class=\"alert alert-danger\" role=\"alert\">Registration unsuccessful: <br>";
-            foreach ($errors as $error){
-                echo $error . "<br>";
-            }
-             echo   "</div>";
-            //print_r($errors);
-        }*/
-
-
     }
-
-    //require_once "imports.php"; // I don't know what's in here so i put it here, in case there is anything that is anything sent that would stop the redirect
 ?>
 <!DOCTYPE html>
 
