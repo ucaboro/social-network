@@ -127,7 +127,9 @@
     /*
      * Returns an array of all blogs that contain a given search term as a whole word
      */
-    function getBlogFromSearchTerm(string $term){
+    function getBlogsFromSearchTerm(string $term){
+        // TODO Only search friends?
+        // TODO Chronological ordering?
         $db = new db();
         $db->connect();
         $searchTerm = '% '.$term.' %';
@@ -139,18 +141,15 @@
         while($row = $result->fetch_array(MYSQLI_ASSOC)){
             $blogArray[$row["postID"]] = createBlogObject($row); //Do i want to get this to output in a certain order?
         }
-
+        return $blogArray;
     }
 
 
-    function getBlogFromUserSearch(string $term){
-
-    }
     /*
      * Create and return a new blog object from the associative array produced by a SQL query
      */
     function createBlogObject($row){
-        return new blogPost($row["postID"], $row["headline"] , getUserWithID($row["userID"]), new DateTime("time"));
+        return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
 
 

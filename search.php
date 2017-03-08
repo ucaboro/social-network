@@ -30,7 +30,7 @@
           <?php
           if ($isSearch) {
             $results = getUsers($searchTerm);
-            $blogResults = getBlogFromSearchTerm($searchTerm);
+            $blogResults = getBlogsFromSearchTerm($searchTerm);
           ?>
             <!-- Friends list -->
             <div class="panel panel-primary">

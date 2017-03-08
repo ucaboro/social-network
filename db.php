@@ -23,7 +23,6 @@ class db {
       $password = "e865fdac";
       $dbname = "social_media";
 
-
       // Create connection object and assign it to property
       self::$mysqli = new mysqli($host, $username, $password, $dbname);
     }
@@ -61,4 +60,4 @@ class db {
   }
 }
 
-?>
+
