@@ -303,12 +303,14 @@ function getRecentActivityFeed() {
                                 isVisibleToCircles = 1 and userID in
                               (select userID from circlemembership
                               where circleID in
-                              (Select circleID from circlemembership where userID = ?))))");
+                              (Select circleID from circlemembership where userID = ?))))
+                              ORDER BY time Desc
+                              LIMIT 20");
   $statement ->bind_param("iiiiiiiiii",$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), $row["filename"]);
+    $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), "img/".$row["filename"]);
   }
 
   krsort($sortArray);
@@ -331,7 +333,7 @@ function getPhotoWithID(int $photoID) {
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), $row["filename"] );
+  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
 /*

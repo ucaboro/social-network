@@ -53,6 +53,7 @@ class photo extends interaction {
     if (is_null($this->annotations)) {
       // Get the annotations from the database
 
+      $this->annotations =  array();
       $db = new db();
       $db->connect();
       $statement = $db -> prepare("SELECT userID FROM photoannotation WHERE photoID = ?");
