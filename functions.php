@@ -1,5 +1,5 @@
 <?php
-
+  require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
  * $keyColumn: the name of the column to use as the key in the array.
@@ -37,8 +37,13 @@ function getUser() {
  * Returns a user ID representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUserID() {
-  //TODO: to modify according to log in and session
-  return 1;
+  if(isset($_SESSION["userID"]))
+  {
+    return $_SESSION["userID"];
+  }
+  else{
+      return 1; // Should change this to null or something for final version
+  }
 }
 
 

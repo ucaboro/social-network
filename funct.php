@@ -1,7 +1,9 @@
 <?php
+    //Set error reporting on
     ini_set('display_errors', 1);
     error_reporting(E_ALL | E_STRICT | E_NOTICE);
-    //Start session so that it can be used to check if user logged in
+
+    //Simple redirect function
     function redirectTo($location){
         header("Location: " . $location);
         exit;
@@ -18,6 +20,7 @@
         echo $output;
     }
 
+    //Checks if a given query ($result) succeeded, if not dies
     function check_query($result, $database){
         if (!$result) {
             printf("Errormessage: %s\n", $database->getError());
@@ -42,6 +45,7 @@
         }
     }
 
+    //Function to check if email password pair match at login
     function checkLogin($email, $password){
         $user = getUserFromEmail($email);
         $storedHash = $user['password'];
@@ -55,7 +59,7 @@
         }
     }
 
-    //Returns a user for a given email (as associative array?)
+    //Returns a user for a given email
     function getUserFromEmail($email){
         //Create database object
         $database = new db();
@@ -79,11 +83,13 @@
 
     }
 
+    //Get userID from given email, used to update session
     function getUserIDFromEmail($email){
         $user = getUserFromEmail($email);
         return $user['userID'];
     }
 
+    //Register a new user to the database
     function register($firstName, $lastName, $email, $password){
         //Encrypt password
         $hashedPassword = passwordEncrypt($password);
@@ -108,10 +114,12 @@
         }
     }
 
+    //Encrypt a password
     function passwordEncrypt($password){
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    //Check if a password matches a storedHash
     function password_check($password, $storedHash){
         return (password_verify($password, $storedHash));
     }

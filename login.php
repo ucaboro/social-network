@@ -1,6 +1,6 @@
 <?php
     //Include functions file
-    require_once("funct.php");
+    //require_once("funct.php");
     //
     require_once "imports.php";
     $error = false;
@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <h1>Login</h1>
-                            <h4>Enter your email and password below</h4>
+                            <h4>Enter your email and password below:</h4>
                         </div>
                     </div>
                     <div class="row">
