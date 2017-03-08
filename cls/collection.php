@@ -47,10 +47,17 @@ class collection {
     // Check if we already got the photos for this collection
     if (is_null($this->photos)) {
       // Get the annotations from the database
-      // TODO: Not yet implemented.
-      $photo1 = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
-      $photo2 = new photo(0, getUserWithID(1), new DateTime("2017-04-01 11:57"), "img/ex_photo1.jpg");
-      $this->photos = array($photo1, $photo2);
+
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");
+      $statement->bind_param("i", $this->id);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $this->photos [] = getPhotoWithID($row["photoID"]);
+      }
     }
     return $this->photos;
   }

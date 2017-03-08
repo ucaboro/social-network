@@ -52,8 +52,17 @@ class photo extends interaction {
     // Check if we already got the annotations for this photo
     if (is_null($this->annotations)) {
       // Get the annotations from the database
-      // TODO: Not yet implemented.
-      $this->annotations = array(getUserWithID(1), getUserWithID(2));
+
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("SELECT userID FROM photoannotation WHERE photoID = ?");
+      $statement->bind_param("i", $this->id);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $this->annotations [] = getUserWithID($row["userID"]);
+      }
     }
     return $this->annotations;
   }
@@ -65,11 +74,18 @@ class photo extends interaction {
     // Check if we already got the comments for this photo
     if (is_null($this->comments)) {
       // Get the comments from the database
-      // TODO: Not yet implemented.
-      $comment1 = new comment(0, $this, getUserWithID(2), new DateTime("2017-04-01 11:57"), "Great photo, really nice.");
-      $comment2 = new comment(0, $this, getUserWithID(0), new DateTime("2017-04-01 11:58"), "Please upload more! I love your photos!");
-      $comment3 = new comment(0, $this, getUserWithID(1), new DateTime("2017-04-01 13:00"), "I hate this photo. It's the worst photo I've ever seen. Please leave this website and never return.");
-      $this->comments = array($comment3, $comment2, $comment1);
+
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("SELECT commentID,userID,comment FROM photocomment WHERE photoID = ?");
+      $statement->bind_param("i", $this->id);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        // TODO: Need to retreive the date from the database
+        $this->comments [] = new comment($row["commentID"], $this, getUserWithID($row["userID"]), new DateTime("2017-04-01 11:57"), $row["comment"]);
+      }
     }
     return $this->comments;
   }
