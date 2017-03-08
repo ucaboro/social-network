@@ -106,8 +106,6 @@ function getCircleWithID(int $id) {
   $statement ->bind_param("i", $id);
   $statement->execute();
   $result = $statement->get_result();
-
-  $circle;
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
     $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"],getUsersInCircleWithID($row["circleID"]));
   }
@@ -203,7 +201,6 @@ function getBlogPostsByUser(user $user, int $limit) {
 
 $db = new db();
 $db->connect();
-$statement;
 if (!isset($limit)) {
   $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC");
   $statement ->bind_param("i",$userID );
