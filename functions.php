@@ -148,15 +148,17 @@ function getMessagesInCircle(circle $circle) {
   $db = new db();
   $db->connect();
 
+  $id=$circle->getCircleID();
+
   $statement = $db -> prepare("SELECT * FROM circlemessage WHERE circleID = ? ORDER BY time DESC");
-  $statement ->bind_param("i", $circle.getCircleID);
+  $statement ->bind_param("i", $id);
 
   $statement->execute();
   $result = $statement->get_result();
 
   $messagesArray = array();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $message = new message($row["messageID"],$circle,getUserWithID($row["userID"], new DateTime($row["time"],$row["message"])));
+    $message = new message($row["messageID"],$circle,getUserWithID($row["userID"]), new DateTime($row["time"]),$row["message"]);
     $messagesArray[$row["messageID"]] = $message;
   }
 
@@ -306,41 +308,59 @@ function getPhotosInCollectionWithID(int $collectionID) {
  */
 function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 
+  // What happens if the number of photos is not specified
+
   $db = new db();
   $db->connect();
 
-  $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ?");
-  $statement->bind_param("i", $user->getUserID());
+  if (isset($numberOfPhotos)){
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND() LIMIT ?");
+    $statement->bind_param("ii", $user->getUserID(), $numberOfPhotos);
+  } else {
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND()");
+    $statement->bind_param("i", $user->getUserID());
+  }
 
   $statement->execute();
   $result = $statement->get_result();
 
-  $availableNoOfPhotos = $result->num_rows;
-
   $photosArray = array();
-
-  if ($availableNoOfPhotos<=$numberOfPhotos){
-    while($row = $result->fetch_array(MYSQLI_ASSOC)){
-      $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
-    }
-  } else {
-
-    $count = 0;
-
-    while ($count <= $numberOfPhotos) {
-
-    }
-
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
   }
 
+  // $statement = $db -> prepare("SELECT COUNT(photoID) AS availablePhotos FROM photo WHERE userID = ?");
+  // $statement->bind_param("i", $user->getUserID());
+  //
+  // $statement->execute();
+  // $result = $statement->get_result();
+  //
+  // $availablePhotos = $result->fetch_array(MYSQLI_ASSOC);
+  // $availableNoOfPhotos = $availablePhotos["availablePhotos"];
+  //
+  // $photosArray = array();
+  // if ($availableNoOfPhotos<=$numberOfPhotos){
+  //   $statementGetPhotos= $db -> prepare("SELECT photoID FROM photo WHERE userID = ?");
+  // } else {
+  //   $statementGetPhotos= $db -> prepare("SELECT photoID FROM photo WHERE userID = ?");
+  // }
+  //
+  //
+  // if ($availableNoOfPhotos<=$numberOfPhotos){
+  //   while($row = $result->fetch_array(MYSQLI_ASSOC)){
+  //     $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+  //   }
+  // } else {
+  //
+  //   $count = 0;
+  //
+  //   while ($count <= $numberOfPhotos) {
+  //
+  //   }
+  //
+  // }
 
   return $photosArray;
-
-  // $toReturn = [];
-  // for ($i=0; $i < $numberOfPhotos; $i++) {
-  //   $toReturn[] = $photo;
-  // }
-  // return $toReturn;
 }
 
 /*
