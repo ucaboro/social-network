@@ -421,8 +421,11 @@ function areUsersFriends(user $user1, user $user2): bool {
 function getPhotoCollectionsByUser(user $user): array {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");
-  $statement->bind_param("i", $collectionID);
+
+  $userID = $user->getUserID();
+
+  $statement = $db -> prepare("SELECT collectionID, name FROM photocollection WHERE userID = ?");
+  $statement->bind_param("i", $userID);
   $statement->execute();
   $result = $statement->get_result();
   $photocollectionsArray = array();
