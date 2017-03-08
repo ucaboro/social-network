@@ -1,5 +1,5 @@
 <?php
-  require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now
+  require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now. Yea I agree with that.
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
  * $keyColumn: the name of the column to use as the key in the array.
@@ -202,10 +202,10 @@ function getBlogPostsByUser(user $user, int $limit) {
 $db = new db();
 $db->connect();
 if (!isset($limit)) {
-  $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC");
+  $statement = $db -> prepare("SELECT postID,headline,post,time FROM blogpost WHERE userID = ? ORDER BY time DESC");
   $statement ->bind_param("i",$userID );
 } else {
-  $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID = ? ORDER BY time DESC LIMIT ?");
+  $statement = $db -> prepare("SELECT postID,headline,post,time FROM blogpost WHERE userID = ? ORDER BY time DESC LIMIT ?");
   $statement ->bind_param("ii", $userID, $limit);
 }
 $statement->execute();
@@ -213,8 +213,7 @@ $result = $statement->get_result();
 
 $blogPostsArray = array();
 while($row = $result->fetch_array(MYSQLI_ASSOC)){
-  // TODO: Need to retreive the Headline from the database
-  $blogPostsArray[$row["postID"]] = new blogPost($row["postID"], "Welcome to my blog", $row["post"], $user, new DateTime($row["time"]));
+  $blogPostsArray[$row["postID"]] = new blogPost($row["postID"], $row["headline"], $row["post"], $user, new DateTime($row["time"]));
 }
 
 return $blogPostsArray;
@@ -249,8 +248,7 @@ function getRecentActivityFeed() {
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    // TODO: Need to retreive the Headline from the database
-    $sortArray[strtotime($row["time"])] = new blogPost($row["postID"], "Welcome to my blog", $row["post"], $user, new DateTime($row["time"]));
+    $sortArray[strtotime($row["time"])] = new blogPost($row["postID"], $row["headline"], $row["post"], $user, new DateTime($row["time"]));
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
@@ -310,11 +308,8 @@ function getRecentActivityFeed() {
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    // TODO: Update to receive the time from db once updated.
-    $sortArray[strtotime("01 Apr 2017 13:45")] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime("01 Apr 2017 13:45"), $row["filename"]);
+    $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), $row["filename"]);
   }
-
-  $mainArray[] = new photo(0, $user, new DateTime("01 Apr 2017 13:45"), "img/ex_photo1.jpg");
 
   krsort($sortArray);
   $slicedArray = array_slice($sortArray,0,20);
@@ -336,8 +331,7 @@ function getPhotoWithID(int $photoID) {
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  // TODO: Need to make it retreive the date from the database.
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime("01 Apr 2017 13:42"), $row["filename"] );
+  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), $row["filename"] );
 }
 
 /*
@@ -479,8 +473,7 @@ function getBlogPostWithID($postID) {
   $statement->execute();
   $result = $statement->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  // TODO: Need to make it retreive the headline from the database.
-  return new blogPost($row["postID"], "A headline for a post on this, my blog." , getUserWithID($row["userID"]), new DateTime("time"));
+  return new blogPost($row["postID"], $row["headline"] , getUserWithID($row["userID"]), new DateTime("time"));
 }
 
 /*
@@ -503,8 +496,7 @@ function getFriendRequests() {
     // Get this user's ID
     $userID = $row["userID1"];
     // Get the time the request was made
-    //TODO: add a date column to the friendship table
-    $time = new DateTime("01 Apr 2017 13:42");
+    $time = new DateTime($row["time"]);
     // Add it to the array
     $users[$userID] = $time;
   }
