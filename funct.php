@@ -124,4 +124,44 @@
         return (password_verify($password, $storedHash));
     }
 
+    /*
+     * Returns an array of all blogs that contain a given search term as a whole word
+     */
+    function getBlogFromSearchTerm(string $term){
+        $db = new db();
+        $db->connect();
+        $searchTerm = '% '.$term.' %';
+        $statement = $db -> prepare(" SELECT * FROM BlogPost WHERE post LIKE ? OR headline LIKE ?");
+        $statement->bind_param("ss",$searchTerm,$searchTerm);
+        $statement->execute();
+        $result = $statement->get_result();
 
+
+    }
+
+    function getBlogFromUserSearch(string $term){
+
+    }
+    /*
+    * Returns an array of users who match the given search string.
+    */
+    function getUsers(string $filter): array {
+        $db = new db();
+        $db->connect();
+        $searchTerm = '%'.$filter.'%';
+        $statement = $db -> prepare(" SELECT userID FROM user WHERE
+                                      firstName LIKE ?
+                                    OR lastName LIKE ?
+                                    OR email = ?
+                                    OR location LIKE ? ");
+        $statement->bind_param("ssss",$searchTerm,$searchTerm,$filter,$searchTerm);
+        $statement->execute();
+        $result = $statement->get_result();
+
+        $usersArray = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $usersArray[$row["userID"]] = getUserWithID($row["userID"]);
+        }
+
+        return $usersArray;
+    }
