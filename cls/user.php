@@ -53,6 +53,13 @@ class user {
   }
 
   /*
+   * Returns the user ID of this user.
+   */
+  public function getUserID() {
+    return $this->id;
+  }
+
+  /*
    * Returns the full name of this user as a string.
    */
   public function getFullName() {
@@ -77,12 +84,21 @@ class user {
    * Get an array of the friends of this user. Key is user ID, value is user object.
    */
   public function getFriends() {
-    //TODO: Not yet implemented.
     // Get the array of friends from the database the first time.
     if (is_null($this->friends)) {
-      $user1 = new user(1, "Carrie", "Mathison", "img/profile1.jpg", new DateTime("1982-11-01"), "Pakistan");
-      $user2 = new user(2, "Walter", "White", "img/profile2.jpg", new DateTime("1969-06-02"), "London");
-      $this->friends = array($user1, $user2);
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("select userID2 as 'userID' from friendship where
+                                    isConfirmed = true and userID1 = ?
+                                    union select userID1 as 'userID' from friendship
+                                    where isConfirmed = true and userID2 = ?");
+      $statement->bind_param("ii", $this->id,$this->id);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $this->friends[] = getUserWithID($row["userID"]);
+      }
     }
     // Return the saved array
     return $this->friends;

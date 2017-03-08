@@ -16,11 +16,10 @@
                   <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                     <?php
-                    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET["search"])) {
-                      $searchTerm = $_GET["search"];
-                    }
+                    $searchTerm = getValueFromGET("search");
+                    $isSearch = !is_null($searchTerm);
                     ?>
-                    <input class="form-control" name="search" placeholder="Search friends..." value="<?php echo $searchTerm; ?>">
+                    <input class="form-control" name="search" placeholder="Search friends..." value="<?php if ($isSearch){ echo $searchTerm;} ?>">
                   </div>
                 </div>
                 <button class="btn btn-primary" action"submit">Search</button>
