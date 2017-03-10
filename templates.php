@@ -272,13 +272,13 @@ function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sen
   $name = $user->getFullName();
   $age = $user->getAge();
   if ($isFriend) {
-    $buttonHtml = "<button title=\"Delete friend\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
+    $buttonHtml = "<button title=\"Delete friend\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#change-friendship\" data-user-name=\"$name\" data-user-id=\"$user->id\" data-change-type=\"0\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
   } elseif ($sentRequest) {
     $buttonHtml = "Friend request sent";
   } elseif ($receivedRequest) {
     $buttonHtml = "Friend request received";
   } else {
-    $buttonHtml = "<button title=\"Add friend\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#add-friend\" data-user-name=\"$name\" data-user-id=\"$user->id\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
+    $buttonHtml = "<button title=\"Add friend\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#change-friendship\" data-user-name=\"$name\" data-user-id=\"$user->id\" data-change-type=\"1\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
   }
   return "<div class=\"friend\">
           <div class=\"row\">

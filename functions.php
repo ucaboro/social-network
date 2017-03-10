@@ -566,17 +566,32 @@ function requestFriendship(int $userID) {
   $stmt->execute();
 }
 
+/*
+ * Removes the friendship between the current user and the user with the specified ID.
+ */
+function deleteFriendship(int $userID) {
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  // Delete one way (ignore errors)
+  $stmt = $db->prepare("DELETE FROM friendship WHERE userID1 = ? AND userID2 = ?");
+  $stmt->bind_param("ii", $thisUserID, $userID);
+  $stmt->execute();
+  // Delete the other way (ignore errors)
+  $stmt = $db->prepare("DELETE FROM friendship WHERE userID1 = ? AND userID2 = ?");
+  $stmt->bind_param("ii", $userID, $thisUserID);
+  $stmt->execute();
+}
 
-
-  /*
-   * Adds a blogpost to the database where the user is the currently logged-in user.
-   */
-  function addNewBlogPost($blogTitle,$blogpost,$dateString){
-    $thisUserID = getUserID();
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
-    $stmt->execute();
-  }
+/*
+ * Adds a blogpost to the database where the user is the currently logged-in user.
+ */
+function addNewBlogPost($blogTitle,$blogpost,$dateString){
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
+  $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+  $stmt->execute();
+}
 ?>
