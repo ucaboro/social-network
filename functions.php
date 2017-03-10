@@ -367,14 +367,16 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
  * Optionally filters the list based on a search string.
  */
 function getFriendsOfUser(user $user, string $filter = NULL): array {
-  $userId = $user->getUserID();
+  $userID = $user->getUserID();
   $searchTerm = '%'.$filter.'%';
   $db = new db();
   $db->connect();
   if (is_null($filter)) {
     // If the search parameter is NULL then it returns all the friends of the user
-    $statement = $db -> prepare("select userID2 as 'userID' from friendship where isConfirmed = true and userID1 = ? union select userID1 as 'userID' from friendship where isConfirmed = true and userID2 = ?");
-    $statement->bind_param("ii", $user->getUserID,$user->getUserID);
+    $statement = $db -> prepare("SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID1 = ?
+                                  UNION
+                                  SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ?");
+    $statement->bind_param("ii", $userID, $userID);
   } else {
     // If a search parameter exists then it looks if that term is contained in either the firstName,
     // lastName or location, it would also select the user whose e-mail is an excact match
