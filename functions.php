@@ -249,8 +249,7 @@ function getRecentActivityFeed() {
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    // $sortArray[strtotime($row["time"])] = new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
-    $sortArray[strtotime($row["time"])]= getBlogPostWithID($row["postID"];)
+    $sortArray[strtotime($row["time"])]= getBlogPostWithID($row["postID"]);
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
