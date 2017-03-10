@@ -2,6 +2,8 @@
     //Set error reporting on
     ini_set('display_errors', 1);
     error_reporting(E_ALL | E_STRICT | E_NOTICE);
+    //Start session
+    session_start();
 
     //Simple redirect function
     function redirectTo($location){
@@ -37,12 +39,7 @@
 
     //Check if user logged in and return a boolean
     function isLoggedIn(){
-        if(!isset($_SESSION['userID'])){
-            return false;
-        }
-        else{
-            return true;
-        }
+        return isset($_SESSION["userID"]);
     }
 
     //Function to check if email password pair match at login
@@ -73,11 +70,9 @@
         //Check to see if query successful
         check_query($result, $database);
         if($user = mysqli_fetch_assoc($result)){
-            $database->closeConnection();
             return $user;
         }
         else{
-            $database->closeConnection();
             return null;
         }
 
@@ -109,7 +104,6 @@
         else{
             //If successful redirect
             $_SESSION["userID"] = getUserIDFromEmail($email);
-            $database->closeConnection();
             redirectTo("index.php");
         }
     }
@@ -127,7 +121,7 @@
     /*
      * Returns an array of all blogs that contain a given search term as a whole word
      */
-    function getBlogsFromSearchTerm(string $term){
+    function getBlogsFromSearchTerm00(string $term){
         // TODO Only search friends?
         // TODO Chronological ordering?
         $db = new db();
@@ -143,6 +137,40 @@
         }
         return $blogArray;
     }
+
+    function getBlogsFromSearchTerm(string $term){
+        //TODO: Change this to getUser();
+        if(isset($_SESSION["userID"]))
+        {
+            $currentUserID = $_SESSION["userID"];
+        }
+        else{
+            // TODO:  Should change this to null or something for final version
+            $currentUserID = 1;
+        }
+        $db = new db();
+        $db->connect();
+        $searchTerm = '% '.$term.' %';
+        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE 
+                                    (post LIKE ? OR headline LIKE ?) 
+                                    AND userID IN 
+                                    (SELECT userID2 as 'userID' FROM friendship 
+                                    WHERE userID1 = ? AND isConfirmed = True UNION
+                                    SELECT userID1 as 'userID' FROM friendship
+                                    WHERE isConfirmed = TRUE AND userID2 = ?)
+                                    ORDER BY time DESC
+                                    LIMIT 20;");
+        $statement->bind_param("ssii",$searchTerm,$searchTerm,$currentUserID,$currentUserID);
+        $statement->execute();
+        $result = $statement->get_result();
+        $blogArray = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $blogArray[$row["postID"]] = createBlogObject($row);
+        }
+        return $blogArray;
+    }
+
+
 
 
     /*

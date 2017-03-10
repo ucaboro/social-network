@@ -39,7 +39,6 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <br />
                             <form id="login-form" action="login.php" method="post">
                                 <div class="form-group">
                                     Email: <input type="text" class="form-control" name="email" value ="<?php echo htmlspecialchars($email) ?>" /><br/>
@@ -53,6 +52,7 @@
                     <div class="row">
                         <div class=""col-xs-12">
                             <button class="btn btn-primary" type="submit" name="submit" value="Submit" form="login-form">Log In</button>
+                            <a class="btn btn-primary" href="register_one_page.php">Register</a>
                         </div>
                     </div>
                     <?php

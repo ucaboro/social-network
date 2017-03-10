@@ -1,4 +1,7 @@
-<?php include "imports.php"; ?>
+<?php include "imports.php";
+//Ensures user is logged in before displaying page
+checkLoggedIn();
+?>
 <!DOCTYPE html>
 
 <html lang="en-gb">

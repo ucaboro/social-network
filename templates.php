@@ -174,14 +174,22 @@ return $html . "
 
     // Add a button for each user
     $friends = $user->getFriends();
-    foreach ($friends as $id => $friend) {
-      $img = getHtmlForSquareImage($friend->photoSrc);
+    if (is_null($friends)){
       $html = $html .
-                  "<div class=\"col-xs-3\">
-                    <a href=\"{$friend->getUrlToProfile()}\">$img</a>
-                    <a href=\"{$friend->getUrlToProfile()}\" class=\"no-underline\"><div class=\"profile-name\">{$friend->getFullName()}</div></a>
-                  </div>";
+                "<div>
+                <span class=\"text-center\" ><p>    There is currently no friends </p></span>
+                </div>";
+    } else {
+      foreach ($friends as $id => $friend) {
+        $img = getHtmlForSquareImage($friend->photoSrc);
+        $html = $html .
+                    "<div class=\"col-xs-3\">
+                      <a href=\"{$friend->getUrlToProfile()}\">$img</a>
+                      <a href=\"{$friend->getUrlToProfile()}\" class=\"no-underline\"><div class=\"profile-name\">{$friend->getFullName()}</div></a>
+                    </div>";
+      }
     }
+
 
   // Close div tags and return the HTML
   return $html . "
