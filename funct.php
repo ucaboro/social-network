@@ -2,6 +2,8 @@
     //Set error reporting on
     ini_set('display_errors', 1);
     error_reporting(E_ALL | E_STRICT | E_NOTICE);
+    //Start session
+    session_start();
 
     //Simple redirect function
     function redirectTo($location){
@@ -37,12 +39,7 @@
 
     //Check if user logged in and return a boolean
     function isLoggedIn(){
-        if(!isset($_SESSION['userID'])){
-            return false;
-        }
-        else{
-            return true;
-        }
+        return isset($_SESSION["userID"]);
     }
 
     //Function to check if email password pair match at login
@@ -73,11 +70,9 @@
         //Check to see if query successful
         check_query($result, $database);
         if($user = mysqli_fetch_assoc($result)){
-            $database->closeConnection();
             return $user;
         }
         else{
-            $database->closeConnection();
             return null;
         }
 
@@ -109,7 +104,6 @@
         else{
             //If successful redirect
             $_SESSION["userID"] = getUserIDFromEmail($email);
-            $database->closeConnection();
             redirectTo("index.php");
         }
     }
