@@ -73,7 +73,7 @@ checkLoggedIn();?>
 
     <!-- Add friend modal popup -->
     <!-- Adapted from http://getbootstrap.com/javascript/#modals -->
-    <div id="add-friend" class="modal fade" tabindex="-1" role="dialog">
+    <div id="change-friendship" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -85,7 +85,7 @@ checkLoggedIn();?>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button id="add-friend-confirm-button" type="button" class="btn btn-primary" data-dismiss="modal" onclick="">Add friend</button>
+            <button id="modal-confirm-button" type="button" class="btn btn-primary" data-dismiss="modal" onclick="">Add friend</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -96,15 +96,19 @@ checkLoggedIn();?>
     <!-- Javascript for showing the modal -->
     <!-- Adapted from http://getbootstrap.com/javascript/#modals -->
     <script>
-      $('#add-friend').on('show.bs.modal', function (event) {
+      $('#change-friendship').on('show.bs.modal', function (event) {
+        // Get all the necessary data
         var button = $(event.relatedTarget); // Button that triggered the modal
-        var recipient = button.data('user-name'); // Extract info from data-* attributes
+        var name = button.data('user-name'); // Extract info from data-* attributes
         var id = button.data('user-id');
-        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
         var modal = $(this);
-        modal.find('#add-friend-name').text(recipient);
-        modal.find('#add-friend-confirm-button').attr('onclick', 'sendFriendRequest(' + id + ')');
+
+        // Set up the modal depending on what type of button was clicked
+        if (button.data('change-type') == 1) {
+          setUpModalForAddFriend(modal, id, name);
+        } else {
+          setUpModalForDeleteFriend(modal, id, name);
+        }
       });
     </script>
 

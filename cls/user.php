@@ -88,11 +88,10 @@ class user {
     if (is_null($this->friends)) {
       $db = new db();
       $db->connect();
-      $statement = $db -> prepare("select userID2 as 'userID' from friendship where
-                                    isConfirmed = true and userID1 = ?
-                                    union select userID1 as 'userID' from friendship
-                                    where isConfirmed = true and userID2 = ?");
-      $statement->bind_param("ii", $this->id,$this->id);
+      $statement = $db -> prepare("SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID1 = ?
+                                    UNION
+                                    SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ?");
+      $statement->bind_param("ii", $this->id, $this->id);
       $statement->execute();
       $result = $statement->get_result();
 
