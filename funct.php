@@ -127,7 +127,7 @@
     /*
      * Returns an array of all blogs that contain a given search term as a whole word
      */
-    function getBlogsFromSearchTerm(string $term){
+    function getBlogsFromSearchTerm00(string $term){
         // TODO Only search friends?
         // TODO Chronological ordering?
         $db = new db();
@@ -143,6 +143,40 @@
         }
         return $blogArray;
     }
+
+    function getBlogsFromSearchTerm(string $term){
+        //TODO: Change this to getUser();
+        if(isset($_SESSION["userID"]))
+        {
+            $currentUserID = $_SESSION["userID"];
+        }
+        else{
+            // TODO:  Should change this to null or something for final version
+            $currentUserID = 1;
+        }
+        $db = new db();
+        $db->connect();
+        $searchTerm = '% '.$term.' %';
+        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE 
+                                    (post LIKE ? OR headline LIKE ?) 
+                                    AND userID IN 
+                                    (SELECT userID2 as 'userID' FROM friendship 
+                                    WHERE userID1 = ? AND isConfirmed = True UNION
+                                    SELECT userID1 as 'userID' FROM friendship
+                                    WHERE isConfirmed = TRUE AND userID2 = ?)
+                                    ORDER BY time DESC
+                                    LIMIT 20;");
+        $statement->bind_param("ssii",$searchTerm,$searchTerm,$currentUserID,$currentUserID);
+        $statement->execute();
+        $result = $statement->get_result();
+        $blogArray = array();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $blogArray[$row["postID"]] = createBlogObject($row);
+        }
+        return $blogArray;
+    }
+
+
 
 
     /*
