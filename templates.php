@@ -388,6 +388,8 @@ function getHtmlForBlogPostSummary(blogPost $post, bool $includePreview) {
   $time = $post->time->format('d M Y H:i');
   if ($includePreview) {
     $preview = "<p>$post->body <a href=\"$url\">Continue reading</a></p>";
+  } else {
+    $preview = "";
   }
   return "<div class=\"col-xs-12\">
             <div class=\"blog-post-summary\">
