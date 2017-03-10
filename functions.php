@@ -434,17 +434,33 @@ function areUsersFriends(user $user1, user $user2): bool {
                                 WHEN (userID1 = ? and userID2 = ?) THEN 1
                                 WHEN (userID2 = ? and userID1 = ?) THEN 1
                                 ELSE 0 END) as 'result', isConfirmed
-                                from friendship
-                                where isConfirmed = 1");
-  $statement->bind_param("iiii",$userID1,$userID2,$userID1,$userID2);
+                                FROM friendship
+                                WHERE isConfirmed = 1");
+  $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
   $statement->execute();
   $result = $statement->get_result();
 
-  $isfriend = false;
-  while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    if ($row["result"]==1){$isfriend = true;}
+  // Check result. 1 means they are friends.
+  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+    if ($row["result"] == 1) { return true; }
   }
-  return $isfriend;
+  return false;
+}
+
+/*
+ * Returns true if there is a pending friend request which was initiated by $sender, false otherwise.
+ */
+function isFriendRequestPending(user $sender, user $receiver) {
+  $db = new db();
+  $db->connect();
+  $senderID = $sender->getUserID();
+  $receiverID = $receiver->getUserID();
+  $statement = $db -> prepare("SELECT * FROM friendship WHERE userID1 = ? AND userID2 = ? AND isConfirmed = 0");
+  $statement->bind_param("ii", $senderID, $receiverID);
+  $statement->execute();
+  $result = $statement->get_result();
+
+  return ($result->num_rows == 1);
 }
 
 /*
@@ -543,7 +559,7 @@ function requestFriendship(int $userID) {
   $thisUserID = getUserID();
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("INSERT INTO friendship (userID1, userID2, isConfirmed) VALUES (?, ?, 0)");
+  $stmt = $db->prepare("INSERT INTO friendship (userID1, userID2, isConfirmed, time) VALUES (?, ?, 0, NOW())");
   $stmt->bind_param("ii", $thisUserID, $userID);
   $stmt->execute();
 }

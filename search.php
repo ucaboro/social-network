@@ -42,9 +42,12 @@
                 // Output each result
                 $thisUser = getUser();
                 foreach ($results as $user) {
-                  echo getHtmlForUserSummarySearchResult($user, areUsersFriends($thisUser, $user));
+                  $areFriends = areUsersFriends($thisUser, $user);
+                  $sentRequest = isFriendRequestPending($thisUser, $user);
+                  $receivedRequest = isFriendRequestPending($user, $thisUser);
+                  echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest);
                 }
-                echo "<hr><br>";
+                echo "<br><br>";
                 foreach ($blogResults as $blog) {
                     echo getHtmlForBlogPostSummary($blog, true);
                 }
@@ -66,11 +69,42 @@
       </div>
     </div>
 
-    <!-- JQuery javascript -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!-- Custom JavaScript -->
-    <!--<script src="script.js"></script>-->
+    <!-- Add friend modal popup -->
+    <!-- Adapted from http://getbootstrap.com/javascript/#modals -->
+    <div id="add-friend" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Send friend request</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to add <span id="add-friend-name">ERROR</span> as a friend?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button id="add-friend-confirm-button" type="button" class="btn btn-primary" data-dismiss="modal" onclick="">Add friend</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <?php echo getHtmlForJavascriptImports(); ?>
+
+    <!-- Javascript for showing the modal -->
+    <!-- Adapted from http://getbootstrap.com/javascript/#modals -->
+    <script>
+      $('#add-friend').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var recipient = button.data('user-name'); // Extract info from data-* attributes
+        var id = button.data('user-id');
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this);
+        modal.find('#add-friend-name').text(recipient);
+        modal.find('#add-friend-confirm-button').attr('onclick', 'sendFriendRequest(' + id + ')');
+      });
+    </script>
+
   </body>
 </html>

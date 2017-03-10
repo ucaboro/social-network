@@ -18,5 +18,21 @@ function respondToFriendRequest(button, requesterID, isAccept) {
             }
           }
   });
+}
 
+function sendFriendRequest(userID) {
+  // Find element object to update
+  elementToUpdate = $(document).find("[class='friend-action'][data-user-id='" + userID + "']")
+  // Send request to the database
+  $.ajax({url: "ajax/sendFriendRequest.php",
+          data: {
+            userID: userID
+          },
+          type: "POST",
+          dataType : "json",
+          // Update the friend request by replacing the buttons with text that says "accepted" or "declined"
+          success: function(result){
+            elementToUpdate.html(result);
+          }
+  });
 }

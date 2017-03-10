@@ -253,28 +253,38 @@ return "$color";
 
 /*
  * Returns the HTML for a single user on the friends and search pages.
+ * $user: The user to display in the search results.
+ * $isFriend: true if the current user is a friend of $user, false otherwise.
+ * $sentRequest: true if the current user has sent $user a friend request which hasn't been responded to yet, false otherwise.
+ * $receivedRequest: true if the current user has recieved a friend request from $user which they haven't responded to yet, false otherwise.
  */
-function getHtmlForUserSummarySearchResult(user $user, bool $isFriend): string {
+function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest): string {
   $profileUrl = $user->getUrlToProfile();
   $img = getHtmlForSquareImage($user->photoSrc);
   $name = $user->getFullName();
   $age = $user->getAge();
   if ($isFriend) {
-    $buttonHtml = "<button class=\"btn btn-link\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
+    $buttonHtml = "<button title=\"Delete friend\" class=\"btn btn-link\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
+  } elseif ($sentRequest) {
+    $buttonHtml = "Friend request sent";
+  } elseif ($receivedRequest) {
+    $buttonHtml = "Friend request received";
   } else {
-    $buttonHtml = "<button class=\"btn btn-link\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
+    $buttonHtml = "<button title=\"Add friend\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#add-friend\" data-user-name=\"$name\" data-user-id=\"$user->id\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
   }
   return "<div class=\"friend\">
           <div class=\"row\">
             <div class=\"col-xs-2\" style=\"padding-right:5px\">
                 <div class=\"friend-profile-image\"><a href=\"$profileUrl\">$img</a></div>
             </div>
-            <div class=\"col-xs-9\">
+            <div class=\"col-xs-7\">
               <a href=\"$profileUrl\"><span class=\"h4\">$name</span></a><br>
               <span class=\"subtitle\">$age years old, $user->location</span>
             </div>
-            <div class=\"col-xs-1\">
-              $buttonHtml
+            <div class=\"col-xs-3 text-right\">
+              <div class=\"friend-action\" data-user-id=\"$user->id\">
+                $buttonHtml
+              </div>
             </div>
           </div>
         </div>";
