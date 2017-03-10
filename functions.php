@@ -202,7 +202,7 @@ function getBlogPostsByUser(user $user, int $limit) {
 
 $db = new db();
 $db->connect();
-if (!isset($limit)) {
+if (!isset($limit) || ($limit==0)) {
   $statement = $db -> prepare("SELECT postID,headline,post,time FROM blogpost WHERE userID = ? ORDER BY time DESC");
   $statement ->bind_param("i",$userID );
 } else {
@@ -547,4 +547,18 @@ function requestFriendship(int $userID) {
   $stmt->bind_param("ii", $thisUserID, $userID);
   $stmt->execute();
 }
+
+
+
+  /*
+   * Adds a blogpost to the database where the user is the currently logged-in user.
+   */
+  function addNewBlogPost($blogTitle,$blogpost,$dateString){
+    $thisUserID = getUserID();
+    $db = new db();
+    $db->connect();
+    $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+    $stmt->execute();
+  }
 ?>
