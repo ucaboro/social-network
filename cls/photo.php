@@ -76,6 +76,7 @@ class photo extends interaction {
     if (is_null($this->comments)) {
       // Get the comments from the database
 
+      $this->comments = array();
       $db = new db();
       $db->connect();
       $statement = $db -> prepare("SELECT commentID,userID,comment FROM photocomment WHERE photoID = ?");

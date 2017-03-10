@@ -52,10 +52,11 @@ function getUserID() {
  * Returns an array of the circles that a user is a member of. Key is circle ID, value is circle object.
  */
 function getCirclesForUser(user $user) {
+  $userID = $user->getUserID();
   $db = new db();
   $db->connect();
   $statement = $db -> prepare("SELECT circleID FROM circlemembership WHERE userId = ?");
-  $statement ->bind_param("i", $user.getUserID);
+  $statement ->bind_param("i", $userID);
   $statement->execute();
   $result = $statement->get_result();
 
@@ -310,7 +311,8 @@ function getRecentActivityFeed() {
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), "img/".$row["filename"]);
+    $sortArray[strtotime($row["time"])] = getPhotoWithID($row["photoID"]);
+    // $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), "img/".$row["filename"]);
   }
 
   krsort($sortArray);
@@ -333,18 +335,19 @@ function getPhotoWithID(int $photoID) {
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"] );
+  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"].".jpg" );
 }
 
 /*
  * Picks a specified number of photos at random from a user's uploaded photos.
  */
 function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
+  $userID =$user->getUserID();
   $db = new db();
   $db->connect();
   if (isset($numberOfPhotos)){
     $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND() LIMIT ?");
-    $statement->bind_param("ii", $user->getUserID(), $numberOfPhotos);
+    $statement->bind_param("ii", $userID, $numberOfPhotos);
   } else {
     $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND()");
     $statement->bind_param("i", $user->getUserID());
