@@ -10,10 +10,10 @@ checkLoggedIn();
     $dateString = $date->format('YmdHis');
 
     $blogPostErrors = array();
-    if (is_null($blogTitle)) {
+    if (empty($blogTitle)) {
       $blogPostErrors[] = "Please provide a title for the blog post.";
     }
-    if (is_null($blogpost)) {
+    if (empty($blogpost)) {
       $blogPostErrors[] = "Please provide content for the blog post.";
     }
     if(empty($blogPostErrors)) {
@@ -47,29 +47,38 @@ checkLoggedIn();
                   <textarea class="form-control" name="blog-post" rows="2" placeholder="What do you want to share today?"></textarea>
                 </div>
               </form>
-              <div class="row">
+
+
+                <?php
+                    //If registration form submitted
+                    if(isset($_POST['blogSubmit']))
+                    {
+                        //And if errors occured, display errors as alerts
+                        if(empty($blogPostErrors)){
+                          echo "
+                          <div class=\" col-xs-12 panel-body alert alert-success\" role=\"alert\">
+                          Blog Successfully posted</span>
+                          </div>";
+                        } else {
+                          echo "
+                          <div class=\" col-xs-12 panel-body alert alert-danger\" role=\"alert\"> Post Unsuccessful: <br>";
+                          foreach ($blogPostErrors as $error)
+                          {
+                              echo $error . "<br>";
+                          }
+                          echo "</div>";
+                        }
+                    }
+                ?>
+                <div class="row">
+
                 <div class="col-xs-12">
                   <button class="btn btn-primary pull-right" name="blogSubmit" value="blogSubmit" type="submit" form="blogpost-form">Post</button>
                 </div>
               </div>
             </div>
           </div>
-          <?php
-              //If registration form submitted
-              if(isset($_POST['blogSubmit']))
-              {
-                  //And if errors occured, display errors as alerts
-                  if(!empty($blogPostErrors))
-                  {
-                      echo "<div class=\"alert alert-danger\" role=\"alert\">Registration unsuccessful: <br>";
-                      foreach ($blogPostErrors as $error)
-                      {
-                          echo $error . "<br>";
-                      }
-                      echo "</div>";
-                  }
-              }
-          ?>
+
           <!-- /END Add new post component -->
           <!-- Recent activity component -->
           <div class="panel panel-primary">
