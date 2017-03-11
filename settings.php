@@ -3,13 +3,14 @@ require_once "imports.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn();
 $location = "Donny";
+if(isset($_POST['blog_privacy_submit']))
+{
+    echo "holla yo!";
+}
 if(isset($_POST['submit']))
 {
     $date = $_POST['date'];
     echo $_POST['date'];
-}
-else{
-
 }
 ?>
 <!DOCTYPE html>
@@ -56,19 +57,25 @@ else{
                                         </div>
                                         <div class="col-xs-2">
                                             <br>
-                                            <button class="btn btn-primary" type="submit" name="location-submit" value="Submit" form="location-form">Change</button>
+                                            <button class="btn btn-primary" type="submit" name="location-submit" value="Submit" form="location-form">Submit</button>
                                         </div>
                                     </div>
                                     <div>
                                         <form action="settings.php" method="post">
-                                            <div class="form-group ">
-                                                <div class="input-group date">
-                                                    <input type="text" name="date" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                            <div class="row">
+                                                <div class="col-xs-10">
+                                                    <div class="form-group ">
+                                                        <div class="input-group date">
+                                                            <input type="text" name="date" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div>
-                                                    <button class="btn btn-primary" name="submit" type="submit" value="Submit">Submit</button>
+                                                <div class="col-xs-2">
+                                                    <div class="form-group">
+                                                        <div>
+                                                            <button class="btn btn-primary" name="submit" type="submit" value="Submit">Submit</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -81,15 +88,6 @@ else{
 
                     <?php echo getHtmlFromPHPFile("templates/accountSettings.php")?>
 
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">Privacy Settings</h4>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -97,6 +95,8 @@ else{
             <div class="row">
                 <div class="col-xs-12">
                     <?php echo getHtmlForNavigationPanel(); ?>
+                    <!--Html and php for the privary settings box-->
+                    <?php include "templates/privacySettings.php"; ?>
                 </div>
             </div>
         </div>
