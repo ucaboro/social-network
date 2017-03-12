@@ -15,6 +15,7 @@ checkLoggedIn();?>
           // Get the photo object
           $photoID = $_GET["p"];
           $photo = getPhotoWithID($photoID);
+          $_SESSION["photoID"]=$photoID;
           ?>
           <div class="panel panel-primary">
             <div class="panel-body">
@@ -32,12 +33,16 @@ checkLoggedIn();?>
                 $name = $user->getFullName();
                 $time = $photo->time->format("d M Y H:i");
                 $profileUrl = $user->getUrlToProfile();
-                echo "<div class=\"col-xs-12\">
+                echo "<div class=\"col-xs-12 \">
                   <div class=\"feed-profile-image\"><a href=\"\">$profileImg</a></div>
                   <span>Photo uploaded by <a href=\"$profileUrl\">$name</a></span><br>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
+                <div class="row">
+                  <button type="submit" href="deletePhoto.php" name="delete_pic" class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
+                  <button type="submit" href="deletePhoto.php" name="set_profile_pic" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
+                </div>
               </div>
             </div>
           </div>
