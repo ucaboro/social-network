@@ -15,6 +15,7 @@ checkLoggedIn();?>
           // Get the photo object
           $photoID = $_GET["p"];
           $photo = getPhotoWithID($photoID);
+          $_SESSION["photoID"]=$photoID;
           ?>
           <div class="panel panel-primary">
             <div class="panel-body">
@@ -39,8 +40,8 @@ checkLoggedIn();?>
                 </div>";
                 ?>
                 <div class="row">
-                  <button type="button" class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
-                  <button type="button" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
+                  <button type="submit" href="deletePhoto.php" name="delete_pic" class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
+                  <button type="submit" href="deletePhoto.php" name="set_profile_pic" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
                 </div>
               </div>
             </div>

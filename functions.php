@@ -414,6 +414,8 @@ function getFriendsOfFriendsOfUser(user $user): array {
   return $friendsArray;
 }
 
+
+
 /*
  * Returns an array of users who are friends with the given user.
  * Optionally filters the list based on a search string.
@@ -675,6 +677,23 @@ function deleteFriendship(int $userID) {
     $db->connect();
     $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
     $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
+    $stmt->execute();
+  }
+
+  function deletePhotowithID($photoID) {
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
+    $statement->bind_param("i", $photoID);
+    $stmt->execute();
+  }
+
+  function setProfilePhotoforUser($photoID, $user) {
+    $userID=$user->getUserID();
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
+    $statement->bind_param("ii", $photoID,$userID);
     $stmt->execute();
   }
 ?>
