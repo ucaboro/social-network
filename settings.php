@@ -1,17 +1,48 @@
 <?php
-require_once "imports.php";
-//Ensures user is logged in before displaying page
-checkLoggedIn();
-$location = "Donny";
-if(isset($_POST['blog_privacy_submit']))
-{
-    echo "holla yo!";
-}
-if(isset($_POST['submit']))
-{
-    $date = $_POST['date'];
-    echo $_POST['date'];
-}
+    require_once "imports.php";
+    //Ensures user is logged in before displaying page
+    checkLoggedIn();
+    //Defaults
+    $dob = "";
+    $location = "";
+    $firstName = "Harry";
+    $lastName = "Harpsicord";
+    $email = "h@H.com";
+    /*Post part for personal settings*/
+    if(isset($_POST['dob_submit']))
+    {
+        echo $_POST['dob'];
+        $dob = $_POST['dob'];
+    }
+    if(isset($_POST['location_submit'])){
+        echo $_POST['location'];
+        $location = $_POST['location'];
+    }
+    //Account part
+    if(isset($_POST['first_name_submit'])){
+        echo $_POST['first_name'];
+        $firstName = $_POST['first_name'];
+    }
+    if(isset($_POST['last_name_submit'])){
+        echo $_POST['last_name'];
+        $lastName = $_POST['last_name'];
+    }
+    if(isset($_POST['email_submit'])){
+        echo $_POST['email'];
+        $email = $_POST['email'];
+    }
+    if(isset($_POST['password_submit'])){
+        echo $_POST['password'];
+    }
+    //Privacy part
+    if(isset($_POST['blog_privacy_submit']))
+    {
+        echo $_POST['blog_privacy'];
+    }
+    if(isset($_POST['info_privacy_submit']))
+    {
+        echo $_POST['info_privacy'];
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en-gb">
@@ -34,66 +65,25 @@ if(isset($_POST['submit']))
 <?php echo getHtmlForHead(); ?>
 <body>
 <?php echo getHtmlForTopNavbar(); ?>
+<!--Body-->
 <div class="container-fluid">
     <div class="row">
+        <!-- Left column -->
         <div class="col-xs-12 col-md-8">
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">Personal Settings</h4>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="row">
-                                        <div class="col-xs-10">
-                                            Where do you live?
-                                            <form id="location-form" action="settings.php" method="POST">
-                                                <div class="form-group">
-                                                    <input class="form-control" name="location" value="<?php echo htmlspecialchars($location)?>">
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <br>
-                                            <button class="btn btn-primary" type="submit" name="location-submit" value="Submit" form="location-form">Submit</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <form action="settings.php" method="post">
-                                            <div class="row">
-                                                <div class="col-xs-10">
-                                                    <div class="form-group ">
-                                                        <div class="input-group date">
-                                                            <input type="text" name="date" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2">
-                                                    <div class="form-group">
-                                                        <div>
-                                                            <button class="btn btn-primary" name="submit" type="submit" value="Submit">Submit</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php echo getHtmlFromPHPFile("templates/accountSettings.php")?>
-
+                    <!--Html and php for the personal settings box-->
+                    <?php include "templates/personalSettings.php"; ?>
+                    <!--Html for account settings box-->
+                    <?php include "templates/accountSettings.php"; ?>
                 </div>
             </div>
         </div>
+        <!--Right column-->
         <div class="col-xs-12 col-md-4">
             <div class="row">
                 <div class="col-xs-12">
+                    <!--Navigation Box-->
                     <?php echo getHtmlForNavigationPanel(); ?>
                     <!--Html and php for the privary settings box-->
                     <?php include "templates/privacySettings.php"; ?>
