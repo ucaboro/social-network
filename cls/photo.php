@@ -85,7 +85,6 @@ class photo extends interaction {
       $result = $statement->get_result();
 
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        // TODO: Need to retreive the date from the database
         $this->comments [] = new comment($row["commentID"], $this, getUserWithID($row["userID"]), new DateTime("2017-04-01 11:57"), $row["comment"]);
       }
     }

@@ -463,6 +463,21 @@ function isFriendRequestPending(user $sender, user $receiver) {
   return ($result->num_rows == 1);
 }
 
+
+/*
+ * Returns true if there is a photoAlready Saved with the specified name.
+ */
+function isPhotoNameExitst($photoName) : bool {
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("SELECT filename FROM photo WHERE filename =  ?  ");
+  $statement->bind_param("s", $photoName);
+  $statement->execute();
+  $result = $statement->get_result();
+
+  return ($result->num_rows == 1);
+}
+
 /*
  * Returns an array of a particular user's photo collections.
  */
@@ -575,6 +590,18 @@ function requestFriendship(int $userID) {
     $db->connect();
     $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+    $stmt->execute();
+  }
+
+  /*
+   * Adds a photo to the database where the user is the currently logged-in user.
+   */
+  function addPhotoToDB($photoName,$dateString){
+    $thisUserID = getUserID();
+    $db = new db();
+    $db->connect();
+    $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
+    $stmt->bind_param("isss",$thisUserID,$photoName,$dateString);
     $stmt->execute();
   }
 ?>

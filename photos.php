@@ -2,30 +2,41 @@
 //Ensures user is logged in before displaying page
 checkLoggedIn();
 
+$photoStorageLocation="img/";
+
+$isPhotoUploaded=false;
 if(isset($_FILES['image'])){
-   $errors= array();
+   $photoUploadErrors= array();
    $file_name = $_FILES['image']['name'];
    $file_size = $_FILES['image']['size'];
    $file_tmp = $_FILES['image']['tmp_name'];
    $file_type = $_FILES['image']['type'];
 
-   $file_ext=strtolower(end(explode('.',$_FILES['image']['name'])));
+   $date = new DateTime();
+   $dateString = $date->format('YmdHis');
 
-   $expensions= array("jpeg","jpg","png");
+   $file_prePreExt=explode('.',$file_name);
+   $file_preext=end($file_prePreExt);
+   $file_ext=strtolower($file_preext);
 
-   if(in_array($file_ext,$expensions)=== false){
-      $errors[]="extension not allowed, please choose a JPEG or PNG file.";
+   $extensions= array("jpeg","jpg","png");
+
+   if(in_array($file_ext,$extensions)=== false){
+      $photoUploadErrors[]="extension not allowed, please choose a JPEG or PNG file.";
    }
 
    if($file_size > 2097152) {
-      $errors[]='File size must be excately 2 MB';
+      $photoUploadErrors[]='File size must be less than 2 MB';
    }
 
-   if(empty($errors)==true) {
-      move_uploaded_file($file_tmp,"img/".$file_name);
-     //  echo "Success";
-   }else{
-     //  print_r($errors);
+   $randomName = RAND(1,50000);
+   while (!isPhotoNameExitst($randomName.$file_ext)) {
+     $randomName = RAND(1,50000);
+   }
+   if(empty($photoUploadErrors)==true) {
+      move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
+      addPhotoToDB($randomName.".".$file_ext,$dateString);
+
    }
 }
 
@@ -47,14 +58,49 @@ if(isset($_FILES['image'])){
           ?>
           <!-- /END Profile summary -->
 
-            <form action = "uploadPhoto.php" method = "POST" enctype = "multipart/form-data">
-            <input class="btn  pull-right" type = "file" name = "image" />
-            <input class="btn  pull-right" type = "submit"/>
-            </form>
 
           <!-- <div class="panel-body">
               <input type="file" class="btn btn-primary pull-right" action="\uploadPhoto.php">Add Photos</input>
           </div> -->
+
+
+          <!-- Photos -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4 class="panel-title">Upload Photos</h4>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <form action = "photos.php" method = "POST" enctype = "multipart/form-data">
+                <input class="btn col-xs-6 col-md-4 " type = "file" name = "image" />
+                <input class="btn btn-info" type = "submit"/>
+                </form>
+              </div>
+              <?php
+                  //If registration form submitted
+                  if(isset($_FILES['image']))
+                  {
+                      //And if errors occured, display errors as alerts
+                      if(empty($photoUploadErrors)){
+                        echo "
+                        <div class=\" col-xs-12 panel-body alert alert-success\" role=\"alert\">
+                        Photo Successfully uploaded</span>
+                        </div>";
+                      } else {
+                        echo "
+                        <div class=\" col-xs-12 panel-body alert alert-danger\" role=\"alert\"> Photo upload unsuccessful: <br>";
+                        foreach ($photoUploadErrors as $error)
+                        {
+                            echo $error . "<br>";
+                        }
+                        echo "</div>";
+                      }
+                  }
+              ?>
+
+            </div>
+          </div>
+          <!-- /END Photos -->
 
           <!-- Photos -->
           <div class="panel panel-primary">
