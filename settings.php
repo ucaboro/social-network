@@ -2,47 +2,7 @@
     require_once "imports.php";
     //Ensures user is logged in before displaying page
     checkLoggedIn();
-    //Defaults
-    $dob = "";
-    $location = "";
-    $firstName = "Harry";
-    $lastName = "Harpsicord";
-    $email = "h@H.com";
-    /*Post part for personal settings*/
-    if(isset($_POST['dob_submit']))
-    {
-        echo $_POST['dob'];
-        $dob = $_POST['dob'];
-    }
-    if(isset($_POST['location_submit'])){
-        echo $_POST['location'];
-        $location = $_POST['location'];
-    }
-    //Account part
-    if(isset($_POST['first_name_submit'])){
-        echo $_POST['first_name'];
-        $firstName = $_POST['first_name'];
-    }
-    if(isset($_POST['last_name_submit'])){
-        echo $_POST['last_name'];
-        $lastName = $_POST['last_name'];
-    }
-    if(isset($_POST['email_submit'])){
-        echo $_POST['email'];
-        $email = $_POST['email'];
-    }
-    if(isset($_POST['password_submit'])){
-        echo $_POST['password'];
-    }
-    //Privacy part
-    if(isset($_POST['blog_privacy_submit']))
-    {
-        echo $_POST['blog_privacy'];
-    }
-    if(isset($_POST['info_privacy_submit']))
-    {
-        echo $_POST['info_privacy'];
-    }
+    include "templates/settingsPhp.php";
 ?>
 <!DOCTYPE html>
 <html lang="en-gb">

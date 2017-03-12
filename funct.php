@@ -122,8 +122,6 @@
      * Returns an array of all blogs that contain a given search term as a whole word
      */
     function getBlogsFromSearchTerm00(string $term){
-        // TODO Only search friends?
-        // TODO Chronological ordering?
         $db = new db();
         $db->connect();
         $searchTerm = '% '.$term.' %';

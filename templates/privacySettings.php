@@ -8,10 +8,10 @@
 
             <form action="settings.php" method="post">
                 <select class="form-control" name="blog_privacy">
-                    <option value="0" selected>Everyone</option>
-                    <option value="1">Friends and friends of friends</option>
-                    <option value="2">Friends only</option>
-                    <option value="3">Just me</option>
+                    <option value="0" <?php if($blogPrivacy == 0){ echo 'selected'; }?> >Everyone</option>
+                    <option value="1" <?php if($blogPrivacy == 1){ echo 'selected'; }?> >Friends and friends of friends</option>
+                    <option value="2" <?php if($blogPrivacy == 2){ echo 'selected'; }?> >Friends only</option>
+                    <option value="3" <?php if($blogPrivacy == 3){ echo 'selected'; }?> >Just me</option>
                 </select>
                 <input type="submit" name="blog_privacy_submit" value="Submitted"/>
             </form>
@@ -19,10 +19,10 @@
             <h5>Who can see my personal info:</h5>
             <form action="settings.php" method="post">
                 <select class="form-control" name="info_privacy">
-                    <option selected>Everyone</option>
-                    <option>Friends and friends of friends</option>
-                    <option>Friends only</option>
-                    <option>Just me</option>
+                    <option value="0" <?php if($infoPrivacy == 0){ echo 'selected'; }?> >Everyone</option>
+                    <option value="1" <?php if($infoPrivacy == 1){ echo 'selected'; }?> >Friends and friends of friends</option>
+                    <option value="2" <?php if($infoPrivacy == 2){ echo 'selected'; }?> >Friends only</option>
+                    <option value="3" <?php if($infoPrivacy == 3){ echo 'selected'; }?> >Just me</option>
                 </select>
                 <input type="submit" name="info_privacy_submit" value="Submitted" />
             </form>
