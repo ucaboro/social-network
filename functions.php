@@ -569,7 +569,7 @@ function getBlogPostWithID($postID) {
   $statement->execute();
   $result = $statement->get_result();
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return createBlogObject($row);//new blogPost($row["postID"], $row["headline"] , getUserWithID($row["userID"]), new DateTime("time"));
+  return createBlogObject($row);
 }
 
 /*

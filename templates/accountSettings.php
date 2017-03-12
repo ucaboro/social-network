@@ -48,6 +48,11 @@
                         <button class="btn btn-primary" type="submit" name="email_submit" value="Submit" form="email_form">Change</button>
                     </div>
                 </div>
+                <?php //If change in email submitted
+                if(isset($_POST['email_submit']))
+                {
+                    displayErrors($errors);
+                } ?>
                 <h5>Change Password:</h5>
                 <form id="password_form" action="settings.php" method="POST">
                     <div class="form-group">
@@ -65,6 +70,11 @@
                         <button class="btn btn-primary" type="submit" name="password_submit" value="Submit" form="password_form">Change Password</button>
                     </div>
                 </div>
+                <?php //If change in password submitted
+                if(isset($_POST['password_submit']))
+                {
+                    displayErrors($errors);
+                } ?>
             </div>
         </div>
     </div>
