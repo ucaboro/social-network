@@ -32,12 +32,15 @@ checkLoggedIn();?>
                 $name = $user->getFullName();
                 $time = $photo->time->format("d M Y H:i");
                 $profileUrl = $user->getUrlToProfile();
-                echo "<div class=\"col-xs-12\">
+                echo "<div class=\"col-xs-12 \">
                   <div class=\"feed-profile-image\"><a href=\"\">$profileImg</a></div>
                   <span>Photo uploaded by <a href=\"$profileUrl\">$name</a></span><br>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
+                <div class="col-xs-12 ">
+                    <button type="button" class="btn btn-primary pull-right">Set as profile picture</button>
+                </div>
               </div>
             </div>
           </div>

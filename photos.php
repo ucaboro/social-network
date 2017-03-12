@@ -49,6 +49,7 @@ if(isset($_FILES['image'])){
    if(empty($photoUploadErrors)==true) {
       move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
       addPhotoToDB($randomName.".".$file_ext,$dateString);
+      $isPhotoUploaded=TRUE;
    }
 }
 
@@ -70,7 +71,7 @@ if(isset($_FILES['image'])){
           ?>
           <!-- /END Profile summary -->
 
-          <!-- Photos -->
+          <!-- Upload Photos -->
           <div class="panel panel-primary">
             <div class="panel-heading">
               <h4 class="panel-title">Upload Photos</h4>
@@ -87,7 +88,7 @@ if(isset($_FILES['image'])){
                   if(isset($_FILES['image']))
                   {
                       // Show success message if no errors occured or else display errors as alerts
-                      if(empty($photoUploadErrors)){
+                      if ($isPhotoUploaded) {
                         echo "
                         <div class=\" col-xs-12 panel-body alert alert-success\" role=\"alert\">
                         Photo Successfully uploaded</span>
@@ -102,11 +103,17 @@ if(isset($_FILES['image'])){
                         echo "</div>";
                       }
                   }
+
+                  // Initialises an empty array for storing photo upload errors.
+                   $photoUploadErrors= array();
+
+                   $_FILES['image']=null;
+                   unset($GLOBALS['_SESSION'][$_FILES['image']]);
               ?>
 
             </div>
           </div>
-          <!-- /END Photos -->
+          <!-- /END Upload Photos -->
 
           <!-- Photos -->
           <div class="panel panel-primary">

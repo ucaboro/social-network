@@ -175,12 +175,14 @@ function getUserWithID(int $id) {
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Photos are returned in date-descending order.
  */
 function getPhotosOwnedByUser(user $user, int $limit = 0): array {
+  $userID =$user->getUserID();
+
 // Sets a default number of photos to be returned if no limit is specified.
   if ($limit == 0) { $limit = 18; }
   $db = new db();
   $db->connect();
   $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? LIMIT ?");
-  $statement ->bind_param("ii", $user->getUserID, $limit);
+  $statement ->bind_param("ii", $userID, $limit);
   $statement->execute();
   $result = $statement->get_result();
 
@@ -276,13 +278,16 @@ function getRecentActivityFeed() {
                               select photoID from photocollectionassignment where collectionID in
                               (select collectionID from photocollection where isVisibleToFriendsOfFriends = 1
                               and userID in
-                              -- selects all the userIDs of the friends of friends of the gived userID who is not already a friend.
+                              -- this selection makes sure the friends of friends are selected while making sure
+                              -- the user himself and his direct friends are not selected.
                               (select userID from user where userID != ? and
                               userID not in
+                              -- makes sure direct friends of ther user is not selected
                               (select userID2 as 'userID' from friendship
                               where isConfirmed = true and userID1 = ? union
                               select userID1 as 'userID' from friendship
                               where isConfirmed = true and userID2 = ?)
+                              -- chooses the friends of friends
                               and userID in
                               (select userID2 as 'userID' from friendship
                               where isConfirmed = true and userID1
@@ -299,6 +304,7 @@ function getRecentActivityFeed() {
                               where isConfirmed = true and userID1 = ? union
                               select userID1 as 'userID' from friendship
                               where isConfirmed = true and userID2 = ?))))
+                              -- friends of friends part ends here
                               union
                               select photoID from photocollectionassignment where collectionID in
                               (select collectionID from photocollection where
@@ -336,7 +342,7 @@ function getPhotoWithID(int $photoID) {
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"].".jpg" );
+  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
 /*
@@ -351,7 +357,7 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
     $statement->bind_param("ii", $userID, $numberOfPhotos);
   } else {
     $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND()");
-    $statement->bind_param("i", $user->getUserID());
+    $statement->bind_param("i", $userID);
   }
   $statement->execute();
   $result = $statement->get_result();
@@ -372,27 +378,40 @@ function getFriendsOfFriendsOfUser(user $user): array {
   $db = new db();
   $db->connect();
 
-  $statement = $db -> prepare("select userID2 as 'userID' from friendship
-                                where isConfirmed = true and userID1 = ? union
-                                select userID1 as 'userID' from friendship
-                                where isConfirmed = true and userID2 = ?)
-                                and userID in
-                                (select userID2 as 'userID' from friendship
-                                where isConfirmed = true and userID1
-                                in
-                                (select userID2 as 'userID' from friendship
-                                where isConfirmed = true and userID1 = ? union
-                                select userID1 as 'userID' from friendship
-                                where isConfirmed = true and userID2 = ?)
-                                union
-                                select userID1 as 'userID' from friendship
-                                where isConfirmed = true and userID2
-                                in
-                                (select userID2 as 'userID' from friendship
-                                where isConfirmed = true and userID1 = ? union
-                                select userID1 as 'userID' from friendship
-                                where isConfirmed = true and userID2 = ?)))");
-  $statement->bind_param("ii", $userId,$userId);
+  $statement = $db -> prepare("select userID from user where userID != ? and
+                              userID not in
+                              -- makes sure direct friends of ther user is not selected
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              -- chooses the friends of friends
+                              and userID in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?))");
+  $statement->bind_param("iiiiiii", $userId, $userId, $userId, $userId, $userId, $userId,$userId);
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $friendsArray = array();
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $friendsArray[$row["userID"]] = getUserWithID($row["userID"]);
+  }
+
+  return $friendsArray;
 }
 
 /*

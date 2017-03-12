@@ -50,7 +50,7 @@ checkLoggedIn();
 
 
                 <?php
-                    //If registration form submitted
+                    //If blog post submitted
                     if(isset($_POST['blogSubmit']))
                     {
                         //And if errors occured, display errors as alerts
