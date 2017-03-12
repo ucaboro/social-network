@@ -58,7 +58,7 @@
             //Security
             $length = 7;
             if(!minLength($password, $length) || !specialChars($password)){
-                $errors[] = "Passwords must be at least " . $length . " characters long and contain at least one non-alphabetical character, i.e. a number of symbol.";
+                $errors[] = "Passwords must be at least " . $length . " characters long and contain at least one non-alphabetical character, i.e. a number or symbol.";
             }
 
         }

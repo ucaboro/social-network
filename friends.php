@@ -37,7 +37,12 @@ checkLoggedIn();?>
             <div class="panel-body">
               <?php
               // Get the array of friends
-              $friends = getFriendsOfUser(getUser(), $searchTerm);
+              if ($isSearch) {
+                $friends = getFriendsOfUser(getUser(), $searchTerm);
+              } else {
+                $friends = getUser()->getFriends();
+              }
+
               // Output each one
               foreach ($friends as $friend) {
                 echo getHtmlForUserSummarySearchResult($friend, true, false, false);

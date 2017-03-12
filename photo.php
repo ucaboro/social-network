@@ -38,8 +38,9 @@ checkLoggedIn();?>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
-                <div class="col-xs-12 ">
-                    <button type="button" class="btn btn-primary pull-right">Set as profile picture</button>
+                <div class="row">
+                  <button type="button" class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
+                  <button type="button" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
                 </div>
               </div>
             </div>
