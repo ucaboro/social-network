@@ -27,7 +27,6 @@
                 $errors[] = $key . " field is empty, required fields cannot be left blank. ";
             }
         }
-
         //Email
         //Only test for further errors if field is non-empty //Better to do with with !presence? or some other way?
         if (!isset($presenceErrors["Email"])) {
@@ -37,16 +36,9 @@
             }
             //
             if (!uniqueEmail($email)) {
-                $errors[] = "There already exists and account for this email address";
+                $errors[] = "There already exists an account for this email address";
             }
         }
-        //Names
-        /*if (!isset($presenceErrors["First Name"])) {
-
-        }
-        if (!isset($presenceErrors["Surame"])) {
-
-        }*/
         //Password
         //Only test for further errors if field is non-empty
         if (!isset($presenceErrors["Password"]) && !isset($presenceErrors["Confirm Password"]))
@@ -62,8 +54,7 @@
             }
 
         }
-
-        //If no validation errors, upload to database //Should really do email confirmation or something
+        //If no validation errors, upload to database
         if(empty($errors))
         {
             register($firstName, $lastName, $email, $password);
@@ -116,21 +107,12 @@
                 if(isset($_POST['submit']))
                 {
                     //And if errors occured, display errors as alerts
-                    if(!empty($errors))
-                    {
-                        echo "<div class=\"alert alert-danger\" role=\"alert\">Registration unsuccessful: <br>";
-                        foreach ($errors as $error)
-                        {
-                            echo $error . "<br>";
-                        }
-                        echo "</div>";
-                    }
+                    displayErrors($errors);
                 }
             ?>
         </div>
       </div>
     </div>
-
 
     <!-- JQuery javascript -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

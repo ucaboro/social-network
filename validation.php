@@ -114,3 +114,21 @@
         return array($presence, $match,$minLength, $specialChars);
     }
 
+    /////////////////SETTINGS VALIDATION FUNCTIONS///////////////////////////
+    function checkBeforeUpdate($oldValue, $newValue){
+        return ($oldValue!= trim($newValue)) && ( presence(trim($newValue)) );
+    }
+
+    function displayErrors($errors){
+        //And if errors occured, display errors as alerts
+        if(!empty($errors))
+        {
+            echo "<div class=\"alert alert-danger\" role=\"alert\"> ";
+            foreach ($errors as $error)
+            {
+                echo $error . "<br>";
+            }
+            echo "</div>";
+        }
+    }
+

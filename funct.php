@@ -56,6 +56,39 @@
         }
     }
 
+    //Function to check if email password pair match at login
+    function checkPasswordOfLoggedInUser($password){
+        $user = getUserRowFromID($_SESSION['userID']);
+        $storedHash = $user['password'];
+        //If password matches, set the Session value for userID, so the site knows the user is logged in
+        if(password_verify($password, $storedHash)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    //Get User from Id, but not as a object, rather as an associative array that contains the hashed password
+    function getUserRowFromID($id){
+        //Create database object
+        $database = new db();
+        //Connect to database
+        $database->connect();
+        //Query as prepared statement
+        $stmt = $database->prepare("SELECT * FROM User WHERE userID = ? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        //Check to see if query successful
+        check_query($result, $database);
+        if($user = mysqli_fetch_assoc($result)){
+            return $user;
+        }
+        else{
+            return null;
+        }
+    }
+
     //Returns a user for a given email
     function getUserFromEmail($email){
         //Create database object
@@ -75,7 +108,6 @@
         else{
             return null;
         }
-
     }
 
     //Get userID from given email, used to update session
