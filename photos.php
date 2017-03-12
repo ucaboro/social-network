@@ -6,37 +6,49 @@ $photoStorageLocation="img/";
 
 $isPhotoUploaded=false;
 if(isset($_FILES['image'])){
+  // Initialises an empty array for storing photo upload errors.
    $photoUploadErrors= array();
+
+  //  Extracts the photo file details
    $file_name = $_FILES['image']['name'];
    $file_size = $_FILES['image']['size'];
    $file_tmp = $_FILES['image']['tmp_name'];
    $file_type = $_FILES['image']['type'];
 
+  //  Time of photo upload
    $date = new DateTime();
    $dateString = $date->format('YmdHis');
 
-   $file_prePreExt=explode('.',$file_name);
-   $file_preext=end($file_prePreExt);
-   $file_ext=strtolower($file_preext);
+  //  splits the filename seperated by period and stores it into an array.
+   $file_name_Array=explode('.',$file_name);
+  //  selects the last element of that array, which is the extension.
+   $file_ext=end($file_name_Array);
+  //  converts the extension into fully lower case so that it is easier to compare against valid formats.
+   $file_ext_lower_case=strtolower($file_ext);
 
+  //  The valid photo extensions.
    $extensions= array("jpeg","jpg","png");
 
-   if(in_array($file_ext,$extensions)=== false){
-      $photoUploadErrors[]="extension not allowed, please choose a JPEG or PNG file.";
+  //  Checks if the uploaded photo has a valid extension.
+   if(in_array($file_ext_lower_case,$extensions)=== false){
+      $photoUploadErrors[]="The file you uploaded is not in a valid format, please choose a JPEG or PNG file.";
    }
 
-   if($file_size > 2097152) {
-      $photoUploadErrors[]='File size must be less than 2 MB';
-   }
+  //  Checks if the photo is under the size limit.
+  //  if($file_size > 2097152) {
+  //     $photoUploadErrors[]='File size must be less than 2 MB';
+  //  }
 
+  // Assigns a random number for the photoname and runs through a loop to make the random file name assigned doesn't already exist.
    $randomName = RAND(1,50000);
-   while (!isPhotoNameExitst($randomName.$file_ext)) {
+   while (isPhotoNameExitst($randomName.$file_ext)) {
      $randomName = RAND(1,50000);
    }
+
+  // Checks if any errors exist, if not then it transfers the photo to the storage location and registers the photo info into the database.
    if(empty($photoUploadErrors)==true) {
       move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
       addPhotoToDB($randomName.".".$file_ext,$dateString);
-
    }
 }
 
@@ -58,12 +70,6 @@ if(isset($_FILES['image'])){
           ?>
           <!-- /END Profile summary -->
 
-
-          <!-- <div class="panel-body">
-              <input type="file" class="btn btn-primary pull-right" action="\uploadPhoto.php">Add Photos</input>
-          </div> -->
-
-
           <!-- Photos -->
           <div class="panel panel-primary">
             <div class="panel-heading">
@@ -77,10 +83,10 @@ if(isset($_FILES['image'])){
                 </form>
               </div>
               <?php
-                  //If registration form submitted
+                  //If photo upload submitted
                   if(isset($_FILES['image']))
                   {
-                      //And if errors occured, display errors as alerts
+                      // Show success message if no errors occured or else display errors as alerts
                       if(empty($photoUploadErrors)){
                         echo "
                         <div class=\" col-xs-12 panel-body alert alert-success\" role=\"alert\">

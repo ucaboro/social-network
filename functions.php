@@ -276,6 +276,7 @@ function getRecentActivityFeed() {
                               select photoID from photocollectionassignment where collectionID in
                               (select collectionID from photocollection where isVisibleToFriendsOfFriends = 1
                               and userID in
+                              -- selects all the userIDs of the friends of friends of the gived userID who is not already a friend.
                               (select userID from user where userID != ? and
                               userID not in
                               (select userID2 as 'userID' from friendship
@@ -363,6 +364,38 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 }
 
 /*
+ * Returns an array of users who are friends of friends (who are not alread friends) with the given user.
+ * Optionally filters the list based on a search string.
+ */
+function getFriendsOfFriendsOfUser(user $user): array {
+  $userID =$user->getUserID();
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("select userID2 as 'userID' from friendship
+                                where isConfirmed = true and userID1 = ? union
+                                select userID1 as 'userID' from friendship
+                                where isConfirmed = true and userID2 = ?)
+                                and userID in
+                                (select userID2 as 'userID' from friendship
+                                where isConfirmed = true and userID1
+                                in
+                                (select userID2 as 'userID' from friendship
+                                where isConfirmed = true and userID1 = ? union
+                                select userID1 as 'userID' from friendship
+                                where isConfirmed = true and userID2 = ?)
+                                union
+                                select userID1 as 'userID' from friendship
+                                where isConfirmed = true and userID2
+                                in
+                                (select userID2 as 'userID' from friendship
+                                where isConfirmed = true and userID1 = ? union
+                                select userID1 as 'userID' from friendship
+                                where isConfirmed = true and userID2 = ?)))");
+  $statement->bind_param("ii", $userId,$userId);
+}
+
+/*
  * Returns an array of users who are friends with the given user.
  * Optionally filters the list based on a search string.
  */
@@ -373,8 +406,9 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
   $db->connect();
   if (is_null($filter)) {
     // If the search parameter is NULL then it returns all the friends of the user
-    $statement = $db -> prepare("select userID2 as 'userID' from friendship where isConfirmed = true and userID1 = ? union select userID1 as 'userID' from friendship where isConfirmed = true and userID2 = ?");
-    $statement->bind_param("ii", $user->getUserID,$user->getUserID);
+    $statement = $db -> prepare("select userID2 as 'userID' from friendship where isConfirmed = true and userID1 = ?
+                                  union select userID1 as 'userID' from friendship where isConfirmed = true and userID2 = ?");
+    $statement->bind_param("ii", $userId,$userId);
   } else {
     // If a search parameter exists then it looks if that term is contained in either the firstName,
     // lastName or location, it would also select the user whose e-mail is an excact match
@@ -470,7 +504,7 @@ function isFriendRequestPending(user $sender, user $receiver) {
 function isPhotoNameExitst($photoName) : bool {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT filename FROM photo WHERE filename =  ?  ");
+  $statement = $db -> prepare("SELECT photoID FROM photo WHERE filename =  ?  ");
   $statement->bind_param("s", $photoName);
   $statement->execute();
   $result = $statement->get_result();
@@ -601,7 +635,7 @@ function requestFriendship(int $userID) {
     $db = new db();
     $db->connect();
     $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
-    $stmt->bind_param("isss",$thisUserID,$photoName,$dateString);
+    $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
     $stmt->execute();
   }
 ?>
