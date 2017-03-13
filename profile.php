@@ -16,21 +16,50 @@ checkLoggedIn();?>
               <div class="row">
                 <div class="col-xs-3">
                   <?php
-                  $userID = getValueFromGET("u");
-                  $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
-                  echo getHtmlForSquareImage($user->photoSrc);
+                      $userID = getValueFromGET("u");
+                      $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                      if(areUsersFriendsWithID($userID, $_SESSION['userID'])) {
+                          $areFiends = true;
+                          $areFriendsOfFriends = true;
+                      }
+                      else if(areUsersFriendsOfFriends($userID, $_SESSION['userID'])){
+                          $areFiends = false;
+                          $areFriendsOfFriends = true;
+                      }
+                      else{
+                          $areFiends = false;
+                          $areFriendsOfFriends = false;
+                      }
+                    echo getHtmlForSquareImage($user->photoSrc);
                   ?>
                 </div>
                 <div class="col-xs-9">
                   <div class="row">
                     <div class="col-xs-12">
                       <span class="h2"><?php echo $user->getFullName(); ?></span><br>
-                      <span class="h5"><?php echo $user->getAge() . " years old, " . $user->location; ?> </span>
+                        <?php echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $areFiends . " areFriendsOfFriends " . $areFriendsOfFriends; ?>
+                        <?php
+                            if(displayInfo($user, $areFiends, $areFriendsOfFriends)){
+                                echo "<span class=\"h5\"><?php echo $user->getAge() . \" years old, \" . $user->location; ?> </span>";
+                            }
+                            else{
+                                echo "<h1>Not showing info</h1>";
+                            }
+                        ?>
+                      <!--<span class="h5"><?php /*echo $user->getAge() . " years old, " . $user->location; */?> </span>-->
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
-                      You are friends.
+                      <?php
+                        if($areFiends)
+                        {
+                            echo "You are friends.";
+                        }
+                        else{
+                            echo "You aren't friends";
+                        }
+                      ?>
                     </div>
                   </div>
                 </div>
@@ -64,7 +93,17 @@ checkLoggedIn();?>
           </div>
           <!-- /END Photos -->
           <!-- Blog Posts -->
-          <?php echo getHtmlForBlogPostsListPanel($user, 6, true); ?>
+            <?php
+                print_r($user);
+                echo ($user->blogVisibility < 2) . "<br><br>";
+                if(displayBlog($user, true, true)){
+                    echo getHtmlForBlogPostsListPanel($user, 6, true);
+                }
+                else{
+                    echo "<h1>Not showing Blogs</h1>";
+                }
+                /*echo getHtmlForBlogPostsListPanel($user, 6, true); */
+            ?>
           <!-- /END Photos -->
         </div>
         <div class="col-md-4">

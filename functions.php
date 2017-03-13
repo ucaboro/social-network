@@ -44,7 +44,6 @@ function getValueFromGET(string $key) {
   return $stmt;
 }
 
-
 /*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
@@ -65,7 +64,6 @@ function getUserID() {
       return 1;
   }
 }
-
 
 /*
  * Returns an array of the circles that a user is a member of. Key is circle ID, value is circle object.
@@ -501,15 +499,37 @@ function getUsers(string $filter): array {
   return $usersArray;
 }
 
+function areUsersFriendsOfFriends(int $userID1, int $userID2){
+    return true;
+}
+function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare(" SELECT (CASE
+                                WHEN (userID1 = ? and userID2 = ?) THEN 1
+                                WHEN (userID2 = ? and userID1 = ?) THEN 1
+                                ELSE 0 END) as 'result', isConfirmed
+                                FROM friendship
+                                WHERE isConfirmed = 1");
+    $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
+    $statement->execute();
+    $result = $statement->get_result();
+    // Check result. 1 means they are friends.
+    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        if ($row["result"] == 1) { return true; }
+    }
+    return false;
+}
+
 /*
  * Returns true if the users are friends, false otherwise.
  */
 function areUsersFriends(user $user1, user $user2): bool {
-  $db = new db();
-  $db->connect();
+  /*$db = new db();
+  $db->connect();*/
   $userID1 = $user1->getUserID();
   $userID2 = $user2->getUserID();
-  $statement = $db -> prepare(" SELECT (CASE
+  /*$statement = $db -> prepare(" SELECT (CASE
                                 WHEN (userID1 = ? and userID2 = ?) THEN 1
                                 WHEN (userID2 = ? and userID1 = ?) THEN 1
                                 ELSE 0 END) as 'result', isConfirmed
@@ -523,7 +543,45 @@ function areUsersFriends(user $user1, user $user2): bool {
   while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
     if ($row["result"] == 1) { return true; }
   }
-  return false;
+  return false;*/
+    return areUsersFriendsWithID($userID1, $userID2);
+}
+
+/*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
+function displayBlog($user, $friends, $friendsOfFriends){
+    print_r($user);
+    if($user->blogVisibility < 1){
+        true;
+    }
+    else if( ($user->blogVisibility < 2) && $friends){
+        true;
+    }
+    else if( ($user->blogVisibility < 3) && $friendsOfFriends){
+        true;
+    }
+    else{
+        echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
+        false;
+    }
+}
+
+/*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
+function displayInfo($user, $friends, $friendsOfFriends){
+    echo "$user->infoVisibility = " . $user->infoVisibility;
+    echo "($user->infoVisibility < 100) = " . ($user->infoVisibility < 100)
+    if($user->infoVisibility < 100){
+        true;
+    }
+    else if( ($user->infoVisibility < 2) && $friends){
+        true;
+    }
+    else if( ($user->infoVisibility < 3) && $friendsOfFriends){
+        true;
+    }
+    else{
+        echo "Info visibility = " . $user->infoVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
+        false;
+    }
 }
 
 /*
