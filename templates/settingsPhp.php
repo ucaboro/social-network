@@ -11,6 +11,7 @@
     $blogPrivacy = $user->blogVisibility;
     $infoPrivacy = $user->infoVisibility;
     $errors = array();
+    $userID = $user->getUserID(); //This is public but for some reason we have a getter
 
     //Post part for personal settings
     if(isset($_POST['dob_submit'])) {               //If submit button pressed and page reloaded, then validate and save to database
@@ -25,6 +26,7 @@
         if(checkBeforeUpdate($location, $_POST['location'])){
             echo $_POST['location'];
             $location = trim($_POST['location']);
+            updateUserCell("location", $location, $userID);
         }
     }
     //Account part
@@ -33,6 +35,7 @@
         if(checkBeforeUpdate($firstName, $_POST['first_name'])){
             echo $_POST['first_name'];
             $firstName = trim($_POST['first_name']);
+            updateUserCell("firstName", $firstName, $userID);
         }
     }
     if(isset($_POST['last_name_submit'])){
@@ -40,9 +43,10 @@
         if(checkBeforeUpdate($lastName, $_POST['last_name'])){
             echo $_POST['last_name'];
             $lastName = trim($_POST['last_name']);
+            updateUserCell("lastName", $lastName, $userID);
         }
     }
-    if(isset($_POST['email_submit'])){
+    if(isset($_POST['email_submit'])){ //Are you sure pop-ups?
         //If field empty or unchanged
         if(!checkBeforeUpdate($email, $_POST['email'])){
             //Do nothing

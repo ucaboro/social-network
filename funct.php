@@ -140,6 +140,26 @@
         }
     }
 
+    /** Update a cell in the user database for a user defined by userID
+     * @param $columnName   name of column to update, i.e. "location"
+     * @param $cellContent  content to update with, i.e. "Chicago"
+     * @param $userID       id of user to to be updated
+     * Note columnName is not protected by the prepared statement, so if it was user inputted it would have to be escaped
+     * However as it will just be one of several predefined strings and hardcoded this is not a danger
+     */
+    function updateUserCell($columnName, $cellContent, $userID){
+        //Create database object
+        $database = new db();
+        //Connect to database
+        $database->connect();
+        //Perform query as prepared statement
+        $stmt = $database->prepare("UPDATE User SET $columnName = ? WHERE userID = ?");
+        $stmt->bind_param("si", $cellContent, $userID);
+        $result =$stmt->execute();
+        //Check if query was successful
+        check_query($result, $database);
+    }
+
     //Encrypt a password
     function passwordEncrypt($password){
         return password_hash($password, PASSWORD_DEFAULT);
