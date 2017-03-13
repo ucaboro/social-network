@@ -1,4 +1,5 @@
 <?php include "imports.php";
+include "templates\script.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn(); ?>
 <!DOCTYPE html>
@@ -35,8 +36,12 @@ checkLoggedIn(); ?>
                     <div class="form-group">
                       <textarea id="msg" name="msg" class="form-control" rows="2" placeholder="Send a message..."></textarea>
 
-                    <h1 id="alert">INFO</h1>
-
+                    <div id="alert" class="alert alert-danger" role="alert"></div>
+                    <div id="success" class="alert alert-success" role="alert"></div>
+                    <script>
+                    $('#alert').hide();
+                    $('#success').hide();
+                    </script>
                     </div>
                   </form>
                   <div class="row">
@@ -98,9 +103,11 @@ checkLoggedIn(); ?>
 
     <script>
     // TODO: PUSH BELOW CODE INTO sript.js after proper testing
-     
+
+
     var crcl = $('#circleID').val();
     var alert = document.getElementById("alert");
+    var success = document.getElementById("success");
 
       var doSmth = function () {
         console.log("hapenning");
@@ -110,8 +117,12 @@ checkLoggedIn(); ?>
         var msg = $('#msg').val();
 
         if (msg.length == 0){
-          alert.innerHTML = "type a message first";
+           $('#alert').show();
+          alert.innerHTML = "type your message first";
         } else{
+          $('#alert').hide();
+          $('#success').show();
+          success.innerHTML = "sent!";
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'ajax/sendMessage.php', true);
         xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
