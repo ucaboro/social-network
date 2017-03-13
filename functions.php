@@ -27,6 +27,25 @@ function getValueFromGET(string $key) {
 }
 
 /*
+ * Inserts a message into datbase
+ */
+ function sendMessage($message, $circleID) {
+
+  $userID = getUser()->id;
+  //$timeUnformatted = new DateTime();
+  //$time = date_format($timeUnformatted, 'Y-m-d H:i:s');
+
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO circlemessage (circleID, userID, message, time) VALUES (?,?,?,NOW())");
+  $stmt->bind_param("iis", $circleID, $userID, $message);
+  $stmt->execute();
+
+  return $stmt;
+}
+
+
+/*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUser() {
