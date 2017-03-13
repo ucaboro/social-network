@@ -125,7 +125,7 @@
         //Connect to database
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO User (email, firstName, lastName, password) VALUES (?, ?, ?, ?)");
+        $stmt = $database->prepare("INSERT INTO User (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
         $stmt->bind_param("ssss", $email, $firstName, $lastName, $hashedPassword);
         $result =$stmt->execute();
         //Check if query was successful
@@ -201,10 +201,10 @@
         $db = new db();
         $db->connect();
         $searchTerm = '% '.$term.' %';
-        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE 
-                                    (post LIKE ? OR headline LIKE ?) 
-                                    AND userID IN 
-                                    (SELECT userID2 as 'userID' FROM friendship 
+        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE
+                                    (post LIKE ? OR headline LIKE ?)
+                                    AND userID IN
+                                    (SELECT userID2 as 'userID' FROM friendship
                                     WHERE userID1 = ? AND isConfirmed = True UNION
                                     SELECT userID1 as 'userID' FROM friendship
                                     WHERE isConfirmed = TRUE AND userID2 = ?)
@@ -229,5 +229,3 @@
     function createBlogObject($row){
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
-
-
