@@ -28,7 +28,7 @@
           <li><a href="profile.php">My profile</a></li>
           <li><a href="settings.php">Settings</a></li>
           <li role="separator" class="divider"></li>
-          <li><a href="logout.php">Log out</a></li>
+          <li><a href="logout.php" onclick="return confirm('Are you sure you want to log out?')">Log out</a></li>
         </ul>
       </div>
     </div>
