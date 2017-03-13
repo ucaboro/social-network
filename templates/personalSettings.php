@@ -19,14 +19,28 @@
                         <button class="btn btn-primary" type="submit" name="location_submit" value="Submit" form="location_form">Submit</button>
                     </div>
                 </div>
-                <div>
-                    When were you born?
+                <div class="row">
+                    <div class="col-xs-10">
+                        When were you born?
+                        <form id="dob_form" action="settings.php" method="POST">
+                            <div class="form-group">
+                                <input class="form-control" type="date" name="dob" value="<?php echo htmlspecialchars($dob)?>">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-xs-2">
+                        <br>
+                        <button class="btn btn-primary" type="submit" name="dob_submit" value="submit" form="dob_form">Submit</button>
+                    </div>
+                </div>
+                <!--<div>
+                   When were you born?
                     <form action="settings.php" method="post">
                         <div class="row">
                             <div class="col-xs-10">
                                 <div class="form-group ">
                                     <div class="input-group date">
-                                        <input type="text" name="dob" class="form-control" value="<?php echo htmlspecialchars($dob)?>"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                        <input type="text" name="dob" class="form-control" value="<?php /*echo htmlspecialchars($dob)*/?>"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +53,7 @@
                             </div>
                         </div>
                     </form>
-                </div>
+                </div>-->
 
             </div>
         </div>

@@ -37,7 +37,7 @@
                 <div class="row">
                     <div class="col-xs-10">
                         Email:
-                        <form id="email_form" action="settings.php" method="POST">
+                        <form id="email_form" action="settings.php" method="POST" onsubmit="return confirm('Do you really want to change your email?');">
                             <div class="form-group">
                                 <input class="form-control" name="email" value="<?php echo htmlspecialchars($email)?>">
                             </div>
@@ -49,20 +49,19 @@
                     </div>
                 </div>
                 <?php //If change in email submitted
-                if(isset($_POST['email_submit']))
-                {
+                if(isset($_POST['email_submit'])) {
                     displayErrors($errors);
                 } ?>
                 <h5>Change Password:</h5>
-                <form id="password_form" action="settings.php" method="POST">
+                <form id="password_form" action="settings.php" method="POST" onsubmit="return confirm('Do you really want to change your password?');">
                     <div class="form-group">
-                        <input class="form-control" name="old_password" placeholder="Old Password">
+                        <input type="password" class="form-control" name="old_password" placeholder="Old Password">
                     </div>
                     <div class="form-group">
-                        <input class="form-control" name="new_password" placeholder="New Password">
+                        <input type="password" class="form-control" name="new_password" placeholder="New Password">
                     </div>
                     <div class="form-group">
-                        <input class="form-control" name="confirm_new_password" placeholder="Confirm New Password">
+                        <input type="password" class="form-control" name="confirm_new_password" placeholder="Confirm New Password">
                     </div>
                 </form>
                 <div class="row">
@@ -71,8 +70,7 @@
                     </div>
                 </div>
                 <?php //If change in password submitted
-                if(isset($_POST['password_submit']))
-                {
+                if(isset($_POST['password_submit'])) {
                     displayErrors($errors);
                 } ?>
             </div>

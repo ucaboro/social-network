@@ -4,7 +4,7 @@
     //Get current values from database
     $user = getUser();
     $dob = ($user->dateOfBirth == null) ? "" : $user->dateOfBirth->format('Y-m-d'); //This defaults to today apparently
-    $location = ($user->location == null) ? "" : $user->location; //$date->format('YmdHis')
+    $location = ($user->location == null) ? "" : $user->location;
     $firstName = $user->firstName;
     $lastName = $user->lastName;
     $email = $user->email;
@@ -20,6 +20,7 @@
             echo $_POST['dob'];
             //Update dob variable
             $dob = trim($_POST['dob']);
+            updateUserCell("date", $dob, $userID);
         }
     }
     if(isset($_POST['location_submit'])) {
@@ -64,6 +65,7 @@
             //Update
             echo $_POST['email'];
             $email = trim($_POST['email']);
+            updateUserCell('email', $email, $userID);
         }
     }
     if(isset($_POST['password_submit'])){
@@ -88,6 +90,7 @@
         }
         else{
             echo "Updating passwords yo.";
+            updateUserCell('password', passwordEncrypt($newPassword), $userID);
         }
     }
     //Privacy part
@@ -97,6 +100,7 @@
         if($blogPrivacy != $_POST['blog_privacy']){
             echo $_POST['blog_privacy'];
             $blogPrivacy = $_POST['blog_privacy'];
+            updateUserCell('blogVisibility', $blogPrivacy, $userID);
         }
     }
     if(isset($_POST['info_privacy_submit']))
@@ -105,5 +109,6 @@
         if($infoPrivacy != $_POST['info_privacy']){
             echo $_POST['info_privacy'];
             $infoPrivacy = $_POST['info_privacy'];
+            updateUserCell('infoVisibility', $infoPrivacy, $userID);
         }
     }
