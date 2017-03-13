@@ -37,13 +37,12 @@ checkLoggedIn();?>
                   <div class="row">
                     <div class="col-xs-12">
                       <span class="h2"><?php echo $user->getFullName(); ?></span><br>
-                        <?php echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $areFiends . " areFriendsOfFriends " . $areFriendsOfFriends; ?>
                         <?php
                             if(displayInfo($user, $areFiends, $areFriendsOfFriends)){
                                 echo '<span class=\"h5\">' . $user->getAge() . " years old, " . $user->location . ' </span>';
                             }
                             else{
-                                echo "<h1>Not showing info</h1>";
+                                echo "<h1>This users personal info is not currently visible to you</h1>";
                             }
                         ?>
                       <!--<span class="h5"><?php /*echo $user->getAge() . " years old, " . $user->location; */?> </span>-->
@@ -94,13 +93,11 @@ checkLoggedIn();?>
           <!-- /END Photos -->
           <!-- Blog Posts -->
             <?php
-                print_r($user);
-                echo ($user->blogVisibility < 2) . "<br><br>";
                 if(displayBlog($user, $areFiends, $areFriendsOfFriends)){
                     echo getHtmlForBlogPostsListPanel($user, 6, true);
                 }
                 else{
-                    echo "<h1>Not showing Blogs</h1>";
+                    echo "<h1>This users blog is not currently visible to you</h1>";
                 }
                 /*echo getHtmlForBlogPostsListPanel($user, 6, true); */
             ?>

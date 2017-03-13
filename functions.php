@@ -387,7 +387,7 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 }
 
 /*
- * Returns an array of users who are friends of friends (who are not alread friends) with the given user.
+ * Returns an array of users who are friends of friends (who are not already friends) with the given user.
  * Optionally filters the list based on a search string.
  */
 function getFriendsOfFriendsOfUser(user $user): array {
@@ -430,7 +430,45 @@ function getFriendsOfFriendsOfUser(user $user): array {
 
   return $friendsArray;
 }
+/*Returns an array of IDs of all the users who are friends of friends (who are not already friends) with the given user.*/
+function getFriendsOfFriendsOfUserAsIDs(int $userID): array {
+    $db = new db();
+    $db->connect();
 
+    $statement = $db -> prepare("select userID from user where userID != ? and
+                              userID not in
+                              -- makes sure direct friends of ther user is not selected
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              -- chooses the friends of friends
+                              and userID in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?))");
+    $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $friendsArray = array();
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $friendsArray[] = $row["userID"];
+    }
+    return $friendsArray;
+}
 
 
 /*
@@ -500,7 +538,10 @@ function getUsers(string $filter): array {
 }
 
 function areUsersFriendsOfFriends(int $userID1, int $userID2){
-    return true;
+    //Get list of all the userIDs of friends of friends of user1
+    $friendsOfFriends = getFriendsOfFriendsOfUserAsIDs($userID1);
+    //See if userID2 is in the array
+    return in_array($userID2, $friendsOfFriends);
 }
 function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
     $db = new db();
@@ -549,28 +590,31 @@ function areUsersFriends(user $user1, user $user2): bool {
 
 /*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
 function displayBlog($user, $friends, $friendsOfFriends){
-    print_r($user);
+    //If user has set to visible to all
     if($user->blogVisibility < 1){
         return true;
     }
+    //If user has set to friends of friends, and you are a friend of a friend
     else if( ($user->blogVisibility < 2) && $friendsOfFriends){
         return true;
     }
+    //If user has set to friends and you are a friend
     else if( ($user->blogVisibility < 3) && $friends){
         return true;
     }
+    //If user has set to only themselves, and you are that user
+    else if($user == getUser()){ //// ??????
+
+    }
+    //Otherwise it is not visible
     else{
-        echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
         return false;
     }
 }
 
 /*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
 function displayInfo($user, $friends, $friendsOfFriends){
-    echo "infoVisbility = " . $user->infoVisibility;
-    echo "(infoVisbility < 100) = " . ($user->infoVisibility < 100);
     if($user->infoVisibility < 1){
-        echo "here i am";
         return true;
     }
     else if( ($user->infoVisibility < 2) && $friendsOfFriends){
@@ -579,8 +623,10 @@ function displayInfo($user, $friends, $friendsOfFriends){
     else if( ($user->infoVisibility < 3) && $friends){
         return true;
     }
+    else if($user == getUser()){ ////?????
+
+    }
     else{
-        echo "Info visibility = " . $user->infoVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
         return false;
     }
 }
