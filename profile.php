@@ -40,7 +40,7 @@ checkLoggedIn();?>
                         <?php echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $areFiends . " areFriendsOfFriends " . $areFriendsOfFriends; ?>
                         <?php
                             if(displayInfo($user, $areFiends, $areFriendsOfFriends)){
-                                echo "<span class=\"h5\"><?php echo $user->getAge() . \" years old, \" . $user->location; ?> </span>";
+                                echo '<span class=\"h5\">' . $user->getAge() . " years old, " . $user->location . ' </span>';
                             }
                             else{
                                 echo "<h1>Not showing info</h1>";
@@ -96,7 +96,7 @@ checkLoggedIn();?>
             <?php
                 print_r($user);
                 echo ($user->blogVisibility < 2) . "<br><br>";
-                if(displayBlog($user, true, true)){
+                if(displayBlog($user, $areFiends, $areFriendsOfFriends)){
                     echo getHtmlForBlogPostsListPanel($user, 6, true);
                 }
                 else{

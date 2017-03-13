@@ -551,36 +551,37 @@ function areUsersFriends(user $user1, user $user2): bool {
 function displayBlog($user, $friends, $friendsOfFriends){
     print_r($user);
     if($user->blogVisibility < 1){
-        true;
+        return true;
     }
-    else if( ($user->blogVisibility < 2) && $friends){
-        true;
+    else if( ($user->blogVisibility < 2) && $friendsOfFriends){
+        return true;
     }
-    else if( ($user->blogVisibility < 3) && $friendsOfFriends){
-        true;
+    else if( ($user->blogVisibility < 3) && $friends){
+        return true;
     }
     else{
         echo "Blog visibility = " . $user->blogVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
-        false;
+        return false;
     }
 }
 
 /*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
 function displayInfo($user, $friends, $friendsOfFriends){
-    echo "$user->infoVisibility = " . $user->infoVisibility;
-    echo "($user->infoVisibility < 100) = " . ($user->infoVisibility < 100)
-    if($user->infoVisibility < 100){
-        true;
+    echo "infoVisbility = " . $user->infoVisibility;
+    echo "(infoVisbility < 100) = " . ($user->infoVisibility < 100);
+    if($user->infoVisibility < 1){
+        echo "here i am";
+        return true;
     }
-    else if( ($user->infoVisibility < 2) && $friends){
-        true;
+    else if( ($user->infoVisibility < 2) && $friendsOfFriends){
+        return true;
     }
-    else if( ($user->infoVisibility < 3) && $friendsOfFriends){
-        true;
+    else if( ($user->infoVisibility < 3) && $friends){
+        return true;
     }
     else{
         echo "Info visibility = " . $user->infoVisibility . " areFriends = " . $friends . " areFriendsOfFriends " . $friendsOfFriends;
-        false;
+        return false;
     }
 }
 
