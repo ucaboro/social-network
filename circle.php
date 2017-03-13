@@ -1,4 +1,5 @@
 <?php include "imports.php";
+include "templates\script.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn(); ?>
 <!DOCTYPE html>
@@ -16,7 +17,10 @@ checkLoggedIn(); ?>
               <div class="row">
                 <div class="col-xs-12 visible-xs-block">
                   <div class="circle-title">
-                    <span class="h1 circle-title">Family</span>
+                    <?php   $circleID = $_GET["c"];
+                      $circle = getCircleWithID($circleID);?>
+                      <input id = "circleID" value="<?php echo $circleID; ?>">
+                    <span class="h1 circle-title"><?php echo $circle->name;?></span>
                   </div>
                 </div>
               </div>
@@ -24,20 +28,28 @@ checkLoggedIn(); ?>
                 <div class="col-sm-3 hidden-xs">
                   <?php
                   $circleID = $_GET["c"];
-                  $circle = getCircleWithID($circleID);
-                  echo getHtmlForCircleShape($circle);
-                  ?>
+                    $circle = getCircleWithID($circleID);
+                     echo getHtmlForCircleShape($circle);?>
                 </div>
                 <div class="col-xs-12 col-sm-9">
                   <form>
                     <div class="form-group">
-                      <textarea class="form-control" rows="2" placeholder="Send a message..."></textarea>
+                      <textarea id="msg" name="msg" class="form-control" rows="2" placeholder="Send a message..."></textarea>
+
+                    <div id="alert" class="alert alert-danger" role="alert"></div>
+                    <div id="success" class="alert alert-success" role="alert"></div>
+                    <script>
+                    $('#alert').hide();
+                    $('#success').hide();
+                    </script>
                     </div>
                   </form>
                   <div class="row">
                     <div class="col-xs-12">
-                      <button class="btn btn-primary pull-right" type="submit">Post</button>
+                      <button id ="postMsg" name="postMsg" class="btn btn-primary pull-right" type="submit">Post</button>
+
                     </div>
+
                   </div>
                 </div>
               </div>
@@ -49,7 +61,7 @@ checkLoggedIn(); ?>
             <div class="panel-heading">
               <h4 class="panel-title">Messages</h4>
             </div>
-            <div class="panel-body">
+            <div id = "msg-panel" class="panel-body">
               <?php
               // Get the array of messages
 
@@ -88,5 +100,66 @@ checkLoggedIn(); ?>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- Custom JavaScript -->
     <!--<script src="script.js"></script>-->
+
+    <script>
+    // TODO: PUSH BELOW CODE INTO sript.js after proper testing
+
+
+    var crcl = $('#circleID').val();
+    var alert = document.getElementById("alert");
+    var success = document.getElementById("success");
+
+      var doSmth = function () {
+        console.log("hapenning");
+      }
+
+      function sendMsg(){
+        var msg = $('#msg').val();
+
+        if (msg.length == 0){
+           $('#alert').show();
+          alert.innerHTML = "type your message first";
+        } else{
+          $('#alert').hide();
+          $('#success').show();
+          success.innerHTML = "sent!";
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'ajax/sendMessage.php', true);
+        xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function (){
+          if (xhr.readyState == 4 && xhr.status ==200){
+              var target = document.getElementById("msg-panel");
+              console.log(crcl);
+              console.log(msg);
+            }
+        }
+        xhr.send("msg="+msg+"&crcl="+crcl);
+      }
+    }
+
+    var button = document.getElementById("postMsg");
+    button.addEventListener("click", sendMsg);
+
+  //function that renews the messages panel every 3 seconds
+    var renew = function () {
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'ajax/updateMessage.php', true);
+    xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function (){
+
+      if (xhr.readyState == 4 && xhr.status ==200){
+        var target = document.getElementById("msg-panel");
+        target.innerHTML = xhr.responseText;
+        console.log("renewing");
+    }
+  }
+      xhr.send("crcl="+crcl);
+       setTimeout(renew, 3000);
+    };
+
+    // UNCOMMENT THE NEXT LINE FOR DYNAMIC MESSAGES
+    //renew();
+    </script>
   </body>
 </html>
