@@ -120,6 +120,7 @@ class user {
     // Return the saved array
     return $this->friends;
   }
+
 }
 
 ?>

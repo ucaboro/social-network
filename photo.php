@@ -15,33 +15,49 @@ checkLoggedIn();?>
           // Get the photo object
           $photoID = $_GET["p"];
           $photo = getPhotoWithID($photoID);
-          $_SESSION["photoID"]=$photoID;
           ?>
           <div class="panel panel-primary">
             <div class="panel-body">
               <div class="row">
                 <div class="col-xs-12">
                   <div class="photo-container">
-                    <img class="img-responsive center-block" src="<?php echo $photo->src; ?>">
+                    <img class="img-responsive center-block" id=image src="<?php echo $photo->src; ?>">
                   </div>
                 </div>
               </div>
               <div class="row">
                 <?php
-                $user = $photo->user;
-                $profileImg = getHtmlForSquareImage($user->photoSrc);
-                $name = $user->getFullName();
+                $photoOwner = $photo->user;
+                $profileImg = getHtmlForSquareImage($photoOwner->photoSrc);
+                $name = $photoOwner->getFullName();
                 $time = $photo->time->format("d M Y H:i");
-                $profileUrl = $user->getUrlToProfile();
+                $profileUrl = $photoOwner->getUrlToProfile();
                 echo "<div class=\"col-xs-12 \">
                   <div class=\"feed-profile-image\"><a href=\"\">$profileImg</a></div>
                   <span>Photo uploaded by <a href=\"$profileUrl\">$name</a></span><br>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
+                <?php
+                // echo "<div class=\"row\">";
+                $userID = getValueFromGET("u");
+                $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+
+                // if ($userID==NULL) {
+                //   echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4\">".$userID.
+                //   "user id is".$user->id." "."aljskdfDelete this picture</button>";
+                // }
+                //
+                // if ($photoOwner->photoSrc==$photo->src) {
+                //   echo "<button type=\"submit\" disabled=\"disabled\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
+                // } else {
+                //   echo "<button type=\"submit\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">".$photoOwner->photoSrc." & ".$photo->src."Set as profile picture</button>";
+                // }
+                // echo "</div>";
+                ?>
                 <div class="row">
-                  <button type="submit" href="deletePhoto.php" name="delete_pic" class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
-                  <button type="submit" href="deletePhoto.php" name="set_profile_pic" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
+                  <button type="submit" name="delete_pic" id="delete_pic"  class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
+                  <button type="submit" name="set_profile_pic" id="set_profile_pic" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
                 </div>
               </div>
             </div>
@@ -145,6 +161,37 @@ checkLoggedIn();?>
         </div>
       </div>
     </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script  type="text/javascript">
+      $(document).ready(function() {
+
+        $('#set_profile_pic').click(function() {
+          $.ajax({
+            type:"POST",
+            url:'ajax/setProfilePic.php',
+            data:{photoID: <?php echo  $photoID; ?>},
+            success:function(result){
+                alert(result);
+                document.getElementById("set_profile_pic").disabled = true;
+            }
+          })
+        })
+
+        $('#delete_pic').click(function() {
+          $.ajax({
+            type:"POST",
+            url:'ajax/deletePhoto.php',
+            data:{photoID: <?php echo  $photoID; ?>},
+            success:function(result){
+                alert(result);
+                document.getElementById("delete_pic").disabled = true;
+            }
+          })
+        })
+
+      });
+    </script>
 
     <!-- JQuery javascript -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

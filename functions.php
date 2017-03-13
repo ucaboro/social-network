@@ -200,7 +200,7 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   if ($limit == 0) { $limit = 18; }
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? LIMIT ?");
+  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND isArchived=0 LIMIT ?");
   $statement ->bind_param("ii", $userID, $limit);
   $statement->execute();
   $result = $statement->get_result();
@@ -287,7 +287,7 @@ function getRecentActivityFeed() {
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
-  $statement = $db -> prepare("SELECT * from photo where photoID in
+  $statement = $db -> prepare("SELECT * from photo where isArchived=0 AND photoID in
                               (select photoID from photo where userID in
                               (select userID2 as 'userID' from friendship
                               where isConfirmed = true and userID1 = ? union
@@ -355,7 +355,7 @@ function getRecentActivityFeed() {
 function getPhotoWithID(int $photoID) {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ?");
+  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ? AND isArchived = 0");
   $statement->bind_param("i", $photoID);
   $statement->execute();
   $result = $statement->get_result();
@@ -372,10 +372,10 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
   $db = new db();
   $db->connect();
   if (isset($numberOfPhotos)){
-    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND() LIMIT ?");
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? AND isArchived=0 ORDER BY RAND() LIMIT ?");
     $statement->bind_param("ii", $userID, $numberOfPhotos);
   } else {
-    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND()");
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? AND isArchived=0 ORDER BY RAND()");
     $statement->bind_param("i", $userID);
   }
   $statement->execute();
@@ -707,8 +707,8 @@ function deleteFriendship(int $userID) {
     $statement->execute();
   }
 
-  function setProfilePhotoforUser($photoID, $user) {
-    $userID=$user->getUserID();
+  function setProfilePhoto($photoID) {
+    $userID=getUserID();
     $db = new db();
     $db->connect();
     $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
@@ -717,6 +717,6 @@ function deleteFriendship(int $userID) {
   }
 
   function createUserObject($row){
-      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/profile" . $row["photoID"] . ".jpg",new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
+      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["photoID"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
   }
 ?>
