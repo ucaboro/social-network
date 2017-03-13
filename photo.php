@@ -33,32 +33,27 @@ checkLoggedIn();?>
                 $time = $photo->time->format("d M Y H:i");
                 $profileUrl = $photoOwner->getUrlToProfile();
                 echo "<div class=\"col-xs-12 \">
-                  <div class=\"feed-profile-image\"><a href=\"\">$profileImg</a></div>
+                  <div class=\"feed-profile-image\"><a id=\"profile_img\" href=\"\">$profileImg</a></div>
                   <span>Photo uploaded by <a href=\"$profileUrl\">$name</a></span><br>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
                 <?php
-                // echo "<div class=\"row\">";
+                echo "<div class=\"row\">";
                 $userID = getValueFromGET("u");
                 $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
 
-                // if ($userID==NULL) {
-                //   echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4\">".$userID.
-                //   "user id is".$user->id." "."aljskdfDelete this picture</button>";
-                // }
-                //
-                // if ($photoOwner->photoSrc==$photo->src) {
-                //   echo "<button type=\"submit\" disabled=\"disabled\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
-                // } else {
-                //   echo "<button type=\"submit\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">".$photoOwner->photoSrc." & ".$photo->src."Set as profile picture</button>";
-                // }
-                // echo "</div>";
+                if (getUserID()==$photoOwner->getUserID()) {
+                  echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4\">Delete this picture</button>";
+                }
+
+                if (getUser()->photoSrc==$photo->src) {
+                  echo "<button disabled type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
+                } else {
+                  echo "<button type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
+                }
+                echo "</div>";
                 ?>
-                <div class="row">
-                  <button type="submit" name="delete_pic" id="delete_pic"  class="btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4">Delete this picture</button>
-                  <button type="submit" name="set_profile_pic" id="set_profile_pic" class="btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5">Set as profile picture</button>
-                </div>
               </div>
             </div>
           </div>
@@ -174,6 +169,9 @@ checkLoggedIn();?>
             success:function(result){
                 alert(result);
                 document.getElementById("set_profile_pic").disabled = true;
+                if (<?php echo getUserID();?> == <?php echo $photoOwner->getUserID(); ?>) {
+                  document.getElementById("profile_img").getElementsByClassName("img-thumb")[0].style.backgroundImage = "url('<?php echo $photo->src; ?>')";
+                }
             }
           })
         })
@@ -185,7 +183,7 @@ checkLoggedIn();?>
             data:{photoID: <?php echo  $photoID; ?>},
             success:function(result){
                 alert(result);
-                document.getElementById("delete_pic").disabled = true;
+                document.getElementById("delete_pic").disabled=true;
             }
           })
         })

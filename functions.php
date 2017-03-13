@@ -180,7 +180,8 @@ function getMessagesInCircle(circle $circle) {
 function getUserWithID(int $id) {
   $db = new db();
   $db->connect();
-  $statement = $db->prepare("SELECT userID, firstName, lastName, email, photoID, date, location, blogVisibility, infoVisibility  FROM user WHERE userID = ?");
+  $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,
+                              user.date AS date, location, blogVisibility, infoVisibility  FROM user, photo WHERE photo.photoID = user.photoID AND user.userID = ?");
   $statement->bind_param("i", $id);
   $statement->execute();
   $result = $statement->get_result();
@@ -717,6 +718,6 @@ function deleteFriendship(int $userID) {
   }
 
   function createUserObject($row){
-      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["photoID"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
+      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["filename"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
   }
 ?>
