@@ -20,6 +20,7 @@
                     </div>
                 </div>
                 <div>
+                    When were you born?
                     <form action="settings.php" method="post">
                         <div class="row">
                             <div class="col-xs-10">
