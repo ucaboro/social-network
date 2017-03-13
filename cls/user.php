@@ -36,6 +36,21 @@ class user {
   public $location;
 
   /*
+   *
+   */
+  public $email;
+
+  /*
+   *
+   */
+  public $blogVisibility;
+
+  /*
+   *
+   */
+  public $infoVisibility;
+
+  /*
    * An array of users who are friends with this user. Key is user ID, value is user object.
    */
   private $friends;
@@ -43,13 +58,16 @@ class user {
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct(int $id, string $firstName, string $lastName, $photoSrc, $dateOfBirth, $location) {
+  public function __construct(int $id, string $firstName, string $lastName, $photoSrc, $dateOfBirth, $location, $email, $blogVisibility, $infoVisibility) {
     $this->id = $id;
     $this->firstName = $firstName;
     $this->lastName = $lastName;
     $this->photoSrc = $photoSrc;
     $this->dateOfBirth = $dateOfBirth;
     $this->location = $location;
+    $this->email = $email;
+    $this->blogVisibility = $blogVisibility;
+    $this->infoVisibility = $infoVisibility;
   }
 
   /*

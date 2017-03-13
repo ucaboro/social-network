@@ -3,13 +3,13 @@
     require_once "validation.php";
     //Get current values from database
     $user = getUser();
-    $dob = ($user->dateOfBirth == null) ? "" : $user->dateOfBirth->format('Y-m-d'); //If date of birth already set in database, show it.
+    $dob = ($user->dateOfBirth == null) ? "" : $user->dateOfBirth->format('Y-m-d'); //This defaults to today apparently
     $location = ($user->location == null) ? "" : $user->location; //$date->format('YmdHis')
     $firstName = $user->firstName;
     $lastName = $user->lastName;
-    $email = "why@noEmail.com";
-    $blogPrivacy = "0";
-    $infoPrivacy = "0";
+    $email = $user->email;
+    $blogPrivacy = $user->blogVisibility;
+    $infoPrivacy = $user->infoVisibility;
     $errors = array();
 
     //Post part for personal settings

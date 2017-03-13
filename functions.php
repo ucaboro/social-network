@@ -61,7 +61,7 @@ function getUserID() {
     return $_SESSION["userID"];
   }
   else{
-    // TODO:  Should change this to null or something for final version
+    // TODO:  Should change this to null or something for final version. Do we need to add checking for the null case?
       return 1;
   }
 }
@@ -180,13 +180,13 @@ function getMessagesInCircle(circle $circle) {
 function getUserWithID(int $id) {
   $db = new db();
   $db->connect();
-  $statement = $db->prepare("SELECT userID, firstName, lastName, photoID, date, location  FROM user WHERE userID = ?");
+  $statement = $db->prepare("SELECT userID, firstName, lastName, email, photoID, date, location, blogVisibility, infoVisibility  FROM user WHERE userID = ?");
   $statement->bind_param("i", $id);
   $statement->execute();
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new user($row["userID"],$row["firstName"],$row["lastName"],"img/profile" . $row["photoID"] . ".jpg",new DateTime($row["date"]),$row["location"]);
+  return createUserObject($row);
 }
 
 /*
@@ -421,7 +421,7 @@ function getFriendsOfFriendsOfUser(user $user): array {
                               where isConfirmed = true and userID1 = ? union
                               select userID1 as 'userID' from friendship
                               where isConfirmed = true and userID2 = ?))");
-  $statement->bind_param("iiiiiii", $userId, $userId, $userId, $userId, $userId, $userId,$userId);
+  $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
 
@@ -462,7 +462,7 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
                                   OR CONCAT_WS('', lastName, firstName) LIKE ?
                                   OR email = ?
                                   OR location LIKE ? ");
-    $statement->bind_param("iissssss",$userId,$userId,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+    $statement->bind_param("iissssss",$userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
   }
   $statement->execute();
   $result = $statement->get_result();
@@ -704,7 +704,7 @@ function deleteFriendship(int $userID) {
     $db->connect();
     $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
     $statement->bind_param("i", $photoID);
-    $stmt->execute();
+    $statement->execute();
   }
 
   function setProfilePhotoforUser($photoID, $user) {
@@ -713,6 +713,10 @@ function deleteFriendship(int $userID) {
     $db->connect();
     $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
     $statement->bind_param("ii", $photoID,$userID);
-    $stmt->execute();
+    $statement->execute();
+  }
+
+  function createUserObject($row){
+      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/profile" . $row["photoID"] . ".jpg",new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
   }
 ?>
