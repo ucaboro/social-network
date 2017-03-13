@@ -19,7 +19,7 @@ checkLoggedIn(); ?>
                   <div class="circle-title">
                     <?php   $circleID = $_GET["c"];
                       $circle = getCircleWithID($circleID);?>
-                      <input id = "circleID" value="<?php echo $circleID; ?>">
+                      <input type = "hidden" id = "circleID" value="<?php echo $circleID; ?>">
                     <span class="h1 circle-title"><?php echo $circle->name;?></span>
                   </div>
                 </div>
@@ -30,6 +30,7 @@ checkLoggedIn(); ?>
                   $circleID = $_GET["c"];
                     $circle = getCircleWithID($circleID);
                      echo getHtmlForCircleShape($circle);?>
+
                 </div>
                 <div class="col-xs-12 col-sm-9">
                   <form>
@@ -80,14 +81,17 @@ checkLoggedIn(); ?>
           <div class="row">
             <div class="col-xs-12">
               <?php echo getHtmlForNavigationPanel(); ?>
+
             </div>
           </div>
           <div class="row">
             <div class="col-xs-12">
+
               <?php
               echo getHtmlForCircleUsersPanel($circle);
               echo getHtmlForCirclePanel();
               ?>
+
             </div>
           </div>
         </div>
@@ -109,10 +113,6 @@ checkLoggedIn(); ?>
     var alert = document.getElementById("alert");
     var success = document.getElementById("success");
 
-      var doSmth = function () {
-        console.log("hapenning");
-      }
-
       function sendMsg(){
         var msg = $('#msg').val();
 
@@ -129,8 +129,10 @@ checkLoggedIn(); ?>
         xhr.onreadystatechange = function (){
           if (xhr.readyState == 4 && xhr.status ==200){
               var target = document.getElementById("msg-panel");
+              target.innerHTML = xhr.responseText;
               console.log(crcl);
               console.log(msg);
+              //console.log(xhr.readyState);
             }
         }
         xhr.send("msg="+msg+"&crcl="+crcl);
@@ -159,7 +161,7 @@ checkLoggedIn(); ?>
     };
 
     // UNCOMMENT THE NEXT LINE FOR DYNAMIC MESSAGES
-    //renew();
+    renew();
     </script>
   </body>
 </html>
