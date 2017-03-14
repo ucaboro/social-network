@@ -25,7 +25,6 @@ class db {
       $password = "e865fdac";
       $dbname = "social_media";
 
-
       // local copy of the db
       // $host = "localhost";
       // $username = "root";
