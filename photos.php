@@ -173,7 +173,11 @@ if(isset($_FILES['image'])){
                     if (count($collections) > 0) {
                       foreach ($collections as $collection) {
                         $photos = $collection->getPhotos();
-                        $photo = $photos[0];
+                        if (isset($photos[0])) {
+                          $photo = $photos[0];
+                        } else {
+                          $photo = getPhotoWithID(1);
+                        }
                         $img = getHtmlForSquareImage($photo->src);
                         $url = $collection->getURLToCollection();
                         echo "<div class=\"col-xs-6\">
@@ -208,7 +212,7 @@ if(isset($_FILES['image'])){
 
           <div class="row">
             <div class="col-xs-12">
-              <div id="add_collection_panel" class="panel panel-primary ">
+              <div id="add_collection_panel" class="panel panel-primary hidden ">
                 <div class="panel-heading">
                   <h4 class="panel-title">Add New Photo Collection</h4>
                 </div>
@@ -219,10 +223,10 @@ if(isset($_FILES['image'])){
                       <input class="form-control" id="collection_name_input" name="blog-title" placeholder="Name of the Collection">
                     </div>
                     <div class="checkbox">
-                      <label><input type="checkbox" id="Collection_FOF_checkbox"checked="true" value="">Visible to Friends of Friends</label>
+                      <label><input type="checkbox" id="Collection_FOF_checkbox" value="">Visible to Friends of Friends</label>
                     </div>
                     <div class="checkbox">
-                      <label><input type="checkbox" id="Collection_circle_checkbox" checked="true" value="">Visible to Circles</label>
+                      <label><input type="checkbox" id="Collection_circle_checkbox" value="">Visible to Circles</label>
                     </div>
                     <button id="new_collection" class="btn btn-primary center-block" type="button">Add Collection</button>
                   </form>
@@ -244,18 +248,18 @@ if(isset($_FILES['image'])){
         })
 
         $('#new_collection').click(function() {
-          // console.log(document.getElementById('Collection_FOF_checkbox').checked."  and ".document.getElementById('Collection_circle_checkbox').checked);
           $.ajax({
             type:"POST",
             url:'ajax/addPhotoCollection.php',
             data:{collection_name:document.getElementById('collection_name_input').value ,
-                  // collection_FOF_visibility:$('#Collection_FOF_checkbox').is(':checked');,
-                  // collection_circle_visibility:$('#Collection_circle_checkbox').is(':checked');,
                   collection_FOF_visibility:(document.getElementById('Collection_FOF_checkbox').checked==true) ? 1 : 0,
                   collection_circle_visibility:(document.getElementById('Collection_circle_checkbox').checked==true) ? 1 : 0},
             success:function(result){
                 alert(result);
-                // document.getElementById("delete_pic").disabled=true;
+                document.getElementById('collection_name_input').value="";
+                document.getElementById('Collection_FOF_checkbox').checked=false;
+                document.getElementById('Collection_circle_checkbox').checked=false;
+                document.getElementById("add_collection_panel").classList.add("hidden");
             }
           })
         })
