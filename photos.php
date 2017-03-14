@@ -66,21 +66,27 @@ if(isset($_FILES['image'])){
           <!-- Profile summary -->
           <?php
           $userID = getValueFromGET("u");
-          $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+          $me = getUser();
+          $user = ($userID == NULL) ? $me : getUserWithID($userID);
+          $userID = $user->id;
           echo getHtmlForSmallUserSummaryPanel($user, "Photos");
           ?>
           <!-- /END Profile summary -->
 
           <!-- Upload Photos -->
+          <?php
+          $isMe = ($me->id == $userID);
+          if ($isMe) {
+          ?>
           <div class="panel panel-primary">
             <div class="panel-heading">
               <h4 class="panel-title">Upload Photos</h4>
             </div>
             <div class="panel-body">
               <div class="row">
-                <form action = "photos.php" method = "POST" enctype = "multipart/form-data">
-                <input class="btn col-xs-6 col-md-4 " type = "file" name = "image" />
-                <input class="btn btn-info" type = "submit"/>
+                <form action="photos.php" method="POST" enctype="multipart/form-data">
+                <input class="btn col-xs-6 col-md-4" type="file" name="image" />
+                <input class="btn btn-info" type="submit"/>
                 </form>
               </div>
               <?php
@@ -113,6 +119,9 @@ if(isset($_FILES['image'])){
 
             </div>
           </div>
+          <?php
+          }
+          ?>
           <!-- /END Upload Photos -->
 
           <!-- Photos -->
@@ -125,11 +134,19 @@ if(isset($_FILES['image'])){
                 <?php
                 // Get the array of photos
                 $photos = getPhotosOwnedByUser($user);
-                // Output each one
-                foreach ($photos as $photoID => $photo) {
-                  echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                          <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
-                        </div>";
+                if (count($photos) > 0) {
+                  // Output each one
+                  foreach ($photos as $photoID => $photo) {
+                    echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
+                            <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                          </div>";
+                  }
+                } else {
+                  if ($isMe) {
+                    echo "<div class=\"col-xs-12\">You haven't uploaded any photos yet.</div>";
+                  } else {
+                    echo "<div class=\"col-xs-12\">This user hasn't uploaded any photos yet.</div>";
+                  }
                 }
                 ?>
               </div>
@@ -153,17 +170,26 @@ if(isset($_FILES['image'])){
                   <div class="row">
                     <?php
                     $collections = getPhotoCollectionsByUser($user);
-                    foreach ($collections as $collection) {
-                      $photos = $collection->getPhotos();
-                      $photo = $photos[0];
-                      $img = getHtmlForSquareImage($photo->src);
-                      $url = $collection->getURLToCollection();
-                      echo "<div class=\"col-xs-6\">
-                              <div class=\"photo-collection\">
-                                <a href=\"$url\">$img</a>
-                                <a href=\"$url\">$collection->name</a>
-                              </div>
-                            </div>";
+                    if (count($collections) > 0) {
+                      foreach ($collections as $collection) {
+                        $photos = $collection->getPhotos();
+                        $photo = $photos[0];
+                        $img = getHtmlForSquareImage($photo->src);
+                        $url = $collection->getURLToCollection();
+                        echo "<div class=\"col-xs-6\">
+                                <div class=\"photo-collection\">
+                                  <a href=\"$url\">$img</a>
+                                  <a href=\"$url\">$collection->name</a>
+                                </div>
+                              </div>";
+                      }
+                    } else {
+                      if ($isMe) {
+                        //TODO: Replace this line with a + button?
+                        echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
+                      } else {
+                        echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
+                      }
                     }
                     ?>
                     <?php

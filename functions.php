@@ -44,6 +44,46 @@ function getValueFromGET(string $key) {
   return $stmt;
 }
 
+/*
+ * Gets last circleID and increments by 1 for proper new circle creation
+ */
+ function getNewCircleID () {
+
+  $db = new db();
+  $db->connect();
+  //return last circleID
+  $stmt = $db->prepare("SELECT circleID FROM `circle` ORDER BY circleID DESC LIMIT 1");
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
+  return $row["circleID"]+1;
+}
+
+/*
+ * Create new circle in the database based on the color and name
+ */
+ function addNewCircle ($name, $color) {
+  $circleID = getNewCircleID();
+  $userID = getUser()->id;
+
+  $db = new db();
+  $db->connect();
+
+  //insert new in circle
+  $stmt = $db->prepare("INSERT INTO circle (circleID, circleName, circleColor) VALUES (?,?,?)");
+  $stmt->bind_param("iss", $circleID, $name, $color);
+  $stmt->execute();
+
+  //assign yourself to the new circle
+  $stmt = $db->prepare("INSERT INTO circlemembership (circleID, userID) VALUES (?,?)");
+  $stmt->bind_param("ii", $circleID, $userID);
+  $stmt->execute();
+
+
+}
+
 
 /*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.

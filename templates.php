@@ -208,32 +208,41 @@ function getHtmlForSquareImage($src) {
 function getHtmlForCirclePanel(bool $mainPanel = false) {
   $bootstrapClass = $mainPanel ? "col-xs-3" : "col-xs-4";
   // Generate the start of the HTML (setting up the panel, panel title)
-  $html = "<div class=\"panel panel-primary\">
+  $html = "<div id=\"circles\" class=\"panel panel-primary\">
             <div class=\"panel-heading\">
               <h4 class=\"panel-title\">Circles</h4>
             </div>
             <div class=\"panel-body\">
               <div class=\"row\">";
 
+
   //Add a button for each circle
   //change 1 to getUserID after login is implemented
 
-  foreach (getUserCircles(1) as $id => $value) {
+  foreach (getUserCircles(getUser()->id) as $id => $value) {
   $CircleIDs =$id;
-
-
 
   foreach (getCircleNames($CircleIDs) as $id => $circle) {
 
     $html = $html . "<div class=\"$bootstrapClass\">" . getHtmlForCircleButton($circle) . "</div>";
 
   }
+
+
+
+
 }
-  // Close div tags and return the HTML
+  // Close div tags and return the HTML and Adding NEW circle
   return $html . "
-              </div>
-          </div>
-        </div>";
+  <div class = \"$bootstrapClass\">
+  <div class=\"circle-container\" >
+      <div class = \"circle\" style=\"border-color: white; background-color:white; display: flex; justify-content: center; align-items: center;\">
+      <i id = \"add\" type=\"button\" data-toggle=\"modal\" data-target=\"#addModal\"  class = \"glyphicon glyphicon-plus-sign\"  style=\"color:BLACK; font-size: 45px; cursor: pointer; \"></i>
+      </div>
+  </div></div>
+</div>
+</div>
+</div>";
 }
 
 /*
@@ -243,19 +252,19 @@ function getHtmlForCirclePanel(bool $mainPanel = false) {
  function getCircleColor($circle) {
    $color = $circle->color;
 
-if($color=="BLUE"){
+if($color=="blue"){
   $color = "#337ab7";
-} elseif ($color=="RED") {
+} elseif ($color=="red") {
   $color = "#FF4136";
-} elseif ($color=="GREEN") {
+} elseif ($color=="green") {
   $color = "#2ECC40";
 } elseif ($color=="YELLOW") {
   $color = "#FFB90F";
-} elseif ($color=="ORANGE") {
+} elseif ($color=="orange") {
   $color = "#FF851B";
-}elseif ($color=="GRAY") {
-  $color = "#DDDDDD";
-}
+}elseif ($color=="aqua") {
+  $color = "#8FD8D8";}
+
 return "$color";
  }
 
@@ -444,6 +453,107 @@ function getHtmlForFriendRequestsPanel() {
 
   return $html; //TODO: work out why this line takes a few seconds to run
 
+}
+
+function getHtmlForNewCircle(){
+  $html = "<div class=\"modal fade\" id=\"addModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\">
+    <div class=\"modal-dialog\" role=\"document\">
+      <div class=\"modal-content\">
+        <div class=\"modal-header\">
+          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>
+          <h4 class=\"modal-title\">Create New Circle</h4>
+        </div>
+        <div class=\"modal-body\">
+          <form>
+            <div class=\"form-group\">
+              <label for=\"circle-name\" class=\"control-label\">Circle Name:</label>
+              <input type=\"text\" class=\"form-control\" id=\"circle-name\">
+            </div>
+            <div class=\"form-group\">
+              <label for=\"circle-color\" class=\"control-label\">Circle Color:</label>
+              <br>
+                  <a id=\"blue\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-primary\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"aqua\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-info\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"green\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-success\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"orange\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-warning\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"red\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-danger\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+              </br>
+              <label id=\"colorinfo\" for=\"circle-color\" class=\"control-label\"></label>
+            </div>
+          </form>
+        </div>
+        <div class=\"modal-footer\">
+          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+          <button id=\"create\" type=\"button\" class=\"btn btn-primary\">Create</button>
+        </div>
+      </div>
+    </div>
+    <script> NewCircleScript(); </script>
+  </div>";
+
+
+  return $html;
+
+}
+
+function messagingScript(){
+  $script = " <script>
+  //script fot messaging functionality
+    var crcl = $('#circleID').val();
+    var alert = document.getElementById(\"alert\");
+    var success = document.getElementById(\"success\");
+
+      function sendMsg(){
+        var msg = $('#msg').val();
+
+        if (msg.length == 0){
+           $('#alert').show();
+          alert.innerHTML = \"type your message first\";
+        } else{
+          $('#alert').hide();
+          $('#success').show();
+          success.innerHTML = \"sent!\";
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'ajax/sendMessage.php', true);
+        xhr.setRequestHeader(\"Content-type\",\"application/x-www-form-urlencoded\");
+        xhr.onreadystatechange = function (){
+          if (xhr.readyState == 4 && xhr.status ==200){
+              var target = document.getElementById(\"msg-panel\");
+              target.innerHTML = xhr.responseText;
+              console.log(crcl);
+              console.log(msg);
+          }
+        }
+        xhr.send(\"msg=\"+msg+\"&crcl=\"+crcl);
+      }
+    }
+
+    var button = document.getElementById(\"postMsg\");
+    button.addEventListener(\"click\", sendMsg);
+
+    //function that renews the messages panel every 3 seconds
+    var renew = function () {
+
+        var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'ajax/updateMessage.php', true);
+    xhr.setRequestHeader(\"Content-type\",\"application/x-www-form-urlencoded\");
+    xhr.onreadystatechange = function (){
+
+      if (xhr.readyState == 4 && xhr.status ==200){
+        var target = document.getElementById(\"msg-panel\");
+        target.innerHTML = xhr.responseText;
+        console.log(\"renewing\");
+    }
+    }
+      xhr.send(\"crcl=\"+crcl);
+       setTimeout(renew, 3000);
+    };
+
+    // UNCOMMENT THE NEXT LINE FOR DYNAMIC MESSAGES
+    renew();
+    </script>";
+
+  return $script;
 }
 
 ?>
