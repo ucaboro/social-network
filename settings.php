@@ -32,8 +32,8 @@
         <div class="col-xs-12 col-md-8">
             <div class="row">
                 <div class="col-xs-12">
-                    <!--Html and php for the personal settings box-->
-                    <?php include "templates/personalSettings.php"; ?>
+                    <!--Html for interests box -->
+                    <?php include "templates/interestsSettings.php"; ?>
                     <!--Html for account settings box-->
                     <?php include "templates/accountSettings.php"; ?>
                 </div>
@@ -45,6 +45,8 @@
                 <div class="col-xs-12">
                     <!--Navigation Box-->
                     <?php echo getHtmlForNavigationPanel(); ?>
+                    <!--Html and php for the personal settings box-->
+                    <?php include "templates/personalSettings.php"; ?>
                     <!--Html and php for the privary settings box-->
                     <?php include "templates/privacySettings.php"; ?>
                 </div>
