@@ -18,6 +18,7 @@ checkLoggedIn();?>
                   <?php
                   $userID = getValueFromGET("u");
                   $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                  $userID = $user->id;
                   echo getHtmlForSquareImage($user->photoSrc);
                   ?>
                 </div>
@@ -25,12 +26,29 @@ checkLoggedIn();?>
                   <div class="row">
                     <div class="col-xs-12">
                       <span class="h2"><?php echo $user->getFullName(); ?></span><br>
-                      <span class="h5"><?php echo $user->getAge() . " years old, " . $user->location; ?> </span>
+                      <?php
+                      $age = $user->getAge();
+                      $age = ($age == 0) ? "Age unknown" : $age . " years old";
+                      $location = $user->location;
+                      $location = ($location == "") ? "location unknown" : $location;
+                      ?>
+                      <span class="h5"><?php echo $age . ", " . $location; ?> </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
-                      You are friends.
+                      <?php
+                      $me = getUser();
+                      $isMe = ($me->id == $userID);
+                      if ($isMe) {
+                        $friendshipStatusString = "This is you.";
+                      } elseif (areUsersFriends($me, $user)) {
+                        $friendshipStatusString = "You are friends.";
+                      } else {
+                        $friendshipStatusString = "You aren't friends.";
+                      }
+                      echo $friendshipStatusString;
+                      ?>
                     </div>
                   </div>
                 </div>
@@ -48,16 +66,24 @@ checkLoggedIn();?>
                 <?php
                 // Get the array of photos (only the first 7)
                 $photos = getPhotosOwnedByUser($user, 7);
-                // Output each one
-                foreach ($photos as $photoID => $photo) {
+                if (count($photos) > 0) {
+                  // Output each one
+                  foreach ($photos as $photoID => $photo) {
+                    echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
+                            <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                          </div>";
+                  }
+                  // Output the see more icon
                   echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                          <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                          <a href=\"photos.php?u=$user->id\">See more</a>
                         </div>";
+                } else {
+                  if ($isMe) {
+                    echo "<div class=\"col-xs-12\">You haven't uploaded any photos yet.<br><a href=\"photos.php?u=$user->id\">Upload a photo</a></div>";
+                  } else {
+                    echo "<div class=\"col-xs-12\">This user hasn't uploaded any photos yet.</div>";
+                  }
                 }
-                // Output the see more icon
-                echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                        <a href=\"photos.php?u=$user->id\">See more</a>
-                      </div>";
                 ?>
               </div>
             </div>

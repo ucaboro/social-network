@@ -22,8 +22,6 @@ checkLoggedIn();
         $isBlogPosted=true;
     }
   }
-
-
 ?>
 <!DOCTYPE html>
 
