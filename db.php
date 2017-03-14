@@ -20,16 +20,16 @@ class db {
       // Details to use for connection
 
       // Azure-clearDB copy of the db
-      // $host = "eu-cdbr-azure-west-d.cloudapp.net";
-      // $username = "b572eae4b8201c";
-      // $password = "e865fdac";
-      // $dbname = "social_media";
+      $host = "eu-cdbr-azure-west-d.cloudapp.net";
+      $username = "b572eae4b8201c";
+      $password = "e865fdac";
+      $dbname = "social_media";
 
       // local copy of the db
-      $host = "localhost";
-      $username = "root";
-      $password = "";
-      $dbname = "smedia";
+      // $host = "localhost";
+      // $username = "root";
+      // $password = "";
+      // $dbname = "smedia";
 
       // GearHost copy of the db
       // $host = "mysql4.gear.host";

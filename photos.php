@@ -200,7 +200,7 @@ if(isset($_FILES['image'])){
                     <?php
                     if (getUserID()==$user->getUserID()) {
                         echo "<div class=\"col-xs-6\">
-                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-sm\">
+                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-md\">
                               <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> Add New Collection
                               </button></div>";
                     }

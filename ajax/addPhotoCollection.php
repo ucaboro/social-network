@@ -5,5 +5,6 @@ $collection_FOF_visibility= $_POST['collection_FOF_visibility'];
 $collection_circle_visibility=$_POST['collection_circle_visibility'];
 
 addNewPhotoCollection($collection_name,$collection_FOF_visibility,$collection_circle_visibility);
-echo "The new collection has been created";
+
+echo "The collection ".$collection_name." has been created";
 ?>
