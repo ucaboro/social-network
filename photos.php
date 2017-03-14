@@ -166,14 +166,73 @@ if(isset($_FILES['image'])){
                             </div>";
                     }
                     ?>
+                    <?php
+                    if (getUserID()==$user->getUserID()) {
+                        echo "<div class=\"col-xs-6\">
+                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-sm\">
+                              <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> Add New Collection
+                              </button></div>";
+                    }
+                    ?>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="add_collection_panel" class="panel panel-primary hidden">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Add New Photo Collection</h4>
+                </div>
+                <div class="panel-body">
+
+                  <form id="new-photo-collection-form" action="index.php" method="POST">
+                    <div class="form-group">
+                      <input class="form-control" id="collection_name_input" name="blog-title" placeholder="Name of the Collection">
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" id="Collection_FOF_checkbox" value="">Visible to Friends of Friends</label>
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" id="Collection_circle_checkbox" value="">Visible to Circles</label>
+                    </div>
+                    <button id="new_collection" class="btn btn-primary center-block" type="submit">Add Collection</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script  type="text/javascript">
+      $(document).ready(function() {
+
+        $('#add_collection_invoke').click(function() {
+          document.getElementById("add_collection_panel").classList.remove("hidden");
+        })
+
+        $('#new_collection').click(function() {
+          $.ajax({
+            type:"POST",
+            url:'ajax/addPhotoCollection.php',
+            data:{collection_name:document.getElementById('collection_name_input').value ,
+                  collection_FOF_visibility:document.getElementById('Collection_FOF_checkbox').checked,
+                  collection_circle_visibility:document.getElementById('Collection_circle_checkbox').checked},
+            success:function(result){
+                // alert(result);
+                // document.getElementById("delete_pic").disabled=true;
+            }
+          })
+        })
+
+      });
+    </script>
 
     <!-- JQuery javascript -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

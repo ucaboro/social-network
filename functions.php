@@ -700,7 +700,10 @@ function deleteFriendship(int $userID) {
     $stmt->execute();
   }
 
-  function deletePhotowithID($photoID) {
+  /*
+   * Marks the photo with the given ID in the database as Archieved.
+   */
+  function deletePhotoWithID($photoID) {
     $db = new db();
     $db->connect();
     $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
@@ -708,6 +711,24 @@ function deleteFriendship(int $userID) {
     $statement->execute();
   }
 
+  /*
+   * Adds a new photo collection to the database where the user is the currently logged-in user.
+   */
+  function addNewPhotoCollection($name,$FOF_visibility,$circle_visibility){
+
+    $thisUserID = getUserID();
+    $FOF_vis=($FOF_visibility) ? 1 : 0;
+    $cicle_vis=($circle_visibility) ? 1 : 0;
+    $db = new db();
+    $db->connect();
+    $stmt = $db->prepare("INSERT INTO photocollection (userID,name,isVisibleToFriendsOfFriends,isVisibleToCircles) VALUES (?, ?, ?,?)");
+    $stmt->bind_param("isii",$thisUserID,$name,$FOF_visibility,$circle_visibility);
+    $stmt->execute();
+  }
+
+  /*
+   * Updates the profile picture ID of the currently logged-in user in the database with the given one.
+   */
   function setProfilePhoto($photoID) {
     $userID=getUserID();
     $db = new db();
