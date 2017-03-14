@@ -208,32 +208,41 @@ function getHtmlForSquareImage($src) {
 function getHtmlForCirclePanel(bool $mainPanel = false) {
   $bootstrapClass = $mainPanel ? "col-xs-3" : "col-xs-4";
   // Generate the start of the HTML (setting up the panel, panel title)
-  $html = "<div class=\"panel panel-primary\">
+  $html = "<div id=\"circles\" class=\"panel panel-primary\">
             <div class=\"panel-heading\">
               <h4 class=\"panel-title\">Circles</h4>
             </div>
             <div class=\"panel-body\">
               <div class=\"row\">";
 
+
   //Add a button for each circle
   //change 1 to getUserID after login is implemented
 
-  foreach (getUserCircles(1) as $id => $value) {
+  foreach (getUserCircles(getUser()->id) as $id => $value) {
   $CircleIDs =$id;
-
-
 
   foreach (getCircleNames($CircleIDs) as $id => $circle) {
 
     $html = $html . "<div class=\"$bootstrapClass\">" . getHtmlForCircleButton($circle) . "</div>";
 
   }
+
+
+
+
 }
-  // Close div tags and return the HTML
+  // Close div tags and return the HTML and Adding NEW circle
   return $html . "
-              </div>
-          </div>
-        </div>";
+  <div class = \"$bootstrapClass\">
+  <div class=\"circle-container\" >
+      <div class = \"circle\" style=\"border-color: white; background-color:white; display: flex; justify-content: center; align-items: center;\">
+      <i id = \"add\" type=\"button\" data-toggle=\"modal\" data-target=\"#addModal\"  class = \"glyphicon glyphicon-plus-sign\"  style=\"color:BLACK; font-size: 45px; cursor: pointer; \"></i>
+      </div>
+  </div></div>
+</div>
+</div>
+</div>";
 }
 
 /*
@@ -243,19 +252,19 @@ function getHtmlForCirclePanel(bool $mainPanel = false) {
  function getCircleColor($circle) {
    $color = $circle->color;
 
-if($color=="BLUE"){
+if($color=="blue"){
   $color = "#337ab7";
-} elseif ($color=="RED") {
+} elseif ($color=="red") {
   $color = "#FF4136";
-} elseif ($color=="GREEN") {
+} elseif ($color=="green") {
   $color = "#2ECC40";
 } elseif ($color=="YELLOW") {
   $color = "#FFB90F";
-} elseif ($color=="ORANGE") {
+} elseif ($color=="orange") {
   $color = "#FF851B";
-}elseif ($color=="GRAY") {
-  $color = "#DDDDDD";
-}
+}elseif ($color=="aqua") {
+  $color = "#8FD8D8";}
+
 return "$color";
  }
 
