@@ -18,10 +18,19 @@ class db {
     // Only set up the connection the first time this is called.
     if (!isset(self::$mysqli)) {
       // Details to use for connection
-      $host = "eu-cdbr-azure-west-d.cloudapp.net";
-      $username = "b572eae4b8201c";
-      $password = "e865fdac";
-      $dbname = "social_media";
+
+      // Azure-clearDB copy of the db
+      // $host = "eu-cdbr-azure-west-d.cloudapp.net";
+      // $username = "b572eae4b8201c";
+      // $password = "e865fdac";
+      // $dbname = "social_media";
+
+      // GearHost copy of the db
+      $host = "mysql4.gear.host";
+      $username = "smedia";
+      $password = "Ki5STdco?Jk!";
+      $dbname = "smedia";
+
 
       // Create connection object and assign it to property
       self::$mysqli = new mysqli($host, $username, $password, $dbname);
@@ -59,5 +68,3 @@ class db {
     return self::$mysqli->error;
   }
 }
-
-

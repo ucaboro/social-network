@@ -48,6 +48,7 @@ class collection {
     if (is_null($this->photos)) {
       // Get the annotations from the database
 
+      $this->photos = array();
       $db = new db();
       $db->connect();
       $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");

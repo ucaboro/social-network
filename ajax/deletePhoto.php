@@ -3,6 +3,6 @@ include '../imports.php';
 
 $photoID=$_POST['photoID'];
 
-deletePhotowithID($photoID);
+deletePhotoWithID($photoID);
 echo "The Image has been successfully deleted";
 ?>
