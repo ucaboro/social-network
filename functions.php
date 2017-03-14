@@ -44,6 +44,47 @@ function getValueFromGET(string $key) {
   return $stmt;
 }
 
+
+/*
+ * Gets last circleID and increments by 1 for proper new circle creation
+ */
+ function getNewCircleID () {
+
+  $db = new db();
+  $db->connect();
+  //return last circleID
+  $stmt = $db->prepare("SELECT circleID FROM `circle` ORDER BY circleID DESC LIMIT 1");
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
+  return $row["circleID"]+1;
+}
+
+/*
+ * Create new circle in the database based on the color and name
+ */
+ function addNewCircle ($name, $color) {
+  $circleID = getNewCircleID();
+  $userID = getUser()->id;
+
+  $db = new db();
+  $db->connect();
+
+  //insert new in circle
+  $stmt = $db->prepare("INSERT INTO circle (circleID, circleName, circleColor) VALUES (?,?,?)");
+  $stmt->bind_param("iss", $circleID, $name, $color);
+  $stmt->execute();
+
+  //assign yourself to the new circle
+  $stmt = $db->prepare("INSERT INTO circlemembership (circleID, userID) VALUES (?,?)");
+  $stmt->bind_param("ii", $circleID, $userID);
+  $stmt->execute();
+
+
+}
+
 /*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
@@ -178,7 +219,8 @@ function getMessagesInCircle(circle $circle) {
 function getUserWithID(int $id) {
   $db = new db();
   $db->connect();
-  $statement = $db->prepare("SELECT userID, firstName, lastName, email, photoID, date, location, blogVisibility, infoVisibility  FROM user WHERE userID = ?");
+  $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,
+                              user.date AS date, location, blogVisibility, infoVisibility  FROM user, photo WHERE photo.photoID = user.photoID AND user.userID = ?");
   $statement->bind_param("i", $id);
   $statement->execute();
   $result = $statement->get_result();
@@ -198,7 +240,7 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   if ($limit == 0) { $limit = 18; }
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? LIMIT ?");
+  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND isArchived=0 LIMIT ?");
   $statement ->bind_param("ii", $userID, $limit);
   $statement->execute();
   $result = $statement->get_result();
@@ -285,7 +327,7 @@ function getRecentActivityFeed() {
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
-  $statement = $db -> prepare("SELECT * from photo where photoID in
+  $statement = $db -> prepare("SELECT * from photo where isArchived=0 AND photoID in
                               (select photoID from photo where userID in
                               (select userID2 as 'userID' from friendship
                               where isConfirmed = true and userID1 = ? union
@@ -353,7 +395,7 @@ function getRecentActivityFeed() {
 function getPhotoWithID(int $photoID) {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ?");
+  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ? AND isArchived = 0");
   $statement->bind_param("i", $photoID);
   $statement->execute();
   $result = $statement->get_result();
@@ -370,10 +412,10 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
   $db = new db();
   $db->connect();
   if (isset($numberOfPhotos)){
-    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND() LIMIT ?");
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? AND isArchived=0 ORDER BY RAND() LIMIT ?");
     $statement->bind_param("ii", $userID, $numberOfPhotos);
   } else {
-    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? ORDER BY RAND()");
+    $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? AND isArchived=0 ORDER BY RAND()");
     $statement->bind_param("i", $userID);
   }
   $statement->execute();
@@ -589,7 +631,7 @@ function areUsersFriends(user $user1, user $user2): bool {
 }
 
 /*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
-function displayBlog($user, $friends, $friendsOfFriends){
+function displayBlog(user $user, bool $friends, bool $friendsOfFriends): bool{
     //If user has set to visible to all
     if($user->blogVisibility < 1){
         return true;
@@ -603,8 +645,8 @@ function displayBlog($user, $friends, $friendsOfFriends){
         return true;
     }
     //If user has set to only themselves, and you are that user
-    else if($user == getUser()){ //// ??????
-
+    else if($user->id == $_SESSION['userID']){ //// ??????
+        return true;
     }
     //Otherwise it is not visible
     else{
@@ -613,7 +655,7 @@ function displayBlog($user, $friends, $friendsOfFriends){
 }
 
 /*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
-function displayInfo($user, $friends, $friendsOfFriends){
+function displayInfo(user $user, bool $friends, bool $friendsOfFriends): bool{
     if($user->infoVisibility < 1){
         return true;
     }
@@ -623,8 +665,8 @@ function displayInfo($user, $friends, $friendsOfFriends){
     else if( ($user->infoVisibility < 3) && $friends){
         return true;
     }
-    else if($user == getUser()){ ////?????
-
+    else if($user->id == $_SESSION['userID']){
+        return true;
     }
     else{
         return false;
@@ -812,8 +854,8 @@ function deleteFriendship(int $userID) {
     $statement->execute();
   }
 
-  function setProfilePhotoforUser($photoID, $user) {
-    $userID=$user->getUserID();
+  function setProfilePhoto($photoID) {
+    $userID=getUserID();
     $db = new db();
     $db->connect();
     $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
@@ -822,6 +864,6 @@ function deleteFriendship(int $userID) {
   }
 
   function createUserObject($row){
-      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/profile" . $row["photoID"] . ".jpg",new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
+      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["filename"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
   }
 ?>

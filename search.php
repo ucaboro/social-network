@@ -37,10 +37,11 @@ checkLoggedIn();?>
             <!-- Friends list -->
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h4 class="panel-title"><?php echo count($results); ?> users found</h4>
+                <h4 class="panel-title"><?php echo (count($results) + count($results)); ?> results found</h4>
               </div>
               <div class="panel-body">
                 <?php
+                echo '<h4 class="panel-title">' . count($results) . " users found</h4> <br>";
                 // Output each result
                 $thisUser = getUser();
                 foreach ($results as $user) {
@@ -50,6 +51,8 @@ checkLoggedIn();?>
                   echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest);
                 }
                 echo "<br><br>";
+                echo "<hr>";
+                echo '<h4 class="panel-title">' . count($blogResults) . " blogs found</h4> <br>";
                 foreach ($blogResults as $blog) {
                     echo getHtmlForBlogPostSummary($blog, true);
                 }

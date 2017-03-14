@@ -18,6 +18,8 @@ checkLoggedIn();?>
                   <?php
                       $userID = getValueFromGET("u");
                       $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                      //If no value provided from get, it takes value from currently logged in user (i.e. defaults to your profile)
+                      $userID = $user->id;
                       if(areUsersFriendsWithID($userID, $_SESSION['userID'])) {
                           $areFiends = true;
                           $areFriendsOfFriends = true;
@@ -37,27 +39,38 @@ checkLoggedIn();?>
                   <div class="row">
                     <div class="col-xs-12">
                       <span class="h2"><?php echo $user->getFullName(); ?></span><br>
-                        <?php
-                            if(displayInfo($user, $areFiends, $areFriendsOfFriends)){
-                                echo '<span class=\"h5\">' . $user->getAge() . " years old, " . $user->location . ' </span>';
-                            }
-                            else{
-                                echo "<h1>This users personal info is not currently visible to you</h1>";
-                            }
-                        ?>
-                      <!--<span class="h5"><?php /*echo $user->getAge() . " years old, " . $user->location; */?> </span>-->
+                      <?php
+                      if(displayInfo($user, $areFiends, $areFriendsOfFriends))
+                      {
+                          $age = $user->getAge();
+                          $age = ($age == 0) ? "Age unknown" : $age . " years old";
+                          $location = $user->location;
+                          $location = ($location == "") ? "location unknown" : $location;
+                          ?><span class="h5"><?php echo $age . ", " . $location; ?> </span><?php
+                      }
+                      else{
+                          echo "<h1>This users personal info is not currently visible to you</h1>";
+                      }
+                      ?>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
                       <?php
-                        if($areFiends)
-                        {
-                            echo "You are friends.";
-                        }
-                        else{
-                            echo "You aren't friends";
-                        }
+                          $isMe = ( $_SESSION['userID'] == $userID); //Checks to see if the profile being view is the same as the currently logged in user
+                          if ($isMe) {
+                            echo "This is you.";
+                          }
+                          else if($areFiends)
+                          {
+                             echo "You are friends.";
+                          }
+                          else if($areFriendsOfFriends){
+                                echo "You aren't friends but you have friends in common.";
+                          }
+                          else{
+                            echo "You aren't friends.";
+                          }
                       ?>
                     </div>
                   </div>
@@ -76,16 +89,24 @@ checkLoggedIn();?>
                 <?php
                 // Get the array of photos (only the first 7)
                 $photos = getPhotosOwnedByUser($user, 7);
-                // Output each one
-                foreach ($photos as $photoID => $photo) {
+                if (count($photos) > 0) {
+                  // Output each one
+                  foreach ($photos as $photoID => $photo) {
+                    echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
+                            <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                          </div>";
+                  }
+                  // Output the see more icon
                   echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                          <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                          <a href=\"photos.php?u=$user->id\">See more</a>
                         </div>";
+                } else {
+                  if ($isMe) {
+                    echo "<div class=\"col-xs-12\">You haven't uploaded any photos yet.<br><a href=\"photos.php?u=$user->id\">Upload a photo</a></div>";
+                  } else {
+                    echo "<div class=\"col-xs-12\">This user hasn't uploaded any photos yet.</div>";
+                  }
                 }
-                // Output the see more icon
-                echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                        <a href=\"photos.php?u=$user->id\">See more</a>
-                      </div>";
                 ?>
               </div>
             </div>
