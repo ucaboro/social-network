@@ -49,7 +49,7 @@ checkLoggedIn();?>
                           ?><span class="h5"><?php echo $age . ", " . $location; ?> </span><?php
                       }
                       else{
-                          echo "<h1>This users personal info is not currently visible to you</h1>";
+                          echo "<h5>This persons profile is currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>";
                       }
                       ?>
                     </div>
@@ -118,11 +118,19 @@ checkLoggedIn();?>
                     echo getHtmlForBlogPostsListPanel($user, 6, true);
                 }
                 else{
-                    echo "<h1>This users blog is not currently visible to you</h1>";
+                    echo "<div class=\"panel panel-primary\">
+                            <div class=\"panel-heading\">
+                                <h4 class=\"panel-title\">Blog posts</h4>
+                            </div>
+                            <div class=\"panel-body\">
+                                <div class=\"row\">
+                                    <h5>This users blog posts are currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>
+                                </div>
+                            </div>
+                          </div>";
                 }
-                /*echo getHtmlForBlogPostsListPanel($user, 6, true); */
             ?>
-          <!-- /END Photos -->
+          <!-- END Blog Posts -->
         </div>
         <div class="col-md-4">
           <div class="row">

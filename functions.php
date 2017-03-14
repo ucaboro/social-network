@@ -608,25 +608,8 @@ function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
  * Returns true if the users are friends, false otherwise.
  */
 function areUsersFriends(user $user1, user $user2): bool {
-  /*$db = new db();
-  $db->connect();*/
   $userID1 = $user1->getUserID();
   $userID2 = $user2->getUserID();
-  /*$statement = $db -> prepare(" SELECT (CASE
-                                WHEN (userID1 = ? and userID2 = ?) THEN 1
-                                WHEN (userID2 = ? and userID1 = ?) THEN 1
-                                ELSE 0 END) as 'result', isConfirmed
-                                FROM friendship
-                                WHERE isConfirmed = 1");
-  $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
-  $statement->execute();
-  $result = $statement->get_result();
-
-  // Check result. 1 means they are friends.
-  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-    if ($row["result"] == 1) { return true; }
-  }
-  return false;*/
     return areUsersFriendsWithID($userID1, $userID2);
 }
 
