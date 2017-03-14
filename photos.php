@@ -41,7 +41,7 @@ if(isset($_FILES['image'])){
 
   // Assigns a random number for the photoname and runs through a loop to make the random file name assigned doesn't already exist.
    $randomName = RAND(1,50000);
-   while (isPhotoNameExitst($randomName.$file_ext)) {
+   while (isPhotoNameExist($randomName.$file_ext)) {
      $randomName = RAND(1,50000);
    }
 
@@ -160,6 +160,7 @@ if(isset($_FILES['image'])){
               <?php echo getHtmlForNavigationPanel(); ?>
             </div>
           </div>
+            <!--Collections-->
           <div class="row">
             <div class="col-xs-12">
               <div class="panel panel-primary">
@@ -169,28 +170,32 @@ if(isset($_FILES['image'])){
                 <div class="panel-body">
                   <div class="row">
                     <?php
-                    $collections = getPhotoCollectionsByUser($user);
-                    if (count($collections) > 0) {
-                      foreach ($collections as $collection) {
-                        $photos = $collection->getPhotos();
-                        $photo = $photos[0];
-                        $img = getHtmlForSquareImage($photo->src);
-                        $url = $collection->getURLToCollection();
-                        echo "<div class=\"col-xs-6\">
-                                <div class=\"photo-collection\">
-                                  <a href=\"$url\">$img</a>
-                                  <a href=\"$url\">$collection->name</a>
-                                </div>
-                              </div>";
-                      }
-                    } else {
-                      if ($isMe) {
-                        //TODO: Replace this line with a + button?
-                        echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
-                      } else {
-                        echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
-                      }
-                    }
+                        $collections = getPhotoCollectionsByUser($user);
+                        if (count($collections) > 0) {
+                          foreach ($collections as $collection) {
+                            $photos = $collection->getPhotos();
+                            $photo = $photos[0];
+                            $img = getHtmlForSquareImage($photo->src);
+                            $url = $collection->getURLToCollection();
+                            echo "<div class=\"col-xs-6\">
+                                    <div class=\"photo-collection\">
+                                      <a href=\"$url\">$img</a>
+                                      <a href=\"$url\">$collection->name</a>
+                                    </div>
+                                  </div>";
+                          }
+                            // Output the see more icon
+                            echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
+                              <a href=\"collections.php?u=$user->id\">See more</a>
+                            </div>";
+                        } else {
+                          if ($isMe) {
+                            //TODO: Replace this line with a + button?
+                            echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
+                          } else {
+                            echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
+                          }
+                        }
                     ?>
                     <?php
                     if (getUserID()==$user->getUserID()) {
@@ -205,6 +210,7 @@ if(isset($_FILES['image'])){
               </div>
             </div>
           </div>
+            <!--End Collections-->
 
           <div class="row">
             <div class="col-xs-12">
