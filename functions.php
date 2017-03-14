@@ -253,6 +253,26 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   return $photosArray;
 }
 
+function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
+    $userID =$user->getUserID();
+    //TODO: do we want a limit?
+    // Sets a default number of photos to be returned if no limit is specified.
+    if ($limit == 0) { $limit = 18; }
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
+    $statement ->bind_param("iii", $userID,$collectionID, $limit);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $photosArray = array();
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+    }
+
+    return $photosArray;
+}
+
 /*
  * Returns an array of the blog posts that the specified user has posted. Key is blogPost ID, value is blogPost object.
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Posts are returned in date-descending order.
@@ -676,7 +696,7 @@ function isFriendRequestPending(user $sender, user $receiver) {
 /*
  * Returns true if there is a photoAlready Saved with the specified name.
  */
-function isPhotoNameExitst($photoName) : bool {
+function isPhotoNameExist($photoName) : bool {
   $db = new db();
   $db->connect();
   $statement = $db -> prepare("SELECT photoID FROM photo WHERE filename =  ?  ");
@@ -686,7 +706,25 @@ function isPhotoNameExitst($photoName) : bool {
 
   return ($result->num_rows == 1);
 }
+/*
+ * Return a collection object for a given collection id
+ */
+//FARSE
+function getPhotoCollectionFromID(int $collectionID){
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photocollection WHERE collectionID = ? LIMIT 1");
+    $statement->bind_param("i", $collectionID);
+    $statement->execute();
+    $result = $statement->get_result();
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"),$row["name"]);
+}
 
+//TODO add visibility for this, also do collections need an actual user object, or would ID suffice? does this create overhead?
+function newCollection($row): Collection{
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"), $row["name"]);
+};
 /*
  * Returns an array of a particular user's photo collections.
  */

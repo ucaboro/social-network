@@ -319,6 +319,7 @@ function getHtmlForNavigationPanel() {
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
+             <li><a href=\"friendsOfFriends.php\">Friends of friends</a></li>
              <li><a href=\"circles.php\">Circles</a></li>
              <li><a href=\"settings.php\">Settings</a></li>
            </ul>

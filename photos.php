@@ -41,7 +41,7 @@ if(isset($_FILES['image'])){
 
   // Assigns a random number for the photoname and runs through a loop to make the random file name assigned doesn't already exist.
    $randomName = RAND(1,50000);
-   while (isPhotoNameExitst($randomName.$file_ext)) {
+   while (isPhotoNameExist($randomName.$file_ext)) {
      $randomName = RAND(1,50000);
    }
 
@@ -160,6 +160,7 @@ if(isset($_FILES['image'])){
               <?php echo getHtmlForNavigationPanel(); ?>
             </div>
           </div>
+            <!--Collections-->
           <div class="row">
             <div class="col-xs-12">
               <div class="panel panel-primary">
@@ -209,6 +210,7 @@ if(isset($_FILES['image'])){
               </div>
             </div>
           </div>
+            <!--End Collections-->
 
           <div class="row">
             <div class="col-xs-12">
