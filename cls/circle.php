@@ -59,7 +59,7 @@ class circle {
       $db = new db();
       $db->connect();
       $stmt = $db->prepare
-      ("SELECT u.userID, firstName, lastName, photoID, date, location
+      ("SELECT u.userID, firstName, lastName, photoID, date, location, email, blogVisibility, infoVisibility
         FROM user u
         JOIN circlemembership c ON c.userID = u.userID
         WHERE circleID = ?;");
@@ -69,7 +69,7 @@ class circle {
       $this ->users = array();
       while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 
-      $this ->users[] = new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"]);
+      $this ->users[] = new user($row["userID"], $row["firstName"], $row["lastName"], "img/profile" . $row["photoID"] . ".jpg", new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"] );
 
     }
     return $this ->users;
