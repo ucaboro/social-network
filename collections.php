@@ -45,7 +45,7 @@ checkLoggedIn();
                                 </div>
                               </div>";
                             }
-
+                            "<button title=\"Delete collection\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#change-friendship\" data-user-name=\"$name\" data-user-id=\"$user->id\" data-change-type=\"0\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
                         } else {
                             if ($isMe) {
                                 //TODO: Replace this line with a + button?

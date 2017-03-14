@@ -327,6 +327,8 @@ function getHtmlForNavigationPanel() {
         </div>";
 }
 
+
+
 /*
  * Returns the HTML for the smaller version of the user summary panel, which appears at the top of the photos and blog pages.
  */

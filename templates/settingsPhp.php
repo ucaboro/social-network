@@ -17,7 +17,6 @@
     if(isset($_POST['dob_submit'])) {               //If submit button pressed and page reloaded, then validate and save to database
         //If dob has been changed and is non-empty
         if( checkBeforeUpdate($dob, $_POST['dob']) ) {
-            echo $_POST['dob'];
             //Update dob variable
             $dob = trim($_POST['dob']);
             updateUserCell("date", $dob, $userID);
@@ -25,7 +24,6 @@
     }
     if(isset($_POST['location_submit'])) {
         if(checkBeforeUpdate($location, $_POST['location'])){
-            echo $_POST['location'];
             $location = trim($_POST['location']);
             updateUserCell("location", $location, $userID);
         }
@@ -34,7 +32,6 @@
     if(isset($_POST['first_name_submit'])){
         //Check field has been changed and is not empty
         if(checkBeforeUpdate($firstName, $_POST['first_name'])){
-            echo $_POST['first_name'];
             $firstName = trim($_POST['first_name']);
             updateUserCell("firstName", $firstName, $userID);
         }
@@ -42,7 +39,6 @@
     if(isset($_POST['last_name_submit'])){
         //Check field is not empty
         if(checkBeforeUpdate($lastName, $_POST['last_name'])){
-            echo $_POST['last_name'];
             $lastName = trim($_POST['last_name']);
             updateUserCell("lastName", $lastName, $userID);
         }
@@ -63,7 +59,6 @@
         //Passed validation
         else{
             //Update
-            echo $_POST['email'];
             $email = trim($_POST['email']);
             updateUserCell('email', $email, $userID);
         }
@@ -89,7 +84,6 @@
             $errors[] = "Passwords must be at least " . $length . " characters long and contain at least one non-alphabetical character, i.e. a number or symbol.";
         }
         else{
-            echo "Updating passwords yo.";
             updateUserCell('password', passwordEncrypt($newPassword), $userID);
         }
     }
@@ -98,7 +92,6 @@
     {
         //If value changed
         if($blogPrivacy != $_POST['blog_privacy']){
-            echo $_POST['blog_privacy'];
             $blogPrivacy = $_POST['blog_privacy'];
             updateUserCell('blogVisibility', $blogPrivacy, $userID);
         }
@@ -107,8 +100,16 @@
     {
         //If value changed
         if($infoPrivacy != $_POST['info_privacy']){
-            echo $_POST['info_privacy'];
             $infoPrivacy = $_POST['info_privacy'];
             updateUserCell('infoVisibility', $infoPrivacy, $userID);
+        }
+    }
+
+    //Interests part
+    if(isset($_POST['interests_settings_submit'])){
+        echo "changing interests";
+        if(/*Write a function to check if the user already has that interest*/true){
+            $interest = $_POST['interests_settings'];
+            //Write a function to upload $interest
         }
     }
