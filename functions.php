@@ -849,8 +849,8 @@ function deleteFriendship(int $userID) {
   function addNewPhotoCollection($name,$FOF_visibility,$circle_visibility){
 
     $thisUserID = getUserID();
-    $FOF_vis=($FOF_visibility) ? 1 : 0;
-    $cicle_vis=($circle_visibility) ? 1 : 0;
+    // $FOF_vis=($FOF_visibility) ? 1 : 0;
+    // $cicle_vis=($circle_visibility) ? 1 : 0;
     $db = new db();
     $db->connect();
     $stmt = $db->prepare("INSERT INTO photocollection (userID,name,isVisibleToFriendsOfFriends,isVisibleToCircles) VALUES (?, ?, ?,?)");
