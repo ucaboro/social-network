@@ -1,4 +1,5 @@
 <?php include "imports.php";
+include "templates/script.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn();
 
@@ -121,6 +122,8 @@ checkLoggedIn();
         </div>
       </div>
     </div>
-    <?php echo getHtmlForJavascriptImports(); ?>
+    <?php echo getHtmlForJavascriptImports();
+          echo getHtmlForNewCircle();
+           ?>
   </body>
 </html>
