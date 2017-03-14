@@ -113,7 +113,7 @@ checkLoggedIn();
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-12">
+            <div id="outerCircle" class="col-xs-12">
               <?php echo getHtmlForCirclePanel(); ?>
             </div>
           </div>
@@ -123,5 +123,6 @@ checkLoggedIn();
     <?php echo getHtmlForJavascriptImports();
           echo getHtmlForNewCircle();
            ?>
+
   </body>
 </html>

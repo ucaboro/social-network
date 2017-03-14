@@ -25,11 +25,18 @@ class db {
       // $password = "e865fdac";
       // $dbname = "social_media";
 
-      // GearHost copy of the db
-      $host = "mysql4.gear.host";
-      $username = "smedia";
-      $password = "Ki5STdco?Jk!";
+
+      // local copy of the db
+      $host = "localhost";
+      $username = "root";
+      $password = "";
       $dbname = "smedia";
+
+      // GearHost copy of the db
+      // $host = "mysql4.gear.host";
+      // $username = "smedia";
+      // $password = "Ki5STdco?Jk!";
+      // $dbname = "smedia";
 
 
       // Create connection object and assign it to property
