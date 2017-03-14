@@ -18,6 +18,7 @@ checkLoggedIn();?>
                   <?php
                   $userID = getValueFromGET("u");
                   $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                  $userID = $user->id;
                   echo getHtmlForSquareImage($user->photoSrc);
                   ?>
                 </div>
