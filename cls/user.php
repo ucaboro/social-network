@@ -56,6 +56,23 @@ class user {
   private $friends;
 
   /*
+   * An array of all the interests the user has
+   */
+  private $interests;
+
+  /*
+   * An array of the ids of all the interests the user has
+   */
+  private $interestIDs;
+
+  /*
+  * An array of the ids of all the interests the user has
+  */
+  private $interestNames;
+
+
+
+  /*
    * Constructor which initialises the object and populates all fields.
    */
   public function __construct(int $id, string $firstName, string $lastName, $photoSrc, $dateOfBirth, $location, $email, $blogVisibility, $infoVisibility) {
@@ -119,6 +136,86 @@ class user {
     }
     // Return the saved array
     return $this->friends;
+  }
+
+//  public function getInterestIDs(){
+//      // Get the array of friends from the database the first time.
+//      if (is_null($this->interests)) {
+//          //$interestID = 0;
+//          $db = new db();
+//          $db->connect();
+//          $statement = $db -> prepare("SELECT interestID FROM interestsassignment WHERE userID1 = ?");
+//          $statement->bind_param("i", $this->id);
+//          $statement->execute();
+//          $result = $statement->get_result();
+//          $this->interestIDs = $result->fetch_array(MYSQLI_NUM);
+//
+////          /* bind result variables */
+////          $statement->bind_result($interestID);
+////          /* fetch values */
+////          while($statement->fetch()) {
+////            $this->interestIDs[] = $interestID;
+////          }
+////          /* close statement */
+////          $statement->close();
+//      }
+//      else{
+//        return $this->interestIDs;
+//      }
+//  }
+
+  public function getInterests(): array{
+    //Get array of interests from the database for the first time
+      if (is_null($this->interests)){
+          $db = new db();
+          $db->connect();
+          $statement = $db -> prepare("SELECT * FROM interests,interestsassignment 
+                                        WHERE interests.interestID = interestsassignment.interestID
+                                        AND userID = ?");
+          $statement->bind_param("i", $this->id);
+          $statement->execute();
+          $result = $statement->get_result();
+          check_query($result, $db);
+          while($row = $result->fetch_array(MYSQLI_ASSOC)){
+              $this->interests[] = new interest($row["interestID"], $row["name"]);
+              $this->interestNames[] = $row["name"];
+              $this->interestIDs[] = $row["name"];
+          }
+          //If the user currently has no interests
+          if(is_null($this->interests)){
+              $this->interests = array();
+              $this->interestNames = array();
+              $this->interestNames = array();
+              return $this->interests = array();
+          }
+          else{
+              return $this->interests;
+
+          }
+      }
+      else{
+        return $this->interests;
+      }
+  }
+
+  public function getInterestNames(): array{
+      if (is_null($this->interestNames)){
+          $dummy = $this->getInterests();
+          return $this->interestNames;
+      }
+      else{
+          return $this->interestNames;
+      }
+  }
+
+  public function getInterestIDs(): array{
+      if (is_null($this->interestIDs)){
+          $dummy = $this->getInterests();
+          return $this->interestIDs;
+      }
+      else{
+          return $this->interestIDs;
+      }
   }
 
 }

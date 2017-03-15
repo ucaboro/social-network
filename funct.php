@@ -220,12 +220,172 @@
         return $blogArray;
     }
 
-
-
-
     /*
      * Create and return a new blog object from the associative array produced by a SQL query
      */
     function createBlogObject($row){
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
+
+
+    function addNewCustomInterest(string $interestName, int $userID): void
+    {
+        //Get interest id from name, if in database, if not in database will return -1
+        $interestID = findInterestIDFromInterestName($interestName);
+        //If interest does not already exist in the database
+        if($interestID == -1){
+            uploadNewInterest($interestName,$userID);
+        }
+        //If interest already exists in the database, just assign it to this user
+        else{
+            assignInterestToUser($interestID, $userID);
+        }
+    }
+    /*
+     * Upload a new user created interest to the interests database
+     */
+    function uploadNewInterest(string $interest, int $userID): void
+    {
+        $database= new db();
+        $database->connect();
+        //Perform query as prepared statement
+        $stmt = $database->prepare("INSERT INTO interests (name) 
+                                    VALUES (?)");
+        $stmt->bind_param("s", $interest);
+        $result = $stmt->execute();
+        $interestID = $database->lastInsertId();
+        if (!$result) {
+            printf("Errormessage: %s\n", $database->getError());
+            die("Database query failed.");
+        }
+        else{
+            assignInterestToUser($interestID, $userID);
+        }
+    }
+
+
+    /*
+     * Link a user and an interest in the interests assignment database, i.e. record that the user has that interest
+     */
+    function assignInterestToUser(int $interestID, int $userID): void{
+        $database= new db();
+        $database->connect();
+        //Perform query as prepared statement
+        $stmt = $database->prepare("INSERT INTO interestsassignment (interestID, userID) VALUES (?, ?)");
+        $stmt->bind_param("ii", $interestID, $userID);
+        $result =$stmt->execute();
+        check_query($result, $database);
+    }
+
+    //Should use object for this
+    function assignInterestToUserFromName(string $name, int $userID): void{
+        $interestID = findInterestIDFromInterestName($name);
+        assignInterestToUser($interestID, $userID);
+    }
+    /*
+     *
+     */
+    function findInterestIDFromInterestName(string $name): int{
+        //Set initially as -1, a returned value of -1 indicated interest not found
+        $id = -1;
+        $interestName = trim($name);
+        $database= new db();
+        $database->connect();
+        $stmt = $database->prepare("SELECT interestID FROM interests WHERE name = ? LIMIT 1");
+        $stmt->bind_param("s", $interestName);
+        $stmt->execute();
+        $stmt->bind_result($id);
+        if($stmt->fetch()){
+            return id;
+        }
+        else{
+            $stmt->close();
+            return -1;
+        }
+    }
+
+    function getInterestObjectFromInterestName(string $name): interest
+    {
+        return new interest(findInterestIDFromInterestName($name), $name);
+    }
+
+
+    /*
+     * Check if user already has a given
+     */
+    function userAlreadyHasInterest(string $interestName, $userID): bool{
+        return userAlreadyHasInterestFromID(findInterestIDFromInterestName($interestName), $userID);
+    }
+
+    function userAlreadyHasInterestFromID(int $interestID, int $userID): bool{
+        //Set initially as -1, a returned value of -1 indicated interest not found
+        $id = -1;
+        $database= new db();
+        $database->connect();
+        $stmt = $database->prepare("SELECT interestID FROM interestsassignment WHERE interestID = ? AND userID = ? LIMIT 1");
+        $stmt->bind_param("ii", $interestID, $userID);
+        $stmt->execute();
+        $stmt->bind_result($id);
+        $stmt->fetch();
+        $stmt->close();
+
+        if($id == -1){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    /*
+     *
+     */
+    function interestAlreadyInDatabase(string $interestName): bool{
+        if(findInterestIDFromInterestName($interestName) > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    function userObjectAlreadyHasInterest(string $name, user $user){
+        return in_array($name, $user->getInterestNames());
+    }
+
+    function userObjectAlreadyHasInterestFromID(int $interestID, user $user){
+        return in_array($interestID, $user->getInterestIDs());
+    }
+
+    function getExistingInterests(): array{
+        $db = new db();
+        $db->connect();
+        $result = $db -> query("SELECT * FROM interests");
+        check_query($result, $db);
+        return $result->fetch_array(MYSQLI_NUM);
+    }
+
+    function getExistingInterestNames(): array{
+        $names = array();
+        $db = new db();
+        $db->connect();
+        $result = $db -> query("SELECT name FROM interests");
+        check_query($result, $db);
+        while($name = $result->fetch_array(MYSQLI_NUM))
+        {
+            $names[] = $name[0];
+        }
+        return $names;
+    }
+//$stmt->execute();
+//$stmt->bind_result($id);
+//if($stmt->fetch()){
+//    return id;
+//}
+//else{
+//    echo "no fetch!";
+//    $stmt->close();
+//    return -1;
+//}
+
