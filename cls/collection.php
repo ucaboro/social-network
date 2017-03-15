@@ -76,10 +76,12 @@ class collection {
       // Get the annotations from the database
       $db = new db();
       $db->connect();
-      $statement = $db -> prepare("SELECT photo.photoID as photoID FROM photocollectionassignment,photo WHERE photo.photoID=photocollectionassignment.photoID AND isArchived = 0 AND  collectionID =?");
+      $statement = $db -> prepare("SELECT isVisibleToCircles AS status FROM photocollection WHERE collectionID =?");
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();
+      $row = $result->fetch_array(MYSQLI_ASSOC);
+      $this->isVisibleToCircles = $row["status"];
     }
     return $this->isVisibleToCircles;
   }
@@ -89,16 +91,51 @@ class collection {
    */
   public function isVisibleToFriendsOfFriends(): bool {
     // Check if we already got the photos for this collection
-    if (is_null($this->isVisibleToCircles)) {
+    if (is_null($this->isVisibleToFriendsOfFriends)) {
       // Get the annotations from the database
       $db = new db();
       $db->connect();
-      $statement = $db -> prepare("SELECT photo.photoID as photoID FROM photocollectionassignment,photo WHERE photo.photoID=photocollectionassignment.photoID AND isArchived = 0 AND  collectionID =?");
+      $statement = $db -> prepare("SELECT isVisibleToFriendsOfFriends AS status FROM photocollection WHERE collectionID = ?");
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();
+      $this->isVisibleToCircles = $row["status"];
     }
-    return $this->isVisibleToCircles;
+    return $this->isVisibleToFriendsOfFriends;
+  }
+
+  /*
+   * Sets the circle visibility Status of the collection.
+   */
+  public function setIsVisibleToCircles($status) {
+
+    $intStatus = ($status == TRUE) ? 1 : 0 ;
+
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("UPDATE photocollection SET isVisibleToCircles = ? WHERE collectionID = ?");
+    $statement->bind_param("ii",$intStatus, $this->id);
+    $statement->execute();
+
+    $this->isVisibleToCircles = $intStatus;
+
+  }
+
+  /*
+   * Sets the friends of friends visibility Status of the collection.
+   */
+  public function setIsVisibleToFriendsOfFriends($status) {
+
+    $intStatus = ($status == TRUE) ? 1 : 0 ;
+
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("UPDATE photocollection SET isisVisibleToFriendsOfFriends = ? WHERE collectionID = ?");
+    $statement->bind_param("ii",$intStatus, $this->id);
+    $statement->execute();
+
+    $this->isVisibleToCircles = $intStatus;
+
   }
 
   /*
