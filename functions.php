@@ -19,12 +19,12 @@ $statementFriendsOfFriendsOf7User = " SELECT userID FROM user WHERE userID != ? 
                                       (".$statementFriendsOf2User.")
                                       )";
 
-$searchParameters411 = " firstName LIKE ?
+$searchParameters411 = "( firstName LIKE ?
                       OR lastName LIKE ?
                       OR CONCAT_WS('', firstName, lastName) LIKE ?
                       OR CONCAT_WS('', lastName, firstName) LIKE ?
                       OR email = ?
-                      OR location LIKE ? ";
+                      OR location LIKE ? )";
 
 
 $statementFriendsOfFriendsOf7User2 = "SELECT userID FROM user WHERE userID != ? AND
