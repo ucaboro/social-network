@@ -57,7 +57,7 @@ class collection {
       $result = $statement->get_result();
 
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $this->photos [] = getPhotoWithID($row["photoID"]);
+        $this->photos[$row["photoID"]] = getPhotoWithID($row["photoID"]);
       }
     }
     return $this->photos;
