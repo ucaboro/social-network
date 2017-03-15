@@ -648,6 +648,7 @@ function areUsersFriendsOfFriends(int $userID1, int $userID2){
     //See if userID2 is in the array
     return in_array($userID2, $friendsOfFriends);
 }
+
 function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
     $db = new db();
     $db->connect();
@@ -892,24 +893,24 @@ function deleteFriendship(int $userID) {
 /*
  * Adds a blogpost to the database where the user is the currently logged-in user.
  */
-function addNewBlogPost($blogTitle,$blogpost,$dateString){
+function addNewBlogPost($blogTitle,$blogpost){
   $thisUserID = getUserID();
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
-  $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+  $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, NOW(), ?)");
+  $stmt->bind_param("isss",$thisUserID,$blogpost,$blogTitle);
   $stmt->execute();
 }
 
 /*
  * Adds a photo to the database where the user is the currently logged-in user.
  */
-function addPhotoToDB($photoName,$dateString){
+function addPhotoToDB($photoName){
   $thisUserID = getUserID();
   $db = new db();
   $db->connect();
-  $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
-  $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
+  $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, NOW())");
+  $stmt->bind_param("iss",$thisUserID,$photoName);
   $stmt->execute();
 }
 
@@ -991,5 +992,26 @@ function addCommentToPhoto(photo $photo, string $comment) {
   $stmt->execute();
 }
 
+
+/*
+ * Returns the number of common interests between user1 and user2.
+ */
+function getCommonInterestsBetweenUsers($user1, $user2) {
+
+  $userID1 = $user1->getUserID();
+  $userID2 = $user2->getUserID();
+
+  $db = new db();
+  $db->connect();
+
+  $statement = $db -> prepare("SELECT COUNT(interestID) AS commonInterests FROM interestsassignment WHERE userID = ? AND interestID IN
+                              (SELECT interestID FROM interestsassignment WHERE userID = ?)");
+  $statement->bind_param("ii", $userID1, $userID2 );
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  return $row["commonInterests"];
+}
 
 ?>
