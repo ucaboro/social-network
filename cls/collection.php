@@ -48,9 +48,10 @@ class collection {
     if (is_null($this->photos)) {
       // Get the annotations from the database
 
+      $this->photos = array();
       $db = new db();
       $db->connect();
-      $statement = $db -> prepare("SELECT photoID FROM photocollectionassignment WHERE collectionID = ?");
+      $statement = $db -> prepare("SELECT photo.photoID as photoID FROM photocollectionassignment,photo WHERE photo.photoID=photocollectionassignment.photoID AND isArchived = 0 AND  collectionID =?");
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();

@@ -16,10 +16,23 @@ checkLoggedIn();?>
               <div class="row">
                 <div class="col-xs-3">
                   <?php
-                  $userID = getValueFromGET("u");
-                  $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
-                  $userID = $user->id;
-                  echo getHtmlForSquareImage($user->photoSrc);
+                      $userID = getValueFromGET("u");
+                      $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                      //If no value provided from get, it takes value from currently logged in user (i.e. defaults to your profile)
+                      $userID = $user->id;
+                      if(areUsersFriendsWithID($userID, $_SESSION['userID'])) {
+                          $areFiends = true;
+                          $areFriendsOfFriends = true;
+                      }
+                      else if(areUsersFriendsOfFriends($userID, $_SESSION['userID'])){
+                          $areFiends = false;
+                          $areFriendsOfFriends = true;
+                      }
+                      else{
+                          $areFiends = false;
+                          $areFriendsOfFriends = false;
+                      }
+                    echo getHtmlForSquareImage($user->photoSrc);
                   ?>
                 </div>
                 <div class="col-xs-9">
@@ -27,27 +40,37 @@ checkLoggedIn();?>
                     <div class="col-xs-12">
                       <span class="h2"><?php echo $user->getFullName(); ?></span><br>
                       <?php
-                      $age = $user->getAge();
-                      $age = ($age == 0) ? "Age unknown" : $age . " years old";
-                      $location = $user->location;
-                      $location = ($location == "") ? "location unknown" : $location;
+                      if(displayInfo($user, $areFiends, $areFriendsOfFriends))
+                      {
+                          $age = $user->getAge();
+                          $age = ($age == 0) ? "Age unknown" : $age . " years old";
+                          $location = $user->location;
+                          $location = ($location == "") ? "location unknown" : $location;
+                          ?><span class="h5"><?php echo $age . ", " . $location; ?> </span><?php
+                      }
+                      else{
+                          echo "<h5>This persons profile is currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>";
+                      }
                       ?>
-                      <span class="h5"><?php echo $age . ", " . $location; ?> </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xs-12">
                       <?php
-                      $me = getUser();
-                      $isMe = ($me->id == $userID);
-                      if ($isMe) {
-                        $friendshipStatusString = "This is you.";
-                      } elseif (areUsersFriends($me, $user)) {
-                        $friendshipStatusString = "You are friends.";
-                      } else {
-                        $friendshipStatusString = "You aren't friends.";
-                      }
-                      echo $friendshipStatusString;
+                          $isMe = ( $_SESSION['userID'] == $userID); //Checks to see if the profile being view is the same as the currently logged in user
+                          if ($isMe) {
+                            echo "This is you.";
+                          }
+                          else if($areFiends)
+                          {
+                             echo "You are friends.";
+                          }
+                          else if($areFriendsOfFriends){
+                                echo "You aren't friends but you have friends in common.";
+                          }
+                          else{
+                            echo "You aren't friends.";
+                          }
                       ?>
                     </div>
                   </div>
@@ -90,8 +113,24 @@ checkLoggedIn();?>
           </div>
           <!-- /END Photos -->
           <!-- Blog Posts -->
-          <?php echo getHtmlForBlogPostsListPanel($user, 6, true); ?>
-          <!-- /END Photos -->
+            <?php
+                if(displayBlog($user, $areFiends, $areFriendsOfFriends)){
+                    echo getHtmlForBlogPostsListPanel($user, 6, true);
+                }
+                else{
+                    echo "<div class=\"panel panel-primary\">
+                            <div class=\"panel-heading\">
+                                <h4 class=\"panel-title\">Blog posts</h4>
+                            </div>
+                            <div class=\"panel-body\">
+                                <div class=\"row\">
+                                    <h5>This users blog posts are currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>
+                                </div>
+                            </div>
+                          </div>";
+                }
+            ?>
+          <!-- END Blog Posts -->
         </div>
         <div class="col-md-4">
           <div class="row">

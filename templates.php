@@ -319,12 +319,15 @@ function getHtmlForNavigationPanel() {
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
+             <li><a href=\"friendsOfFriends.php\">Friends of friends</a></li>
              <li><a href=\"circles.php\">Circles</a></li>
              <li><a href=\"settings.php\">Settings</a></li>
            </ul>
           </div>
         </div>";
 }
+
+
 
 /*
  * Returns the HTML for the smaller version of the user summary panel, which appears at the top of the photos and blog pages.
@@ -487,6 +490,154 @@ function getHtmlForAnnotationsList(photo $photo): string {
     }
   }
   return "Acknowledged by " . $youPrefix . join(", ", $names) . ".";
+}
+
+function getHtmlForNewCircle(){
+  $html = "<div class=\"modal fade\" id=\"addModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\">
+    <div class=\"modal-dialog\" role=\"document\">
+      <div class=\"modal-content\">
+        <div class=\"modal-header\">
+          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>
+          <h4 class=\"modal-title\">Create New Circle</h4>
+        </div>
+        <div class=\"modal-body\">
+          <form>
+            <div class=\"form-group\">
+              <label for=\"circle-name\" class=\"control-label\">Circle Name:</label>
+              <input type=\"text\" class=\"form-control\" id=\"circle-name\">
+            </div>
+            <div class=\"form-group\">
+              <label for=\"circle-color\" class=\"control-label\">Circle Color:</label>
+              <br>
+                  <a id=\"blue\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-primary\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"aqua\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-info\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"green\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-success\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"orange\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-warning\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+                  <a id=\"red\" href=\"#aboutModal\" data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-circle-sm btn-danger\"><span class=\"glyphicon glyphicon-tint\"></span> </a>
+              </br>
+              <label id=\"colorinfo\" for=\"circle-color\" class=\"control-label\"></label>
+            </div>
+          </form>
+        </div>
+        <div class=\"modal-footer\">
+          <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>
+          <button id=\"create\" type=\"button\" class=\"btn btn-primary\">Create</button>
+        </div>
+      </div>
+    </div>
+    <script type=\"text/javascript\">
+    //script for new circle creation
+
+    //Creating New Circle functions
+    //get color of the button
+    var color =\"\";
+    var color_click = function(){
+        color = this.id;
+    }
+
+     function createCircle(){
+       var name = $('#circle-name').val();
+       if (name.length==0||color.length==0){
+          document.getElementById(\"colorinfo\").innerHTML = \"create a name and select a color\";
+         }else{
+
+          document.getElementById(\"colorinfo\").innerHTML = \"\";
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST','ajax/createNewCircle.php', true);
+      xhr.setRequestHeader(\"Content-type\",\"application/x-www-form-urlencoded\");
+      xhr.onreadystatechange = function (){
+
+        if (xhr.readyState == 4 && xhr.status ==200){
+              var target = document.getElementById(\"outerCircle\");
+              // target.classList.add(\"hidden\");
+              target.innerHTML = xhr.responseText;
+              // target.classList.remove(\"hidden\");
+
+        }
+    }
+    xhr.send(\"name=\"+name+\"&color=\"+color);
+    }
+
+    }
+
+    //assigning colors to buttons
+    document.getElementById('blue').onclick = color_click;
+    document.getElementById('aqua').onclick = color_click;
+    document.getElementById('green').onclick = color_click;
+    document.getElementById('orange').onclick = color_click;
+    document.getElementById('red').onclick = color_click;
+
+    //create new circle button
+    var create = document.getElementById(\"create\");
+    create.addEventListener(\"click\", createCircle);
+
+    </script>
+  </div>";
+
+
+  return $html;
+
+}
+
+function messagingScript(){
+  $script = " <script>
+  //script fot messaging functionality
+    var crcl = $('#circleID').val();
+    var alert = document.getElementById(\"alert\");
+    var success = document.getElementById(\"success\");
+
+      function sendMsg(){
+        var msg = $('#msg').val();
+
+        if (msg.length == 0){
+           $('#alert').show();
+          alert.innerHTML = \"type your message first\";
+        } else{
+          $('#alert').hide();
+          $('#success').show();
+          success.innerHTML = \"sent!\";
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'ajax/sendMessage.php', true);
+        xhr.setRequestHeader(\"Content-type\",\"application/x-www-form-urlencoded\");
+        xhr.onreadystatechange = function (){
+          if (xhr.readyState == 4 && xhr.status ==200){
+              var target = document.getElementById(\"msg-panel\");
+              target.innerHTML = xhr.responseText;
+              console.log(crcl);
+              console.log(msg);
+          }
+        }
+        xhr.send(\"msg=\"+msg+\"&crcl=\"+crcl);
+      }
+    }
+
+    var button = document.getElementById(\"postMsg\");
+    button.addEventListener(\"click\", sendMsg);
+
+    //function that renews the messages panel every 3 seconds
+    var renew = function () {
+
+        var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'ajax/updateMessage.php', true);
+    xhr.setRequestHeader(\"Content-type\",\"application/x-www-form-urlencoded\");
+    xhr.onreadystatechange = function (){
+
+      if (xhr.readyState == 4 && xhr.status ==200){
+        var target = document.getElementById(\"msg-panel\");
+        target.innerHTML = xhr.responseText;
+        console.log(\"renewing\");
+    }
+    }
+      xhr.send(\"crcl=\"+crcl);
+       setTimeout(renew, 3000);
+    };
+
+    // UNCOMMENT THE NEXT LINE FOR DYNAMIC MESSAGES
+    renew();
+    </script>";
+
+  return $script;
 }
 
 ?>

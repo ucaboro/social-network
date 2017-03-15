@@ -1,5 +1,5 @@
-<?php
-include "imports.php";
+<?php include "imports.php";
+include "templates/script.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn();
 
@@ -113,13 +113,16 @@ checkLoggedIn();
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-12">
+            <div id="outerCircle" class="col-xs-12">
               <?php echo getHtmlForCirclePanel(); ?>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <?php echo getHtmlForJavascriptImports(); ?>
+    <?php echo getHtmlForJavascriptImports();
+          echo getHtmlForNewCircle();
+           ?>
+
   </body>
 </html>

@@ -44,6 +44,7 @@ function getValueFromGET(string $key) {
   return $stmt;
 }
 
+
 /*
  * Gets last circleID and increments by 1 for proper new circle creation
  */
@@ -84,7 +85,6 @@ function getValueFromGET(string $key) {
 
 }
 
-
 /*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
@@ -105,7 +105,6 @@ function getUserID() {
       return 1;
   }
 }
-
 
 /*
  * Returns an array of the circles that a user is a member of. Key is circle ID, value is circle object.
@@ -252,6 +251,26 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   }
 
   return $photosArray;
+}
+
+function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
+    $userID =$user->getUserID();
+    //TODO: do we want a limit?
+    // Sets a default number of photos to be returned if no limit is specified.
+    if ($limit == 0) { $limit = 18; }
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
+    $statement ->bind_param("iii", $userID,$collectionID, $limit);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $photosArray = array();
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+    }
+
+    return $photosArray;
 }
 
 /*
@@ -431,7 +450,7 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
 }
 
 /*
- * Returns an array of users who are friends of friends (who are not alread friends) with the given user.
+ * Returns an array of users who are friends of friends (who are not already friends) with the given user.
  * Optionally filters the list based on a search string.
  */
 function getFriendsOfFriendsOfUser(user $user): array {
@@ -474,7 +493,45 @@ function getFriendsOfFriendsOfUser(user $user): array {
 
   return $friendsArray;
 }
+/*Returns an array of IDs of all the users who are friends of friends (who are not already friends) with the given user.*/
+function getFriendsOfFriendsOfUserAsIDs(int $userID): array {
+    $db = new db();
+    $db->connect();
 
+    $statement = $db -> prepare("select userID from user where userID != ? and
+                              userID not in
+                              -- makes sure direct friends of ther user is not selected
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              -- chooses the friends of friends
+                              and userID in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?)
+                              union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2
+                              in
+                              (select userID2 as 'userID' from friendship
+                              where isConfirmed = true and userID1 = ? union
+                              select userID1 as 'userID' from friendship
+                              where isConfirmed = true and userID2 = ?))");
+    $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $friendsArray = array();
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $friendsArray[] = $row["userID"];
+    }
+    return $friendsArray;
+}
 
 
 /*
@@ -543,29 +600,81 @@ function getUsers(string $filter): array {
   return $usersArray;
 }
 
-/*
- * Returns true if the users are friends, false otherwise.
- */
-function areUsersFriends(user $user1, user $user2): bool {
-  $db = new db();
-  $db->connect();
-  $userID1 = $user1->getUserID();
-  $userID2 = $user2->getUserID();
-  $statement = $db -> prepare(" SELECT (CASE
+function areUsersFriendsOfFriends(int $userID1, int $userID2){
+    //Get list of all the userIDs of friends of friends of user1
+    $friendsOfFriends = getFriendsOfFriendsOfUserAsIDs($userID1);
+    //See if userID2 is in the array
+    return in_array($userID2, $friendsOfFriends);
+}
+function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare(" SELECT (CASE
                                 WHEN (userID1 = ? and userID2 = ?) THEN 1
                                 WHEN (userID2 = ? and userID1 = ?) THEN 1
                                 ELSE 0 END) as 'result', isConfirmed
                                 FROM friendship
                                 WHERE isConfirmed = 1");
-  $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
-  $statement->execute();
-  $result = $statement->get_result();
+    $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
+    $statement->execute();
+    $result = $statement->get_result();
+    // Check result. 1 means they are friends.
+    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        if ($row["result"] == 1) { return true; }
+    }
+    return false;
+}
 
-  // Check result. 1 means they are friends.
-  while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-    if ($row["result"] == 1) { return true; }
-  }
-  return false;
+/*
+ * Returns true if the users are friends, false otherwise.
+ */
+function areUsersFriends(user $user1, user $user2): bool {
+  $userID1 = $user1->getUserID();
+  $userID2 = $user2->getUserID();
+    return areUsersFriendsWithID($userID1, $userID2);
+}
+
+/*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
+function displayBlog(user $user, bool $friends, bool $friendsOfFriends): bool{
+    //If user has set to visible to all
+    if($user->blogVisibility < 1){
+        return true;
+    }
+    //If user has set to friends of friends, and you are a friend of a friend
+    else if( ($user->blogVisibility < 2) && $friendsOfFriends){
+        return true;
+    }
+    //If user has set to friends and you are a friend
+    else if( ($user->blogVisibility < 3) && $friends){
+        return true;
+    }
+    //If user has set to only themselves, and you are that user
+    else if($user->id == $_SESSION['userID']){ //// ??????
+        return true;
+    }
+    //Otherwise it is not visible
+    else{
+        return false;
+    }
+}
+
+/*Decide if the blog should be displayed when visiting a profile, user is the user who's profile is shown*/
+function displayInfo(user $user, bool $friends, bool $friendsOfFriends): bool{
+    if($user->infoVisibility < 1){
+        return true;
+    }
+    else if( ($user->infoVisibility < 2) && $friendsOfFriends){
+        return true;
+    }
+    else if( ($user->infoVisibility < 3) && $friends){
+        return true;
+    }
+    else if($user->id == $_SESSION['userID']){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 /*
@@ -588,7 +697,7 @@ function isFriendRequestPending(user $sender, user $receiver) {
 /*
  * Returns true if there is a photoAlready Saved with the specified name.
  */
-function isPhotoNameExitst($photoName) : bool {
+function isPhotoNameExist($photoName) : bool {
   $db = new db();
   $db->connect();
   $statement = $db -> prepare("SELECT photoID FROM photo WHERE filename =  ?  ");
@@ -598,7 +707,25 @@ function isPhotoNameExitst($photoName) : bool {
 
   return ($result->num_rows == 1);
 }
+/*
+ * Return a collection object for a given collection id
+ */
+//FARSE
+function getPhotoCollectionFromID(int $collectionID){
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photocollection WHERE collectionID = ? LIMIT 1");
+    $statement->bind_param("i", $collectionID);
+    $statement->execute();
+    $result = $statement->get_result();
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"),$row["name"]);
+}
 
+//TODO add visibility for this, also do collections need an actual user object, or would ID suffice? does this create overhead?
+function newCollection($row): Collection{
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"), $row["name"]);
+};
 /*
  * Returns an array of a particular user's photo collections.
  */
@@ -612,8 +739,11 @@ function getPhotoCollectionsByUser(user $user): array {
   $statement->bind_param("i", $userID);
   $statement->execute();
   $result = $statement->get_result();
+
   $photocollectionsArray = array();
+
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    // TODO: Need to make sure if photo collection need a date.
     $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user, new DateTime("2017-04-20 14:44"),$row["name"]);
   }
   return $photocollectionsArray;
@@ -741,23 +871,6 @@ function addPhotoToDB($photoName,$dateString){
   $stmt->execute();
 }
 
-function deletePhotowithID($photoID) {
-  $db = new db();
-  $db->connect();
-  $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
-  $statement->bind_param("i", $photoID);
-  $statement->execute();
-}
-
-function setProfilePhoto($photoID) {
-  $userID=getUserID();
-  $db = new db();
-  $db->connect();
-  $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
-  $statement->bind_param("ii", $photoID,$userID);
-  $statement->execute();
-}
-
 function createUserObject($row){
     return new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
 }
@@ -783,6 +896,44 @@ function togglePhotoAnnotation(photo $photo) {
     $stmt->bind_param("ii", $photoID, $userID);
   }
   $stmt->execute();
+}
+
+/*
+ * Marks the photo with the given ID in the database as Archieved.
+ */
+function deletePhotoWithID($photoID) {
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
+  $statement->bind_param("i", $photoID);
+  $statement->execute();
+}
+
+/*
+ * Adds a new photo collection to the database where the user is the currently logged-in user.
+ */
+function addNewPhotoCollection($name,$FOF_visibility,$circle_visibility){
+
+  $thisUserID = getUserID();
+  // $FOF_vis=($FOF_visibility) ? 1 : 0;
+  // $cicle_vis=($circle_visibility) ? 1 : 0;
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO photocollection (userID,name,isVisibleToFriendsOfFriends,isVisibleToCircles) VALUES (?, ?, ?,?)");
+  $stmt->bind_param("isii",$thisUserID,$name,$FOF_visibility,$circle_visibility);
+  $stmt->execute();
+}
+
+/*
+ * Updates the profile picture ID of the currently logged-in user in the database with the given one.
+ */
+function setProfilePhoto($photoID) {
+  $userID=getUserID();
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
+  $statement->bind_param("ii", $photoID,$userID);
+  $statement->execute();
 }
 
 /*

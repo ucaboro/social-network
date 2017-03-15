@@ -41,7 +41,7 @@ if(isset($_FILES['image'])){
 
   // Assigns a random number for the photoname and runs through a loop to make the random file name assigned doesn't already exist.
    $randomName = RAND(1,50000);
-   while (isPhotoNameExitst($randomName.$file_ext)) {
+   while (isPhotoNameExist($randomName.$file_ext)) {
      $randomName = RAND(1,50000);
    }
 
@@ -160,6 +160,7 @@ if(isset($_FILES['image'])){
               <?php echo getHtmlForNavigationPanel(); ?>
             </div>
           </div>
+            <!--Collections-->
           <div class="row">
             <div class="col-xs-12">
               <div class="panel panel-primary">
@@ -173,7 +174,11 @@ if(isset($_FILES['image'])){
                     if (count($collections) > 0) {
                       foreach ($collections as $collection) {
                         $photos = $collection->getPhotos();
-                        $photo = $photos[0];
+                        if (isset($photos[0])) {
+                          $photo = $photos[0];
+                        } else {
+                          $photo = getPhotoWithID(1);
+                        }
                         $img = getHtmlForSquareImage($photo->src);
                         $url = $collection->getURLToCollection();
                         echo "<div class=\"col-xs-6\">
@@ -192,14 +197,77 @@ if(isset($_FILES['image'])){
                       }
                     }
                     ?>
+                    <?php
+                    if (getUserID()==$user->getUserID()) {
+                        echo "<div class=\"col-xs-6\">
+                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-md\">
+                              <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> Add New Collection
+                              </button></div>";
+                    }
+                    ?>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+            <!--End Collections-->
+
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="add_collection_panel" class="panel panel-primary hidden ">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Add New Photo Collection</h4>
+                </div>
+                <div class="panel-body">
+
+                  <form id="new-photo-collection-form" action="index.php" method="POST">
+                    <div class="form-group">
+                      <input class="form-control" id="collection_name_input" name="blog-title" placeholder="Name of the Collection">
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" id="Collection_FOF_checkbox" value="">Visible to Friends of Friends</label>
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" id="Collection_circle_checkbox" value="">Visible to Circles</label>
+                    </div>
+                    <button id="new_collection" class="btn btn-primary center-block" type="button">Add Collection</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script  type="text/javascript">
+      $(document).ready(function() {
+
+        $('#add_collection_invoke').click(function() {
+          document.getElementById("add_collection_panel").classList.remove("hidden");
+        })
+
+        $('#new_collection').click(function() {
+          $.ajax({
+            type:"POST",
+            url:'ajax/addPhotoCollection.php',
+            data:{collection_name:document.getElementById('collection_name_input').value ,
+                  collection_FOF_visibility:(document.getElementById('Collection_FOF_checkbox').checked==true) ? 1 : 0,
+                  collection_circle_visibility:(document.getElementById('Collection_circle_checkbox').checked==true) ? 1 : 0},
+            success:function(result){
+                alert(result);
+                document.getElementById('collection_name_input').value="";
+                document.getElementById('Collection_FOF_checkbox').checked=false;
+                document.getElementById('Collection_circle_checkbox').checked=false;
+                document.getElementById("add_collection_panel").classList.add("hidden");
+            }
+          })
+        })
+
+      });
+    </script>
 
     <!-- JQuery javascript -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

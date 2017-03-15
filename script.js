@@ -130,4 +130,47 @@ function togglePhotoAnnotation(button, photoID) {
           dataType : "html",
           // no success function needed
   });
+
+//script for new circle creation
+var NewCircleScript = function (){
+//Creating New Circle functions
+//get color of the button
+var color ="";
+var color_click = function(){
+    color = this.id;
+}
+
+ function createCircle(){
+   var name = $('#circle-name').val();
+   if (name.length==0||color.length==0){
+      document.getElementById("colorinfo").innerHTML = "create a name and select a color";
+     }else{
+
+      document.getElementById("colorinfo").innerHTML = "";
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST','ajax/createNewCircle.php', true);
+  xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function (){
+
+    if (xhr.readyState == 4 && xhr.status ==200){
+          var target = document.getElementById("circles");
+          target.innerHTML = xhr.responseText;
+          //location.reload();
+    }
+}
+xhr.send("name="+name+"&color="+color);
+}
+
+}
+//assigning colors to buttons
+document.getElementById('blue').onclick = color_click;
+document.getElementById('aqua').onclick = color_click;
+document.getElementById('green').onclick = color_click;
+document.getElementById('orange').onclick = color_click;
+document.getElementById('red').onclick = color_click;
+
+//create new circle button
+var create = document.getElementById("create");
+create.addEventListener("click", createCircle);
 }
