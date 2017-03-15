@@ -71,8 +71,15 @@ if(isset($_POST['comment'])){
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                       <?php
+                      // Get an array of booleans which state whether the collection contains the current photo
+                      $collectionsContainPhoto = doCollectionsContainPhoto($photoID);
                       foreach ($collections as $collection) {
-                        echo "<li><a href=\"addPhotoToCollection.php?p=$photoID&c=$collection->id\">$collection->name</a></li>";
+                        if ($collectionsContainPhoto[$collection->id]) {
+                          echo "<li class=\"disabled\"><a disabled>$collection->name <span class=\"glyphicon glyphicon-ok pull-right\" aria-hidden=\"true\"></span></a></li>";
+                        } else {
+                          echo "<li><a href=\"addPhotoToCollection.php?p=$photoID&c=$collection->id\">$collection->name</a></li>";
+                        }
+
                       }
                       ?>
                     </ul>

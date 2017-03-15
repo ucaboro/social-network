@@ -15,10 +15,6 @@ if(isset($_FILES['image'])){
     $file_tmp = $_FILES['image']['tmp_name'];
     $file_type = $_FILES['image']['type'];
 
-    //  Time of photo upload
-    $date = new DateTime();
-    $dateString = $date->format('YmdHis');
-
     //  splits the filename seperated by period and stores it into an array.
     $file_name_Array=explode('.',$file_name);
     //  selects the last element of that array, which is the extension.
@@ -48,7 +44,7 @@ if(isset($_FILES['image'])){
     // Checks if any errors exist, if not then it transfers the photo to the storage location and registers the photo info into the database.
     if(empty($photoUploadErrors)==true) {
         move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
-        addPhotoToDB($randomName.".".$file_ext,$dateString);
+        addPhotoToDB($randomName.".".$file_ext);
         $isPhotoUploaded=TRUE;
     }
 }
