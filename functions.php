@@ -1052,11 +1052,43 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
 
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
         $this->friends[] = getUserWithID($row["userID"]);
+/*
+ * See if the user in the circle
+ */
+ function isInTheCircle($userID, $circleID) {
 
-    }
-  }
-    // Return the saved array
-    return $this->friends;
-  }
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT u.userID as userID FROM user as u
+      JOIN circlemembership as c ON c.userID = u.userID
+      WHERE circleID = ? AND c.userID = ?");
+
+
+    $statement->bind_param("ii",$circleID, $userID);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    if (!$row){
+      $flag=0;
+        } else {
+          $flag=1;
+      }
+
+    return $flag;
+
+}
+
+
+  function deleteFromCircle($id, $circleID){
+    $db = new db();
+    $db->connect();
+
+    $stmt = $db->prepare("DELETE FROM circlemembership WHERE circleID =? AND userID = ?");
+    $stmt->bind_param("ii", $circleID, $id);
+    $stmt->execute();
+
+
+}
 
 ?>

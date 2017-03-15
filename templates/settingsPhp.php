@@ -105,11 +105,32 @@
         }
     }
 
-    //Interests part
-    if(isset($_POST['interests_settings_submit'])){
-        echo "changing interests";
-        if(/*Write a function to check if the user already has that interest*/true){
-            $interest = $_POST['interests_settings'];
-            //Write a function to upload $interest
+    //Existing Interests part
+    if(isset($_POST['existing_interests_submit'])) {
+        //Interest object posted from select, is that possible?
+        $interestName = trim($_POST['existing_interests']);
+        //$interest = getInterestObjectFromInterestName($interestName);
+        $interestID = findInterestIDFromInterestName($interestName);
+        if (!userObjectAlreadyHasInterestFromID($interestID , $user)) {
+            //assignInterestToUserFromName($name, $userID);
+            assignInterestToUser($interestID, $userID);
+            echo "adding existing interest " . $interestName;
+        }
+        else{
+            echo "User already has " . $interestName . " stored as an interest";
+        }
+    }
+
+    //New Custom interests part
+    if(isset($_POST['new_interests_submit']))
+    {
+        $interestName = trim($_POST['new_interests']);
+        //Upload interest if user does not already have it stored in the database // Might be better to keep a list of interests and comapre to that
+        if (!userObjectAlreadyHasInterest($interestName, $user)) {
+            uploadNewInterest($interestName, $userID);
+            echo "changing new custom interest " . $interestName;
+        }
+        else{
+            echo "User already has " . $interestName . " stored as an interest";
         }
     }

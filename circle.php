@@ -100,6 +100,8 @@ checkLoggedIn(); ?>
       </div>
 <?php   echo getHtmlForNewCircle() ;?>
 
+<!--/////////////////////////////////ADD USER MODAL SCREEN////////////////////////////////////////////////-->
+
 <div class="modal fade" id="addUsers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -110,12 +112,10 @@ checkLoggedIn(); ?>
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="recipient-name" class="control-label">Friends:</label>
+            <label class="control-label">Friends:</label>
 
             <div class="panel-body">
               <?php
-                //send array variables to ajax
-                //header("Content-type: text/javascript");
 
                 $friends = getUser()->getFriends();
 
@@ -128,12 +128,12 @@ checkLoggedIn(); ?>
 
                   switch (isInTheCircle($friend->id,$circleID)) {
                     case '0':
-                      echo getHtmlForAddUserResult($friend, true, false, false);
+                      echo getHtmlForAddUserResult($friend, true, false, false, "glyphicon glyphicon-plus");
                         array_push($allUserIds,  $friend->id);
                       break;
 
                     case '1':
-                      continue;
+                        continue;
                   }
 
               }
@@ -146,24 +146,80 @@ checkLoggedIn(); ?>
           </div>
 
       <div class="modal-footer">
-        <button id="close" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="closebtn2" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-</div>";
+</div>
+</div>
+
+<!--/////////////////////////////////DELETE USER MODAL SCREEN//////////////////////////////////////////////// -->
+
+<div class="modal fade" id="deleteUsers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+      <div class="modal-header">
+        <button id="close" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addTitle">Delete users to the circle</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label  class="control-label">Friends available to delete:</label>
+
+            <div class="panel-body">
+              <?php
+                //send array variables to ajax
+                //header("Content-type: text/javascript");
+
+                $friends = getUser()->getFriends();
+
+                $idToDelete = array();
+              // Output each one
+              foreach ($friends as $friend) {
+
+
+                  switch (isInTheCircle($friend->id,$circleID)) {
+                    case '0':
+                      continue;
+
+                    case '1':
+                    echo getHtmlForAddUserResult($friend, true, false, false, "glyphicon glyphicon-remove");
+                      array_push($idToDelete,  $friend->id);
+                      break;
+                  }
+
+              }
+
+                $idsToDelete_json = json_encode($idToDelete);
+
+              ?>
+            </div>
+
+          </div>
+
+      <div class="modal-footer">
+        <button id="closebtn" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
   </body>
 </html>
 <script type='text/javascript'>
 //ADD NEW USER
 
-
+/////////////////////////////////SCRIPTING////////////////////////////////////////////////
 //retrieving array from php
 var circle = $('#circleID').val();
 var obj = JSON.parse('<?= $allUserIds_json; ?>');
-console.log(("There are " + obj));
+var obj2 = JSON.parse('<?= $idsToDelete_json; ?>');
 
-//recieve array from php
+////////////////////////////FUNCTION TO "TICK" THE PLUS SIGN////////////////////////
 function tick(){
+
   var id = this.id;
   var sign = document.getElementById(id).className;
   document.getElementById(id).className ="glyphicon glyphicon-ok";
@@ -183,28 +239,63 @@ function tick(){
   xhr.send("id="+id+"&circle="+circle);
   }
 
+  ////////////////////////////FUNCTION TO "UNTICK" THE PLUS SIGN////////////////////////
+  function untick(){
+    var id = this.id;
+    var sign = document.getElementById(id).className;
+    document.getElementById(id).className ="glyphicon glyphicon-ok";
+
+      //send to the db
+      var xhr = new XMLHttpRequest();
+     xhr.open('POST','ajax/deleteUsers.php', true);
+     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+     xhr.onreadystatechange = function (){
+
+       if (xhr.readyState == 4 && xhr.status ==200){
+            var target = document.getElementById("users");
+                   target.innerHTML = xhr.responseText;
+
+       }
+    }
+    xhr.send("id="+id+"&circle="+circle);
+    }
 
 
 //on close change all back to plus
 function restoreSign(){
-document.location.reload();
+
+
+    document.location.reload();
+
   for (i = 0; i < obj.length; i++) {
   document.getElementById(obj[i]).className="glyphicon glyphicon-plus";
   }
+
 }
 
 //create close button
 document.getElementById("close").onclick = restoreSign;
 
-//create add button
-document.getElementById("add").onclick = addUsers;
+document.getElementById("closebtn").onclick = reload;
+document.getElementById("closebtn2").onclick = reload;
 
+function reload(){
+document.location.reload();
+}
 
-//create add button
+//create add sign
 for (i = 0; i < obj.length; i++) {
   var id = document.getElementById(obj[i]);
   id.addEventListener("click", tick);
 }
+
+//create delete sign
+for (i = 0; i < obj2.length; i++) {
+  var id = document.getElementById(obj2[i]);
+  id.addEventListener("click", untick);
+}
+
+
 
 
 

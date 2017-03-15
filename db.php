@@ -73,4 +73,10 @@ class db {
   public function getError() {
     return self::$mysqli->error;
   }
+
+    /*Gives primary key id of most recently inserted row from insert statement*/
+    public static function lastInsertId()
+    {
+        return self::$mysqli->insert_id;
+    }
 }
