@@ -137,11 +137,12 @@ function getUrlToCircle($circleID) {
 function getHtmlForCircleUsersPanel($circle) {
   // Generate the start of the HTML (setting up the panel, panel title)
   $html = "<div class=\"panel panel-primary\">
-            <div class=\"panel-heading\">
+            <div class=\"panel-heading\" \">
               <h5 style=\"display: inline; \"class=\"panel-title\">People in this circle</h5>
 
-              <h4 id=\"add-users\" data-toggle=\"modal\" data-target=\"#addUsers\" type = \"button\"style=\"display: inline; float: right; cursor: pointer;\"class=\"panel-title\" >Add users</h4>
-
+              <i id = \"add\" type=\"button\" data-toggle=\"modal\" data-target=\"#addUsers\"  class = \"glyphicon glyphicon-plus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \"></i>
+              
+              <i id = \"delete\" type=\"button\" data-toggle=\"modal\" data-target=\"#deleteUsers\"  class = \"glyphicon glyphicon-minus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \">&nbsp</i>
             </div>
             <div class=\"panel-body\">
               <div class=\"row\">";
@@ -313,7 +314,7 @@ function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sen
 /*
  * Return users for the Add Users to cirlce modal
  */
-function getHtmlForAddUserResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest): string {
+function getHtmlForAddUserResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest, string $sign): string {
   $profileUrl = $user->getUrlToProfile();
   $img = getHtmlForSquareImage($user->photoSrc);
   $name = $user->getFullName();
@@ -332,8 +333,8 @@ function getHtmlForAddUserResult(user $user, bool $isFriend, bool $sentRequest, 
             </div>
             <div class=\"col-xs-3 text-right\">
               <div  class=\"friend-action\" data-user-id=\"$user->id\">
-                <span id = \"$id\" type=\"button\" style = \"cursor:pointer\"  class=\"glyphicon glyphicon-plus\"></span>
-              
+                <span id = \"$id\" type=\"button\" style = \"cursor:pointer\"  class=\"$sign\"></span>
+
               </div>
             </div>
           </div>
