@@ -130,6 +130,7 @@ function togglePhotoAnnotation(button, photoID) {
           dataType : "html",
           // no success function needed
   });
+}
 
 //script for new circle creation
 var NewCircleScript = function (){
