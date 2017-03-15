@@ -392,6 +392,8 @@ function getRecentActivityFeed() {
   $mainArray = array();
   $sortArray = array();
 
+  global $statementFriendsOf2User;
+
   // Gets the last 20 blogposts made by the friends of the currently logged-in user where available.
   $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID IN (".$statementFriendsOf2User.")
                                 ORDER BY TIME DESC LIMIT 20");
@@ -496,6 +498,8 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
     $db = new db();
     $db->connect();
 
+    global $statementFriendsOfFriendsOf7User;
+
     $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
 
     if (is_null($filter)) {
@@ -525,6 +529,8 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
 function getFriendsOfUser(user $user, string $filter = NULL): array {
   $userID = $user->getUserID();
   $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
+  global $statementFriendsOf2User;
+  global $searchParameters411;
   $db = new db();
   $db->connect();
   if (is_null($filter)) {
@@ -552,8 +558,10 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
  * Returns an array of users who match the given search string.
  */
 function getUsers(string $filter): array {
+
   $db = new db();
   $db->connect();
+  global $searchParameters411;
   $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
   $statement = $db -> prepare(" SELECT userID FROM user WHERE ". $searchParameters411);
   $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
@@ -679,7 +687,6 @@ function isPhotoNameExist($photoName) : bool {
 /*
  * Return a collection object for a given collection id
  */
-//FARSE
 function getPhotoCollectionFromID(int $collectionID){
     $db = new db();
     $db->connect();
@@ -688,13 +695,9 @@ function getPhotoCollectionFromID(int $collectionID){
     $statement->execute();
     $result = $statement->get_result();
     $row = $result->fetch_array(MYSQLI_ASSOC);
-    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"),$row["name"]);
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]),$row["name"]);
 }
 
-//TODO add visibility for this, also do collections need an actual user object, or would ID suffice? does this create overhead?
-function newCollection($row): Collection{
-    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"), $row["name"]);
-};
 /*
  * Returns an array of a particular user's photo collections.
  */
@@ -1015,6 +1018,8 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
   $userID1 = $user1->getUserID();
   $userID2 = $user2->getUserID();
 
+  global $statementFriendsOf2User;
+
   $db = new db();
   $db->connect();
 
@@ -1028,30 +1033,6 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
   return $row["mutualFriends"];
 }
 
-/*
-   * Get an array of the friends of this user that are not in the circle. Key is user ID, value is user object.
-   */
-   function getNotInCircleFriends($circleID) {
-    // Get the array of friends from the database the first time.
-
-      $db = new db();
-      $db->connect();
-      $statement = $db -> prepare("SELECT userID2 AS userID FROM friendship WHERE isConfirmed = true AND userID1 = ?
-        WHERE EXISTS
-        (SELECT userID2  FROM circlemembership WHERE circleID = ?)
-        UNION SELECT userID1 AS userID FROM friendship WHERE isConfirmed = true AND userID2 = ?
-        WHERE EXISTS
-        (SELECT userID1 FROM circlemembership WHERE circleID = ?)");
-        if (!$statement) {
-        echo "false statement check";
-
-          } else{
-      $statement->bind_param("iiii", $this->id, $circleID, $this->id, $circleID);
-      $statement->execute();
-      $result = $statement->get_result();
-
-      while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $this->friends[] = getUserWithID($row["userID"]);
 /*
  * See if the user in the circle
  */
@@ -1079,6 +1060,21 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
 
 }
 
+function displayCollections(user $user, bool $friends, bool $friendsOfFriends, bool $inCommonCircle){
+    if($friends || ($user->id === $_SESSION['userID']) ){
+        return true;
+    }
+    if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
+        return true;
+    }
+    else if($user->isVisibleToCircles && $inCommonCircle){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 
   function deleteFromCircle($id, $circleID){
     $db = new db();
@@ -1087,8 +1083,5 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
     $stmt = $db->prepare("DELETE FROM circlemembership WHERE circleID =? AND userID = ?");
     $stmt->bind_param("ii", $circleID, $id);
     $stmt->execute();
-
-
 }
-
 ?>
