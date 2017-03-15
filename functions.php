@@ -1,6 +1,54 @@
 <?php
   require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now. Yea I agree with that.
 
+
+$statementFriendsOf2User="SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
+                          SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ? ";
+
+$statementFriendsOfFriendsOf7User = " SELECT userID FROM user WHERE userID != ? AND
+                                      userID NOT IN
+                                      (".$statementFriendsOf2User.")
+                                      AND userID IN
+                                      (
+                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
+                                      AND userID1 IN
+                                      (".$statementFriendsOf2User.")
+                                      UNION
+                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
+                                      AND userID2 IN
+                                      (".$statementFriendsOf2User.")
+                                      )";
+
+$searchParameters411 = " firstName LIKE ?
+                      OR lastName LIKE ?
+                      OR CONCAT_WS('', firstName, lastName) LIKE ?
+                      OR CONCAT_WS('', lastName, firstName) LIKE ?
+                      OR email = ?
+                      OR location LIKE ? ";
+
+
+$statementFriendsOfFriendsOf7User2 = "SELECT userID FROM user WHERE userID != ? AND
+                                      userID NOT IN
+                                      (
+                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
+                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
+                                      )
+                                      AND userID IN
+                                      (
+                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
+                                      AND userID1 IN
+                                      (
+                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
+                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
+                                      )
+                                      UNION
+                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
+                                      AND userID2 IN
+                                      (
+                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
+                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
+                                      )) ";
+
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
  * $keyColumn: the name of the column to use as the key in the array.
@@ -325,6 +373,9 @@ while($row = $result->fetch_array(MYSQLI_ASSOC)){
 return $blogPostsArray;
 }
 
+
+
+
 /*
  * Returns an array of feed items represeting the recent activity feed for the currently logged in user.
  * Items are in date-descending order. Values are interaction objects. The last 20 items only are returned.
@@ -341,15 +392,11 @@ function getRecentActivityFeed() {
   $mainArray = array();
   $sortArray = array();
 
+  global $statementFriendsOf2User;
+
   // Gets the last 20 blogposts made by the friends of the currently logged-in user where available.
-  $statement = $db -> prepare("SELECT * from blogpost
-                                where userID in (
-                                select userID2 as 'userID' from friendship
-                                where isConfirmed = true and userID1 = ? union
-                                select userID1 as 'userID' from friendship
-                                where isConfirmed = true and userID2 = ?)
-                                ORDER BY time Desc
-                                LIMIT 20");
+  $statement = $db -> prepare("SELECT * FROM blogpost WHERE userID IN (".$statementFriendsOf2User.")
+                                ORDER BY TIME DESC LIMIT 20");
   $statement ->bind_param("ii",$userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
@@ -358,11 +405,9 @@ function getRecentActivityFeed() {
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
-  $statement = $db -> prepare("SELECT * from circlemessage
-                                where circleID in
-                                (Select circleID from circlemembership where userID = ?)
-                                ORDER BY time Desc
-                                LIMIT 20");
+  $statement = $db -> prepare("SELECT * FROM circlemessage WHERE circleID IN
+                              (SELECT circleID FROM circlemembership WHERE userID = ?)
+                                ORDER BY TIME DESC LIMIT 20");
   $statement ->bind_param("i",$userID);
   $statement->execute();
   $result = $statement->get_result();
@@ -371,58 +416,19 @@ function getRecentActivityFeed() {
   }
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
-  $statement = $db -> prepare("SELECT * from photo where isArchived=0 AND photoID in
-                              (select photoID from photo where userID in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              union
-                              select photoID from photocollectionassignment where collectionID in
-                              (select collectionID from photocollection where isVisibleToFriendsOfFriends = 1
-                              and userID in
-                              -- this selection makes sure the friends of friends are selected while making sure
-                              -- the user himself and his direct friends are not selected.
-                              (select userID from user where userID != ? and
-                              userID not in
-                              -- makes sure direct friends of ther user is not selected
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              -- chooses the friends of friends
-                              and userID in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?))))
-                              -- friends of friends part ends here
-                              union
-                              select photoID from photocollectionassignment where collectionID in
-                              (select collectionID from photocollection where
-                                isVisibleToCircles = 1 and userID in
-                              (select userID from circlemembership
-                              where circleID in
-                              (Select circleID from circlemembership where userID = ?))))
-                              ORDER BY time Desc
-                              LIMIT 20");
-  $statement ->bind_param("iiiiiiiiii",$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID,$userID);
+  $statement = $db -> prepare("SELECT * FROM photo WHERE isArchived=0 AND photoID IN
+                              (SELECT photoID FROM photo WHERE userID IN ( " . $statementFriendsOf2User . ")
+                              UNION
+                              SELECT photoID FROM photocollectionassignment WHERE collectionID IN (
+                              SELECT collectionID FROM photocollection WHERE isVisibleToCircles = 1 AND userID IN
+                              (SELECT userID FROM circlemembership WHERE circleID IN
+                              (SELECT circleID FROM circlemembership WHERE userID = ?))))
+                              ORDER BY TIME DESC LIMIT 20");
+  $statement ->bind_param("iii",$userID,$userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
     $sortArray[strtotime($row["time"])] = getPhotoWithID($row["photoID"]);
-    // $sortArray[strtotime($row["time"])] = new photo($row["photoID"], getUserWithID($row["userID"]), new DateTime($row["time"]), "img/".$row["filename"]);
   }
 
   krsort($sortArray);
@@ -492,43 +498,15 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
     $db = new db();
     $db->connect();
 
+    global $statementFriendsOfFriendsOf7User;
+
     $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
 
-    $selectFriendsOfFriendsStatement= "select userID from user where userID != ? and
-                                      userID not in
-                                      -- makes sure direct friends of ther user is not selected
-                                      (select userID2 as 'userID' from friendship
-                                      where isConfirmed = true and userID1 = ? union
-                                      select userID1 as 'userID' from friendship
-                                      where isConfirmed = true and userID2 = ?)
-                                      -- chooses the friends of friends
-                                      and userID in
-                                      (select userID2 as 'userID' from friendship
-                                      where isConfirmed = true and userID1
-                                      in
-                                      (select userID2 as 'userID' from friendship
-                                      where isConfirmed = true and userID1 = ? union
-                                      select userID1 as 'userID' from friendship
-                                      where isConfirmed = true and userID2 = ?)
-                                      union
-                                      select userID1 as 'userID' from friendship
-                                      where isConfirmed = true and userID2
-                                      in
-                                      (select userID2 as 'userID' from friendship
-                                      where isConfirmed = true and userID1 = ? union
-                                      select userID1 as 'userID' from friendship
-                                      where isConfirmed = true and userID2 = ?))";
-    $searchParameters = "AND firstName LIKE ?
-                          OR lastName LIKE ?
-                          OR CONCAT_WS('', firstName, lastName) LIKE ?
-                          OR CONCAT_WS('', lastName, firstName) LIKE ?
-                          OR email = ?
-                          OR location LIKE ? ";
     if (is_null($filter)) {
-      $statement = $db -> prepare($selectFriendsOfFriendsStatement);
+      $statement = $db -> prepare($statementFriendsOfFriendsOf7User);
       $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
     } else {
-      $statement = $db -> prepare($selectFriendsOfFriendsStatement.$searchParameters);
+      $statement = $db -> prepare($statementFriendsOfFriendsOf7User." AND ".$searchParameters);
       $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
     }
 
@@ -551,26 +529,18 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
 function getFriendsOfUser(user $user, string $filter = NULL): array {
   $userID = $user->getUserID();
   $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
+  global $statementFriendsOf2User;
+  global $searchParameters411;
   $db = new db();
   $db->connect();
   if (is_null($filter)) {
     // If the search parameter is NULL then it returns all the friends of the user
-    $statement = $db -> prepare("SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID1 = ?
-                                  UNION
-                                  SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ?");
+    $statement = $db -> prepare($statementFriendsOf2User);
     $statement->bind_param("ii", $userID, $userID);
   } else {
     // If a search parameter exists then it looks if that term is contained in either the firstName,
     // lastName or location, it would also select the user whose e-mail is an excact match
-    $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN
-                                (SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? union
-                                  SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = true AND userID2 = ? )
-                                  AND firstName LIKE ?
-                                  OR lastName LIKE ?
-                                  OR CONCAT_WS('', firstName, lastName) LIKE ?
-                                  OR CONCAT_WS('', lastName, firstName) LIKE ?
-                                  OR email = ?
-                                  OR location LIKE ? ");
+    $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN ( " .$statementFriendsOf2User. ") AND " . $searchParameters411);
     $statement->bind_param("iissssss",$userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
   }
   $statement->execute();
@@ -588,16 +558,12 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
  * Returns an array of users who match the given search string.
  */
 function getUsers(string $filter): array {
+
   $db = new db();
   $db->connect();
+  global $searchParameters411;
   $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
-  $statement = $db -> prepare(" SELECT userID FROM user WHERE
-                                  firstName LIKE ?
-                                OR lastName LIKE ?
-                                OR CONCAT_WS('', firstName, lastName) LIKE ?
-                                OR CONCAT_WS('', lastName, firstName) LIKE ?
-                                OR email = ?
-                                OR location LIKE ? ");
+  $statement = $db -> prepare(" SELECT userID FROM user WHERE ". $searchParameters411);
   $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
   $statement->execute();
   $result = $statement->get_result();
@@ -736,7 +702,6 @@ function isPhotoNameExist($photoName) : bool {
 /*
  * Return a collection object for a given collection id
  */
-//FARSE
 function getPhotoCollectionFromID(int $collectionID){
     $db = new db();
     $db->connect();
@@ -745,13 +710,9 @@ function getPhotoCollectionFromID(int $collectionID){
     $statement->execute();
     $result = $statement->get_result();
     $row = $result->fetch_array(MYSQLI_ASSOC);
-    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"),$row["name"]);
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]),$row["name"]);
 }
 
-//TODO add visibility for this, also do collections need an actual user object, or would ID suffice? does this create overhead?
-function newCollection($row): Collection{
-    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"), $row["name"]);
-};
 /*
  * Returns an array of a particular user's photo collections.
  */
@@ -987,6 +948,28 @@ function addPhotoToCollection(int $photoID, int $collectionID) {
 }
 
 /*
+ * Removes a photo from the collection.
+ */
+function removePhotoFromCollection(int $photoID, int $collectionID) {
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("DELETE FROM photocollectionassignment where photoID = ? AND collectionID = ? ;");
+  $stmt->bind_param("ii", $photoID, $collectionID);
+  $stmt->execute();
+}
+
+/*
+ * Removes a photo from the collection.
+ */
+function renamePhotoCollection($newName, int $collectionID) {
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("UPDATE photocollection SET name = ? WHERE collectionID = ?");
+  $stmt->bind_param("ii", $newName, $collectionID);
+  $stmt->execute();
+}
+
+/*
  * Deletes the photo Collection with the specified ID.
  */
 function deletePhotoCollectionWithID(int $collectionID) {
@@ -1043,6 +1026,29 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
 }
 
 /*
+ * Returns the number of mutual friends between user1 and user2.
+ */
+function getCommonFriendsBetweenUsers($user1, $user2) {
+
+  $userID1 = $user1->getUserID();
+  $userID2 = $user2->getUserID();
+
+  global $statementFriendsOf2User;
+
+  $db = new db();
+  $db->connect();
+
+  // The first $statementFriendsOf2User selects all the
+  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+  $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  return $row["mutualFriends"];
+}
+
+/*
  * See if the user in the circle
  */
  function isInTheCircle($userID, $circleID) {
@@ -1069,6 +1075,21 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
 
 }
 
+function displayCollections(user $user, bool $friends, bool $friendsOfFriends, bool $inCommonCircle){
+    if($friends || ($user->id === $_SESSION['userID']) ){
+        return true;
+    }
+    if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
+        return true;
+    }
+    else if($user->isVisibleToCircles && $inCommonCircle){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 
   function deleteFromCircle($id, $circleID){
     $db = new db();
@@ -1077,8 +1098,5 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
     $stmt = $db->prepare("DELETE FROM circlemembership WHERE circleID =? AND userID = ?");
     $stmt->bind_param("ii", $circleID, $id);
     $stmt->execute();
-
-
 }
-
 ?>
