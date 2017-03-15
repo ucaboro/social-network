@@ -378,14 +378,12 @@
         }
         return $names;
     }
-//$stmt->execute();
-//$stmt->bind_result($id);
-//if($stmt->fetch()){
-//    return id;
-//}
-//else{
-//    echo "no fetch!";
-//    $stmt->close();
-//    return -1;
-//}
 
+    function deleteInterestWithID(int $interestID){
+        $db = new db();
+        $db->connect();
+        $stmt = $db -> prepare("DELETE FROM interestsassignment where interestID = ?;
+                          DELETE FROM interests where interestID = ?;");
+        $stmt->bind_param("ii", $interestID, $interestID);
+        $stmt->execute();
+    }

@@ -654,6 +654,21 @@ function displayInfo(user $user, bool $friends, bool $friendsOfFriends): bool{
     }
 }
 
+function displayCollections(user $user, bool $friends, bool $friendsOfFriends, bool $inCommonCircle){
+    if($friends || ($user->id === $_SESSION['userID']) ){
+        return true;
+    }
+    if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
+        return true;
+    }
+    else if($user->isVisibleToCircles && $inCommonCircle){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 /*
  * Returns true if there is a pending friend request which was initiated by $sender, false otherwise.
  */

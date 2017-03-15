@@ -4,7 +4,8 @@
     if(isset($_POST['new_interests_submit']) || isset($_POST['existing_interests_submit'])){
         $user = getUser();
     }
-    $myInterestsArray = $user -> getInterestNames();
+    //$myInterestsArray = $user -> getInterestNames();
+    $myInterestsArray = $user -> getInterests();
 ?>
 
 <div class="panel panel-primary">
@@ -18,10 +19,13 @@
                 <h5>My Interests:</h5>
                     <ul>
                     <?php
-                        foreach($myInterestsArray as $interestName){
-                            echo "<li>" . $interestName  . "</li>";
+                        foreach($myInterestsArray as $interest){
+                            echo "<li>" . $interest -> getName()  . " <button>
+                                                                        <span class=\"glyphicon glyphicon-trash\"></span>
+                                                                    </button></li>"; // user deleteInterestWithID($interest->getID())
                         }
                     ?>
+                        <!-- <button class='glyphicon glyphicon-trash aria-label'></button>-->
                     </ul>
                 <ul class="dropdown-menu">
                     <li><a href="profile.php">My profile</a></li>

@@ -38,15 +38,18 @@ checkLoggedIn();?>
                     <?php
                     // Get the array of friends of friends
                     if ($isSearch) {
-                        //$friends = getFriendsOfUser(getUser(), $searchTerm);
-                        $friendsOfFriends = "searching..";
+                        $friendsOfFriends = getFriendsOfFriendsOfUser(getUser(), $searchTerm);
                     } else {
                         $friendsOfFriends = getFriendsOfFriendsOfUser(getUser());
                     }
 
                     // Output each one
-                    foreach ($friendsOfFriends as $bekannter) {
-                        echo getHtmlForUserSummarySearchResult($bekannter, true, false, false);
+                    $thisUser = getUser();
+                    foreach ($friendsOfFriends as $friendOfFriend) {
+                        $areFriends = areUsersFriends($thisUser, $friendOfFriend);
+                        $sentRequest = isFriendRequestPending($thisUser, $friendOfFriend);
+                        $receivedRequest = isFriendRequestPending($friendOfFriend, $thisUser);
+                        echo getHtmlForUserSummarySearchResult($friendOfFriend, $areFriends, $sentRequest, $receivedRequest);
                     }
                     ?>
                 </div>
