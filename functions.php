@@ -1,5 +1,6 @@
 <?php
   require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now. Yea I agree with that.
+
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
  * $keyColumn: the name of the column to use as the key in the array.
@@ -208,28 +209,9 @@ function getCircleWithID(int $id) {
   $statement->execute();
   $result = $statement->get_result();
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"],getUsersInCircleWithID($row["circleID"]));
+    $circle = new circle($row["circleID"],$row["circleName"],$row["circleColor"]);
   }
   return $circle;
-}
-
-/*
- * Returns an array of User Object. Key is user ID and Value is User object.
- * $id: the ID of the circle from which the user list is returned.
- */
-function getUsersInCircleWithID(int $id) {
-  $db = new db();
-  $db->connect();
-  $statement = $db -> prepare("SELECT userID FROM circlemembership WHERE circleID = ?");
-  $statement ->bind_param("i", $id);
-  $statement->execute();
-  $result = $statement->get_result();
-
-  $users = array();
-  while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $users[$row["userID"]] = getUserWithID($row["userID"]);
-  }
-  return $users;
 }
 
 /*
@@ -282,7 +264,7 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   if ($limit == 0) { $limit = 18; }
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND isArchived=0 LIMIT ?");
+  $statement = $db -> prepare("SELECT photoID FROM photo WHERE userID = ? AND isArchived=0 LIMIT ?");
   $statement ->bind_param("ii", $userID, $limit);
   $statement->execute();
   $result = $statement->get_result();
