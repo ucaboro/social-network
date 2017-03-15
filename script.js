@@ -93,3 +93,41 @@ function deleteFriend(userID) {
           }
   });
 }
+
+/*
+ * Either annotates or unannotates the specified photo.
+ * button: The annotate button that was clicked.
+ * photoID: The ID of the photo being annotated.
+ */
+function togglePhotoAnnotation(button, photoID) {
+  // Get the span containing the list of people who have annotated the photo
+  var list = $(button).parent().parent().find("[class='annotation-list']");
+  // Either add or remove 'You' from the start of it.
+  // Changing the html here looks more responsive, since the DB is slooow.
+  var listHtml = list.html();
+  // CASE: Starting with no annotations
+  if (listHtml.trim() == "No acknowledgments yet.") {
+    list.html("Acknowledged by you.");
+  }
+  // CASE: Starting with annotation(s), one of which was you
+  else if (listHtml.trim().substr(16, 3) == "you") {
+    if (listHtml.trim().substr(19, 1) == ".") {
+      list.html("No acknowledgments yet.");
+    } else {
+      list.html("Acknowledged by " + listHtml.trim().substr(20));
+    }
+  }
+  // CASE: Starting with annotation(s), none of which are you
+  else {
+    list.html("Acknowledged by you, " + listHtml.trim().substr(16));
+  }
+  // Send request to the database
+  $.ajax({url: "ajax/togglePhotoAnnotation.php",
+          data: {
+            photoID: photoID
+          },
+          type: "POST",
+          dataType : "html",
+          // no success function needed
+  });
+}

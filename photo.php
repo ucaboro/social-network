@@ -1,6 +1,18 @@
-<?php include "imports.php";
+<?php
+include "imports.php";
 //Ensures user is logged in before displaying page
-checkLoggedIn();?>
+checkLoggedIn();
+// Get the photo object
+$photoID = $_GET["p"];
+$photo = getPhotoWithID($photoID);
+// Submit the POSTed comment if necessary
+if(isset($_POST['comment'])){
+  $comment = $_POST['comment'];
+  if ($comment <> "") {
+    addCommentToPhoto($photo, $comment);
+  }
+}
+?>
 <!DOCTYPE html>
 
 <html lang="en-gb">
@@ -12,9 +24,7 @@ checkLoggedIn();?>
         <div class="col-md-8">
           <!-- Photo -->
           <?php
-          // Get the photo object
-          $photoID = $_GET["p"];
-          $photo = getPhotoWithID($photoID);
+
           ?>
           <div class="panel panel-primary">
             <div class="panel-body">
@@ -63,23 +73,14 @@ checkLoggedIn();?>
             <div class="panel-body">
               <div class="row">
                 <div class="col-xs-12 col-sm-1">
-                  <button class="btn btn-default btn-emoji">👋</button>
+                  <button class="btn btn-default btn-emoji" onclick="togglePhotoAnnotation(this, <?php echo $photoID; ?>)">👋</button>
                 </div>
                 <div class="col-xs-12 col-sm-11">
-                  <?php
-                  // Get a list of names of people who acknowledged it
-                  $names = [];
-                  foreach ($photo->getAnnotations() as $user) {
-                    $profileUrl = $user->getUrlToProfile();
-                    $name = $user->getFullName();
-                    $names[] = "<a href=\"$profileUrl\">$name</a>";
-                  }
-                  if (count($names) == 0) {
-                    echo "No acknowledgments yet.";
-                  } else {
-                    echo "Acknowledged by " . join(", ", $names) . ".";
-                  }
-                  ?>
+                  <span class="annotation-list">
+                    <?php
+                    echo getHtmlForAnnotationsList($photo);
+                    ?>
+                  </span>
                 </div>
               </div>
             </div>
@@ -93,9 +94,9 @@ checkLoggedIn();?>
             <div class="panel-body">
               <div class="row">
                 <div class="col-xs-12">
-                  <form class="comment-form">
+                  <form class="comment-form" action="" method="POST">
                     <div class="form-group">
-                      <textarea class="form-control" rows="2" placeholder="Leave a comment..."></textarea>
+                      <textarea name="comment" class="form-control" rows="2" placeholder="Leave a comment..."></textarea>
                     </div>
                     <button class="btn btn-primary pull-right" type="submit">Send comment</button>
                   </form>
@@ -190,12 +191,6 @@ checkLoggedIn();?>
 
       });
     </script>
-
-    <!-- JQuery javascript -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!-- Custom JavaScript -->
-    <!--<script src="script.js"></script>-->
+    <?php echo getHtmlForJavascriptImports(); ?>
   </body>
 </html>

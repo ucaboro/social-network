@@ -396,13 +396,14 @@ function getRecentActivityFeed() {
 function getPhotoWithID(int $photoID) {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ? AND isArchived = 0");
+  $statement = $db -> prepare("SELECT photo.photoID, photo.userID, photo.filename, photo.time, firstName, lastName, email, date, location, blogVisibility, infoVisibility, p2.filename AS profilePhoto FROM photo LEFT JOIN user ON photo.userID = user.userID LEFT JOIN photo AS p2 ON user.photoID = p2.photoID WHERE photo.photoID = ? AND photo.isArchived = 0");
   $statement->bind_param("i", $photoID);
   $statement->execute();
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"] );
+  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], $row["date"], $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+  return new photo($row["photoID"], $user, new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
 /*
@@ -716,48 +717,86 @@ function deleteFriendship(int $userID) {
   $stmt->execute();
 }
 
-  /*
-   * Adds a blogpost to the database where the user is the currently logged-in user.
-   */
-  function addNewBlogPost($blogTitle,$blogpost,$dateString){
-    $thisUserID = getUserID();
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
-    $stmt->execute();
-  }
+/*
+ * Adds a blogpost to the database where the user is the currently logged-in user.
+ */
+function addNewBlogPost($blogTitle,$blogpost,$dateString){
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
+  $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+  $stmt->execute();
+}
 
-  /*
-   * Adds a photo to the database where the user is the currently logged-in user.
-   */
-  function addPhotoToDB($photoName,$dateString){
-    $thisUserID = getUserID();
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
-    $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
-    $stmt->execute();
-  }
+/*
+ * Adds a photo to the database where the user is the currently logged-in user.
+ */
+function addPhotoToDB($photoName,$dateString){
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
+  $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
+  $stmt->execute();
+}
 
-  function deletePhotowithID($photoID) {
-    $db = new db();
-    $db->connect();
-    $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
-    $statement->bind_param("i", $photoID);
-    $statement->execute();
-  }
+function deletePhotowithID($photoID) {
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
+  $statement->bind_param("i", $photoID);
+  $statement->execute();
+}
 
-  function setProfilePhoto($photoID) {
-    $userID=getUserID();
-    $db = new db();
-    $db->connect();
-    $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
-    $statement->bind_param("ii", $photoID,$userID);
-    $statement->execute();
-  }
+function setProfilePhoto($photoID) {
+  $userID=getUserID();
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
+  $statement->bind_param("ii", $photoID,$userID);
+  $statement->execute();
+}
 
-  function createUserObject($row){
-      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["filename"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
+function createUserObject($row){
+    return new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+}
+
+/*
+ * Either annotates or unannotates the specified photo.
+ */
+function togglePhotoAnnotation(photo $photo) {
+  $photoID = $photo->id;
+  $userID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("SELECT * FROM photoannotation WHERE photoID = ? AND userID = ?");
+  $stmt->bind_param("ii", $photoID, $userID);
+  $stmt->execute();
+
+  $result = $stmt->get_result();
+  if ($result->num_rows == 0) {
+    $stmt = $db -> prepare("INSERT INTO photoannotation (photoID, userID) VALUES (?, ?)");
+    $stmt->bind_param("ii", $photoID, $userID);
+  } else {
+    $stmt = $db->prepare("DELETE FROM photoannotation WHERE photoID = ? AND userID = ?");
+    $stmt->bind_param("ii", $photoID, $userID);
   }
+  $stmt->execute();
+}
+
+/*
+ * Adds a comment from the current user to the specified photo.
+ */
+function addCommentToPhoto(photo $photo, string $comment) {
+  $photoID = $photo->id;
+  $userID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("INSERT INTO photocomment (userID, photoID, comment, time) VALUES (?, ?, ?, NOW())");
+  $stmt->bind_param("iis", $userID, $photoID, $comment);
+  $stmt->execute();
+}
+
+
 ?>

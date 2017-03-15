@@ -455,4 +455,38 @@ function getHtmlForFriendRequestsPanel() {
 
 }
 
+/*
+ * Returns a comma-separated list of names of the users who annotated the specified photo.
+ */
+function getHtmlForAnnotationsList(photo $photo): string {
+  $users = $photo->getAnnotations();
+  if (count($users) == 0) {
+    return "No acknowledgments yet.";
+  }
+  // Get a list of names of people who annotated it
+  $names = [];
+  $includesLoggedInUser = false;
+  foreach ($users as $user) {
+    // If the logged in user annotated it, display their name as 'You'
+    if ($user->id == getUserID()) {
+      $includesLoggedInUser = true;
+    } else {
+      // Add their full name to the list
+      $profileUrl = $user->getUrlToProfile();
+      $name = $user->getFullName();
+      $names[] = "<a href=\"$profileUrl\">$name</a>";
+    }
+  }
+  // Work out the right format for the bit at the start that says 'You' if the current user annotated it
+  $youPrefix = "";
+  if ($includesLoggedInUser) {
+    if (count($names) > 0) {
+      $youPrefix = "you, ";
+    } else {
+      $youPrefix = "you";
+    }
+  }
+  return "Acknowledged by " . $youPrefix . join(", ", $names) . ".";
+}
+
 ?>
