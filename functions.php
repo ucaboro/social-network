@@ -949,5 +949,16 @@ function addCommentToPhoto(photo $photo, string $comment) {
   $stmt->execute();
 }
 
+/*
+ * Assigns a photo to a collection.
+ */
+function addPhotoToCollection(int $photoID, int $collectionID) {
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("INSERT INTO photocollectionassignment (photoID, collectionID) VALUES (?, ?)");
+  $stmt->bind_param("ii", $photoID, $collectionID);
+  $stmt->execute();
+}
+
 
 ?>
