@@ -67,7 +67,6 @@ checkLoggedIn(); ?>
               // Get the array of messages
 
               $messages = getMessagesInCircle($circle);
-
               // Output each one
               foreach ($messages as $messageID => $message) {
                 echo getHtmlForCircleMessage($message);
@@ -81,7 +80,6 @@ checkLoggedIn(); ?>
           <div class="row">
             <div class="col-xs-12">
               <?php echo getHtmlForNavigationPanel(); ?>
-
             </div>
           </div>
           <div class="row">
@@ -94,7 +92,6 @@ checkLoggedIn(); ?>
                 <div id="outer"  class="col-xs-12">
                   <?php  echo getHtmlForCirclePanel();?>
                 </div>
-
             </div>
 
           </div>
@@ -103,12 +100,11 @@ checkLoggedIn(); ?>
       </div>
 <?php   echo getHtmlForNewCircle() ;?>
 
-
 <div class="modal fade" id="addUsers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button id="close" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="addTitle">Add users to the circle</h4>
       </div>
       <div class="modal-body">
@@ -122,11 +118,23 @@ checkLoggedIn(); ?>
                 //header("Content-type: text/javascript");
 
                 $friends = getUser()->getFriends();
+
                 $allUserIds = array();
               // Output each one
               foreach ($friends as $friend) {
-                echo getHtmlForAddUserResult($friend, true, false, false);
-                  array_push($allUserIds,  $friend->id);
+
+                  //condition to push the user to th JS for object creation
+                  //if it doesnt exists in the db yet
+
+                  switch (isInTheCircle($friend->id,$circleID)) {
+                    case '0':
+                      echo getHtmlForAddUserResult($friend, true, false, false);
+                        array_push($allUserIds,  $friend->id);
+                      break;
+
+                    case '1':
+                      continue;
+                  }
 
               }
 
@@ -179,7 +187,7 @@ function tick(){
 
 //on close change all back to plus
 function restoreSign(){
-
+document.location.reload();
   for (i = 0; i < obj.length; i++) {
   document.getElementById(obj[i]).className="glyphicon glyphicon-plus";
   }

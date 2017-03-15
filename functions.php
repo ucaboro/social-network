@@ -1027,4 +1027,36 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
   return $row["commonInterests"];
 }
 
+/*
+   * Get an array of the friends of this user that are not in the circle. Key is user ID, value is user object.
+   */
+   function getNotInCircleFriends($circleID) {
+    // Get the array of friends from the database the first time.
+
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("SELECT userID2 AS userID FROM friendship WHERE isConfirmed = true AND userID1 = ?
+        WHERE EXISTS
+        (SELECT userID2  FROM circlemembership WHERE circleID = ?)
+        UNION SELECT userID1 AS userID FROM friendship WHERE isConfirmed = true AND userID2 = ?
+        WHERE EXISTS
+        (SELECT userID1 FROM circlemembership WHERE circleID = ?)");
+
+        if (!$statement) {
+        echo "false statement check";
+
+          } else{
+      $statement->bind_param("iiii", $this->id, $circleID, $this->id, $circleID);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $this->friends[] = getUserWithID($row["userID"]);
+
+    }
+  }
+    // Return the saved array
+    return $this->friends;
+  }
+
 ?>
