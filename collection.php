@@ -45,6 +45,10 @@ if(isset($_FILES['image'])){
     if(empty($photoUploadErrors)==true) {
         move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
         addPhotoToDB($randomName.".".$file_ext);
+        // TODO: need make sure its getting the added photoID from the database.
+        $lastAddedPhotoID =   $db->lastinsertID();
+        $collectionID = getValueFromGET("c");
+        addPhotoToCollection($lastAddedPhotoID,$collectionID);
         $isPhotoUploaded=TRUE;
     }
 }

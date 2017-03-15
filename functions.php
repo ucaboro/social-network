@@ -494,7 +494,7 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
 
     $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
 
-    $selectFriendsOfFriendsStatement: "select userID from user where userID != ? and
+    $selectFriendsOfFriendsStatement= "select userID from user where userID != ? and
                                       userID not in
                                       -- makes sure direct friends of ther user is not selected
                                       (select userID2 as 'userID' from friendship
@@ -968,6 +968,18 @@ function addPhotoToCollection(int $photoID, int $collectionID) {
   $db->connect();
   $stmt = $db -> prepare("INSERT INTO photocollectionassignment (photoID, collectionID) VALUES (?, ?)");
   $stmt->bind_param("ii", $photoID, $collectionID);
+  $stmt->execute();
+}
+
+/*
+ * Deletes the photo Collection with the specified ID.
+ */
+function deletePhotoCollectionWithID(int $collectionID) {
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("DELETE FROM photocollectionassignment where collectionID = ?;
+                          DELETE FROM photocollection where collectionID = ?;");
+  $stmt->bind_param("ii", $collectionID, $collectionID);
   $stmt->execute();
 }
 
