@@ -49,7 +49,7 @@ checkLoggedIn();?>
                           ?><span class="h5"><?php echo $age . ", " . $location; ?> </span><?php
                       }
                       else{
-                          echo "<h5>This persons profile is currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>";
+                          echo "<h5>This person's profile is currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>";
                       }
                       ?>
                     </div>
@@ -124,7 +124,9 @@ checkLoggedIn();?>
                             </div>
                             <div class=\"panel-body\">
                                 <div class=\"row\">
-                                    <h5>This users blog posts are currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>
+                                  <div class=\"col-xs-12\">
+                                    <h5>This user's blog posts are currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>
+                                  </div>
                                 </div>
                             </div>
                           </div>";
