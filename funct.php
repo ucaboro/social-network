@@ -319,7 +319,7 @@
 
     function userAlreadyHasInterestFromID(int $interestID, int $userID): bool{
         //Set initially as -1, a returned value of -1 indicated interest not found
-        $id = -1;
+        $id = null;
         $database= new db();
         $database->connect();
         $stmt = $database->prepare("SELECT interestID FROM interestsassignment WHERE interestID = ? AND userID = ? LIMIT 1");
@@ -329,7 +329,7 @@
         $stmt->fetch();
         $stmt->close();
 
-        if($id == -1){
+        if(is_null($id)){
             return false;
         }
         else{

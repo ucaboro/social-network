@@ -179,7 +179,7 @@ class user {
           while($row = $result->fetch_array(MYSQLI_ASSOC)){
               $this->interests[] = new interest($row["interestID"], $row["name"]);
               $this->interestNames[] = $row["name"];
-              $this->interestIDs[] = $row["name"];
+              $this->interestIDs[] = $row["interestID"];
           }
           //If the user currently has no interests
           if(is_null($this->interests)){
