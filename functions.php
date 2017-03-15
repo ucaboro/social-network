@@ -295,6 +295,26 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   return $photosArray;
 }
 
+function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
+    $userID =$user->getUserID();
+    //TODO: do we want a limit?
+    // Sets a default number of photos to be returned if no limit is specified.
+    if ($limit == 0) { $limit = 18; }
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
+    $statement ->bind_param("iii", $userID,$collectionID, $limit);
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $photosArray = array();
+    while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+    }
+
+    return $photosArray;
+}
+
 /*
  * Returns an array of the blog posts that the specified user has posted. Key is blogPost ID, value is blogPost object.
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Posts are returned in date-descending order.
@@ -437,13 +457,14 @@ function getRecentActivityFeed() {
 function getPhotoWithID(int $photoID) {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT * FROM photo WHERE photoID = ? AND isArchived = 0");
+  $statement = $db -> prepare("SELECT photo.photoID, photo.userID, photo.filename, photo.time, firstName, lastName, email, date, location, blogVisibility, infoVisibility, p2.filename AS profilePhoto FROM photo LEFT JOIN user ON photo.userID = user.userID LEFT JOIN photo AS p2 ON user.photoID = p2.photoID WHERE photo.photoID = ? AND photo.isArchived = 0");
   $statement->bind_param("i", $photoID);
   $statement->execute();
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return new photo($row["photoID"], getUserWithID($row["userID"]) , new DateTime($row["time"]), "img/".$row["filename"] );
+  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], $row["date"], $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+  return new photo($row["photoID"], $user, new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
 /*
@@ -718,7 +739,7 @@ function isFriendRequestPending(user $sender, user $receiver) {
 /*
  * Returns true if there is a photoAlready Saved with the specified name.
  */
-function isPhotoNameExitst($photoName) : bool {
+function isPhotoNameExist($photoName) : bool {
   $db = new db();
   $db->connect();
   $statement = $db -> prepare("SELECT photoID FROM photo WHERE filename =  ?  ");
@@ -728,7 +749,25 @@ function isPhotoNameExitst($photoName) : bool {
 
   return ($result->num_rows == 1);
 }
+/*
+ * Return a collection object for a given collection id
+ */
+//FARSE
+function getPhotoCollectionFromID(int $collectionID){
+    $db = new db();
+    $db->connect();
+    $statement = $db -> prepare("SELECT * FROM photocollection WHERE collectionID = ? LIMIT 1");
+    $statement->bind_param("i", $collectionID);
+    $statement->execute();
+    $result = $statement->get_result();
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"),$row["name"]);
+}
 
+//TODO add visibility for this, also do collections need an actual user object, or would ID suffice? does this create overhead?
+function newCollection($row): Collection{
+    return new Collection($row["collectionID"], getUserWithID($row["userID"]), new DateTime("2017-04-20 14:44"), $row["name"]);
+};
 /*
  * Returns an array of a particular user's photo collections.
  */
@@ -742,8 +781,11 @@ function getPhotoCollectionsByUser(user $user): array {
   $statement->bind_param("i", $userID);
   $statement->execute();
   $result = $statement->get_result();
+
   $photocollectionsArray = array();
+
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    // TODO: Need to make sure if photo collection need a date.
     $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user, new DateTime("2017-04-20 14:44"),$row["name"]);
   }
   return $photocollectionsArray;
@@ -847,69 +889,107 @@ function deleteFriendship(int $userID) {
   $stmt->execute();
 }
 
-  /*
-   * Adds a blogpost to the database where the user is the currently logged-in user.
-   */
-  function addNewBlogPost($blogTitle,$blogpost,$dateString){
-    $thisUserID = getUserID();
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
-    $stmt->execute();
-  }
+/*
+ * Adds a blogpost to the database where the user is the currently logged-in user.
+ */
+function addNewBlogPost($blogTitle,$blogpost,$dateString){
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, ?, ?)");
+  $stmt->bind_param("isss",$thisUserID,$blogpost,$dateString,$blogTitle);
+  $stmt->execute();
+}
 
-  /*
-   * Adds a photo to the database where the user is the currently logged-in user.
-   */
-  function addPhotoToDB($photoName,$dateString){
-    $thisUserID = getUserID();
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
-    $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
-    $stmt->execute();
-  }
+/*
+ * Adds a photo to the database where the user is the currently logged-in user.
+ */
+function addPhotoToDB($photoName,$dateString){
+  $thisUserID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, ?)");
+  $stmt->bind_param("iss",$thisUserID,$photoName,$dateString);
+  $stmt->execute();
+}
 
-  /*
-   * Marks the photo with the given ID in the database as Archieved.
-   */
-  function deletePhotoWithID($photoID) {
-    $db = new db();
-    $db->connect();
-    $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
-    $statement->bind_param("i", $photoID);
-    $statement->execute();
-  }
+function createUserObject($row){
+    return new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+}
 
-  /*
-   * Adds a new photo collection to the database where the user is the currently logged-in user.
-   */
-  function addNewPhotoCollection($name,$FOF_visibility,$circle_visibility){
+/*
+ * Either annotates or unannotates the specified photo.
+ */
+function togglePhotoAnnotation(photo $photo) {
+  $photoID = $photo->id;
+  $userID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("SELECT * FROM photoannotation WHERE photoID = ? AND userID = ?");
+  $stmt->bind_param("ii", $photoID, $userID);
+  $stmt->execute();
 
-    $thisUserID = getUserID();
-    $FOF_vis=($FOF_visibility) ? 1 : 0;
-    $cicle_vis=($circle_visibility) ? 1 : 0;
-    $db = new db();
-    $db->connect();
-    $stmt = $db->prepare("INSERT INTO photocollection (userID,name,isVisibleToFriendsOfFriends,isVisibleToCircles) VALUES (?, ?, ?,?)");
-    $stmt->bind_param("isii",$thisUserID,$name,$FOF_visibility,$circle_visibility);
-    $stmt->execute();
+  $result = $stmt->get_result();
+  if ($result->num_rows == 0) {
+    $stmt = $db -> prepare("INSERT INTO photoannotation (photoID, userID) VALUES (?, ?)");
+    $stmt->bind_param("ii", $photoID, $userID);
+  } else {
+    $stmt = $db->prepare("DELETE FROM photoannotation WHERE photoID = ? AND userID = ?");
+    $stmt->bind_param("ii", $photoID, $userID);
   }
+  $stmt->execute();
+}
 
-  /*
-   * Updates the profile picture ID of the currently logged-in user in the database with the given one.
-   */
-  function setProfilePhoto($photoID) {
-    $userID=getUserID();
-    $db = new db();
-    $db->connect();
-    $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
-    $statement->bind_param("ii", $photoID,$userID);
-    $statement->execute();
-  }
+/*
+ * Marks the photo with the given ID in the database as Archieved.
+ */
+function deletePhotoWithID($photoID) {
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE photo SET isArchived = 1 WHERE photoID = ? ");
+  $statement->bind_param("i", $photoID);
+  $statement->execute();
+}
 
-  function createUserObject($row){
-      return new user($row["userID"],$row["firstName"],$row["lastName"],"img/" . $row["filename"]  ,new DateTime($row["date"]),$row["location"],$row["email"],$row["blogVisibility"],$row["infoVisibility"]);
-  }
+/*
+ * Adds a new photo collection to the database where the user is the currently logged-in user.
+ */
+function addNewPhotoCollection($name,$FOF_visibility,$circle_visibility){
+
+  $thisUserID = getUserID();
+  // $FOF_vis=($FOF_visibility) ? 1 : 0;
+  // $cicle_vis=($circle_visibility) ? 1 : 0;
+  $db = new db();
+  $db->connect();
+  $stmt = $db->prepare("INSERT INTO photocollection (userID,name,isVisibleToFriendsOfFriends,isVisibleToCircles) VALUES (?, ?, ?,?)");
+  $stmt->bind_param("isii",$thisUserID,$name,$FOF_visibility,$circle_visibility);
+  $stmt->execute();
+}
+
+/*
+ * Updates the profile picture ID of the currently logged-in user in the database with the given one.
+ */
+function setProfilePhoto($photoID) {
+  $userID=getUserID();
+  $db = new db();
+  $db->connect();
+  $statement = $db -> prepare("UPDATE user SET photoID = ? WHERE userID = ? ");
+  $statement->bind_param("ii", $photoID,$userID);
+  $statement->execute();
+}
+
+/*
+ * Adds a comment from the current user to the specified photo.
+ */
+function addCommentToPhoto(photo $photo, string $comment) {
+  $photoID = $photo->id;
+  $userID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("INSERT INTO photocomment (userID, photoID, comment, time) VALUES (?, ?, ?, NOW())");
+  $stmt->bind_param("iis", $userID, $photoID, $comment);
+  $stmt->execute();
+}
+
+
 ?>

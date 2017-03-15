@@ -1,6 +1,18 @@
-<?php include "imports.php";
+<?php
+include "imports.php";
 //Ensures user is logged in before displaying page
-checkLoggedIn();?>
+checkLoggedIn();
+// Get the photo object
+$photoID = $_GET["p"];
+$photo = getPhotoWithID($photoID);
+// Submit the POSTed comment if necessary
+if(isset($_POST['comment'])){
+  $comment = $_POST['comment'];
+  if ($comment <> "") {
+    addCommentToPhoto($photo, $comment);
+  }
+}
+?>
 <!DOCTYPE html>
 
 <html lang="en-gb">
@@ -12,9 +24,7 @@ checkLoggedIn();?>
         <div class="col-md-8">
           <!-- Photo -->
           <?php
-          // Get the photo object
-          $photoID = $_GET["p"];
-          $photo = getPhotoWithID($photoID);
+
           ?>
           <div class="panel panel-primary">
             <div class="panel-body">
@@ -38,22 +48,55 @@ checkLoggedIn();?>
                   <span class=\"feed-item-time\">uploaded on $time</span>
                 </div>";
                 ?>
-                <?php
-                echo "<div class=\"row\">";
-                $userID = getValueFromGET("u");
-                $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
-
-                if (getUserID()==$photoOwner->getUserID()) {
-                  echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-warning col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-4\">Delete this picture</button>";
-                }
-
-                if (getUser()->photoSrc==$photo->src) {
-                  echo "<button disabled type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
-                } else {
-                  echo "<button type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary col-xs-8 col-xs-push-2 col-sm-3 col-sm-push-5\">Set as profile picture</button>";
-                }
-                echo "</div>";
-                ?>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  // Get the current logged in user
+                  $user = getUser();
+                  // Check whether it's their photo
+                  $photoBelongsToCurrentUser = $user->id == $photoOwner->getUserID();
+                  // If it is, create the dropdown
+                  if ($photoBelongsToCurrentUser) {
+                    // Get the array of photo collections for the current user
+                    $collections = getPhotoCollectionsByUser($user);
+                    // Check whether we need to disable the add to collection button (if no collections)
+                    $disabled = "";
+                    if (count($collections) == 0) { $disabled = "disabled"; }
+                  ?>
+                  <div class="dropdown">
+                    <button <?php echo $disabled; ?> style="margin-top:10px" class="btn btn-info btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Add to collection
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <?php
+                      foreach ($collections as $collection) {
+                        echo "<li><a href=\"addPhotoToCollection.php?p=$photoID&c=$collection->id\">$collection->name</a></li>";
+                      }
+                      ?>
+                    </ul>
+                  </div>
+                  <?php
+                  }
+                  ?>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  if ($photoBelongsToCurrentUser) {
+                    echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-danger btn-block\" style=\"margin-top:10px\">Delete this picture</button>";
+                  }
+                  ?>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  $disabled = "";
+                  if (getUser()->photoSrc==$photo->src) {
+                    $disabled = " disabled";
+                  }
+                  echo "<button$disabled type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary btn-block\" style=\"margin-top:10px\">Set as profile picture</button>";
+                  ?>
+                </div>
               </div>
             </div>
           </div>
@@ -63,23 +106,14 @@ checkLoggedIn();?>
             <div class="panel-body">
               <div class="row">
                 <div class="col-xs-12 col-sm-1">
-                  <button class="btn btn-default btn-emoji">👋</button>
+                  <button class="btn btn-default btn-emoji" onclick="togglePhotoAnnotation(this, <?php echo $photoID; ?>)">👋</button>
                 </div>
                 <div class="col-xs-12 col-sm-11">
-                  <?php
-                  // Get a list of names of people who acknowledged it
-                  $names = [];
-                  foreach ($photo->getAnnotations() as $user) {
-                    $profileUrl = $user->getUrlToProfile();
-                    $name = $user->getFullName();
-                    $names[] = "<a href=\"$profileUrl\">$name</a>";
-                  }
-                  if (count($names) == 0) {
-                    echo "No acknowledgments yet.";
-                  } else {
-                    echo "Acknowledged by " . join(", ", $names) . ".";
-                  }
-                  ?>
+                  <span class="annotation-list">
+                    <?php
+                    echo getHtmlForAnnotationsList($photo);
+                    ?>
+                  </span>
                 </div>
               </div>
             </div>
@@ -93,9 +127,9 @@ checkLoggedIn();?>
             <div class="panel-body">
               <div class="row">
                 <div class="col-xs-12">
-                  <form class="comment-form">
+                  <form class="comment-form" action="" method="POST">
                     <div class="form-group">
-                      <textarea class="form-control" rows="2" placeholder="Leave a comment..."></textarea>
+                      <textarea name="comment" class="form-control" rows="2" placeholder="Leave a comment..."></textarea>
                     </div>
                     <button class="btn btn-primary pull-right" type="submit">Send comment</button>
                   </form>
@@ -190,12 +224,6 @@ checkLoggedIn();?>
 
       });
     </script>
-
-    <!-- JQuery javascript -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!-- Custom JavaScript -->
-    <!--<script src="script.js"></script>-->
+    <?php echo getHtmlForJavascriptImports(); ?>
   </body>
 </html>

@@ -353,12 +353,15 @@ function getHtmlForNavigationPanel() {
              <li><a href=\"photos.php\">Photos</a></li>
              <li><a href=\"blog.php\">Blogs</a></li>
              <li><a href=\"friends.php\">Friends</a></li>
+             <li><a href=\"friendsOfFriends.php\">Friends of friends</a></li>
              <li><a href=\"circles.php\">Circles</a></li>
              <li><a href=\"settings.php\">Settings</a></li>
            </ul>
           </div>
         </div>";
 }
+
+
 
 /*
  * Returns the HTML for the smaller version of the user summary panel, which appears at the top of the photos and blog pages.
@@ -487,6 +490,40 @@ function getHtmlForFriendRequestsPanel() {
 
   return $html; //TODO: work out why this line takes a few seconds to run
 
+}
+
+/*
+ * Returns a comma-separated list of names of the users who annotated the specified photo.
+ */
+function getHtmlForAnnotationsList(photo $photo): string {
+  $users = $photo->getAnnotations();
+  if (count($users) == 0) {
+    return "No acknowledgments yet.";
+  }
+  // Get a list of names of people who annotated it
+  $names = [];
+  $includesLoggedInUser = false;
+  foreach ($users as $user) {
+    // If the logged in user annotated it, display their name as 'You'
+    if ($user->id == getUserID()) {
+      $includesLoggedInUser = true;
+    } else {
+      // Add their full name to the list
+      $profileUrl = $user->getUrlToProfile();
+      $name = $user->getFullName();
+      $names[] = "<a href=\"$profileUrl\">$name</a>";
+    }
+  }
+  // Work out the right format for the bit at the start that says 'You' if the current user annotated it
+  $youPrefix = "";
+  if ($includesLoggedInUser) {
+    if (count($names) > 0) {
+      $youPrefix = "you, ";
+    } else {
+      $youPrefix = "you";
+    }
+  }
+  return "Acknowledged by " . $youPrefix . join(", ", $names) . ".";
 }
 
 function getHtmlForNewCircle(){
