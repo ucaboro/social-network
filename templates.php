@@ -137,8 +137,12 @@ function getUrlToCircle($circleID) {
 function getHtmlForCircleUsersPanel($circle) {
   // Generate the start of the HTML (setting up the panel, panel title)
   $html = "<div class=\"panel panel-primary\">
-            <div class=\"panel-heading\">
-              <h4 class=\"panel-title\">People in this circle</h4>
+            <div class=\"panel-heading\" \">
+              <h5 style=\"display: inline; \"class=\"panel-title\">People in this circle</h5>
+
+              <i id = \"add\" type=\"button\" data-toggle=\"modal\" data-target=\"#addUsers\"  class = \"glyphicon glyphicon-plus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \"></i>
+              
+              <i id = \"delete\" type=\"button\" data-toggle=\"modal\" data-target=\"#deleteUsers\"  class = \"glyphicon glyphicon-minus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \">&nbsp</i>
             </div>
             <div class=\"panel-body\">
               <div class=\"row\">";
@@ -308,6 +312,37 @@ function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sen
 }
 
 /*
+ * Return users for the Add Users to cirlce modal
+ */
+function getHtmlForAddUserResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest, string $sign): string {
+  $profileUrl = $user->getUrlToProfile();
+  $img = getHtmlForSquareImage($user->photoSrc);
+  $name = $user->getFullName();
+  $age = $user->getAge();
+  $id = $user->id;
+
+
+  return "<div class=\"friend\">
+          <div class=\"row\">
+            <div class=\"col-xs-2\" style=\"padding-right:5px\">
+                <div class=\"friend-profile-image\"><a href=\"\">$img</a></div>
+            </div>
+            <div class=\"col-xs-7\">
+              <a href=\"$profileUrl\"><span class=\"h4\">$name</span></a><br>
+              <span class=\"subtitle\">$age years old, $user->location</span>
+            </div>
+            <div class=\"col-xs-3 text-right\">
+              <div  class=\"friend-action\" data-user-id=\"$user->id\">
+                <span id = \"$id\" type=\"button\" style = \"cursor:pointer\"  class=\"$sign\"></span>
+
+              </div>
+            </div>
+          </div>
+        </div>";
+}
+
+
+/*
  * Returns the HTML for the navigation panel at the side of every page.
  */
 function getHtmlForNavigationPanel() {
@@ -458,6 +493,40 @@ function getHtmlForFriendRequestsPanel() {
 
 }
 
+/*
+ * Returns a comma-separated list of names of the users who annotated the specified photo.
+ */
+function getHtmlForAnnotationsList(photo $photo): string {
+  $users = $photo->getAnnotations();
+  if (count($users) == 0) {
+    return "No acknowledgments yet.";
+  }
+  // Get a list of names of people who annotated it
+  $names = [];
+  $includesLoggedInUser = false;
+  foreach ($users as $user) {
+    // If the logged in user annotated it, display their name as 'You'
+    if ($user->id == getUserID()) {
+      $includesLoggedInUser = true;
+    } else {
+      // Add their full name to the list
+      $profileUrl = $user->getUrlToProfile();
+      $name = $user->getFullName();
+      $names[] = "<a href=\"$profileUrl\">$name</a>";
+    }
+  }
+  // Work out the right format for the bit at the start that says 'You' if the current user annotated it
+  $youPrefix = "";
+  if ($includesLoggedInUser) {
+    if (count($names) > 0) {
+      $youPrefix = "you, ";
+    } else {
+      $youPrefix = "you";
+    }
+  }
+  return "Acknowledged by " . $youPrefix . join(", ", $names) . ".";
+}
+
 function getHtmlForNewCircle(){
   $html = "<div class=\"modal fade\" id=\"addModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\">
     <div class=\"modal-dialog\" role=\"document\">
@@ -515,10 +584,10 @@ function getHtmlForNewCircle(){
       xhr.onreadystatechange = function (){
 
         if (xhr.readyState == 4 && xhr.status ==200){
-              var target = document.getElementById(\"outerCircle\");
-              // target.classList.add(\"hidden\");
+              var target = document.getElementById(\"outer\");
+
               target.innerHTML = xhr.responseText;
-              // target.classList.remove(\"hidden\");
+
 
         }
     }

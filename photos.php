@@ -15,10 +15,6 @@ if(isset($_FILES['image'])){
    $file_tmp = $_FILES['image']['tmp_name'];
    $file_type = $_FILES['image']['type'];
 
-  //  Time of photo upload
-   $date = new DateTime();
-   $dateString = $date->format('YmdHis');
-
   //  splits the filename seperated by period and stores it into an array.
    $file_name_Array=explode('.',$file_name);
   //  selects the last element of that array, which is the extension.
@@ -48,7 +44,7 @@ if(isset($_FILES['image'])){
   // Checks if any errors exist, if not then it transfers the photo to the storage location and registers the photo info into the database.
    if(empty($photoUploadErrors)==true) {
       move_uploaded_file($file_tmp,$photoStorageLocation.$randomName.".".$file_ext);
-      addPhotoToDB($randomName.".".$file_ext,$dateString);
+      addPhotoToDB($randomName.".".$file_ext);
       $isPhotoUploaded=TRUE;
    }
 }
@@ -170,37 +166,37 @@ if(isset($_FILES['image'])){
                 <div class="panel-body">
                   <div class="row">
                     <?php
-                        $collections = getPhotoCollectionsByUser($user);
-                        if (count($collections) > 0) {
-                          foreach ($collections as $collection) {
-                            $photos = $collection->getPhotos();
-                            $photo = $photos[0];
-                            $img = getHtmlForSquareImage($photo->src);
-                            $url = $collection->getURLToCollection();
-                            echo "<div class=\"col-xs-6\">
-                                    <div class=\"photo-collection\">
-                                      <a href=\"$url\">$img</a>
-                                      <a href=\"$url\">$collection->name</a>
-                                    </div>
-                                  </div>";
-                          }
-                            // Output the see more icon
-                            echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                              <a href=\"collections.php?u=$user->id\">See more</a>
-                            </div>";
+                    $collections = getPhotoCollectionsByUser($user);
+                    if (count($collections) > 0) {
+                      foreach ($collections as $collection) {
+                        $photos = $collection->getPhotos();
+                        if (isset($photos[0])) {
+                          $photo = $photos[0];
                         } else {
-                          if ($isMe) {
-                            //TODO: Replace this line with a + button?
-                            echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
-                          } else {
-                            echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
-                          }
+                          $photo = getPhotoWithID(1);
                         }
+                        $img = getHtmlForSquareImage($photo->src);
+                        $url = $collection->getURLToCollection();
+                        echo "<div class=\"col-xs-6\">
+                                <div class=\"photo-collection\">
+                                  <a href=\"$url\">$img</a>
+                                  <a href=\"$url\">$collection->name</a>
+                                </div>
+                              </div>";
+                      }
+                    } else {
+                      if ($isMe) {
+                        //TODO: Replace this line with a + button?
+                        echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
+                      } else {
+                        echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
+                      }
+                    }
                     ?>
                     <?php
                     if (getUserID()==$user->getUserID()) {
                         echo "<div class=\"col-xs-6\">
-                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-sm\">
+                              <button type=\"button\" id=\"add_collection_invoke\" class=\"btn btn-primary btn-md\">
                               <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> Add New Collection
                               </button></div>";
                     }
@@ -214,7 +210,7 @@ if(isset($_FILES['image'])){
 
           <div class="row">
             <div class="col-xs-12">
-              <div id="add_collection_panel" class="panel panel-primary hidden">
+              <div id="add_collection_panel" class="panel panel-primary hidden ">
                 <div class="panel-heading">
                   <h4 class="panel-title">Add New Photo Collection</h4>
                 </div>
@@ -230,7 +226,7 @@ if(isset($_FILES['image'])){
                     <div class="checkbox">
                       <label><input type="checkbox" id="Collection_circle_checkbox" value="">Visible to Circles</label>
                     </div>
-                    <button id="new_collection" class="btn btn-primary center-block" type="submit">Add Collection</button>
+                    <button id="new_collection" class="btn btn-primary center-block" type="button">Add Collection</button>
                   </form>
                 </div>
               </div>
@@ -254,11 +250,14 @@ if(isset($_FILES['image'])){
             type:"POST",
             url:'ajax/addPhotoCollection.php',
             data:{collection_name:document.getElementById('collection_name_input').value ,
-                  collection_FOF_visibility:document.getElementById('Collection_FOF_checkbox').checked,
-                  collection_circle_visibility:document.getElementById('Collection_circle_checkbox').checked},
+                  collection_FOF_visibility:(document.getElementById('Collection_FOF_checkbox').checked==true) ? 1 : 0,
+                  collection_circle_visibility:(document.getElementById('Collection_circle_checkbox').checked==true) ? 1 : 0},
             success:function(result){
-                // alert(result);
-                // document.getElementById("delete_pic").disabled=true;
+                alert(result);
+                document.getElementById('collection_name_input').value="";
+                document.getElementById('Collection_FOF_checkbox').checked=false;
+                document.getElementById('Collection_circle_checkbox').checked=false;
+                document.getElementById("add_collection_panel").classList.add("hidden");
             }
           })
         })

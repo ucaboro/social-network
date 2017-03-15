@@ -7,8 +7,8 @@ checkLoggedIn();
   if(isset($_POST['blogSubmit'])){
     $blogTitle=$_POST["blog-title"];
     $blogpost=$_POST["blog-post"];
-    $date = new DateTime();
-    $dateString = $date->format('YmdHis');
+    // $date = new DateTime();
+    // $dateString = $date->format('YmdHis');
 
     $blogPostErrors = array();
     if (empty($blogTitle)) {
@@ -18,7 +18,7 @@ checkLoggedIn();
       $blogPostErrors[] = "Please provide content for the blog post.";
     }
     if(empty($blogPostErrors)) {
-        addNewBlogPost($blogTitle,$blogpost,$dateString);
+        addNewBlogPost($blogTitle,$blogpost);
         $isBlogPosted=true;
     }
   }
@@ -113,7 +113,7 @@ checkLoggedIn();
             </div>
           </div>
           <div class="row">
-            <div id="outerCircle" class="col-xs-12">
+            <div id="outer" class="col-xs-12">
               <?php echo getHtmlForCirclePanel(); ?>
             </div>
           </div>
