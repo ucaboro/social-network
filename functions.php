@@ -86,6 +86,48 @@ function getValueFromGET(string $key) {
 }
 
 /*
+ * Checks if the userID is in current circle
+ */
+ function checkUserInCircle ($userID, $circleID) {
+
+  $db = new db();
+  $db->connect();
+
+  //checking for this user in the db
+  $stmt = $db->prepare("SELECT circleID FROM circlemembership WHERE userID=? AND circleID=?");
+  $stmt->bind_param("ii", $userID, $circleID);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+
+  if (!$row){
+    $res = 0;
+  }else{
+    $res = 1;
+  }
+
+  return $res;
+
+}
+
+
+/*
+ *  asigns userID to a specifc circleID
+ */
+ function addToCircle ($userID, $circleID) {
+
+  $db = new db();
+  $db->connect();
+
+  $stmt = $db->prepare("INSERT INTO circlemembership (circleID, userID) VALUES (?,?)");
+  $stmt->bind_param("ii", $circleID, $userID);
+  $stmt->execute();
+
+}
+
+
+
+/*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
  */
 function getUser() {

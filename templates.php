@@ -138,7 +138,10 @@ function getHtmlForCircleUsersPanel($circle) {
   // Generate the start of the HTML (setting up the panel, panel title)
   $html = "<div class=\"panel panel-primary\">
             <div class=\"panel-heading\">
-              <h4 class=\"panel-title\">People in this circle</h4>
+              <h5 style=\"display: inline; \"class=\"panel-title\">People in this circle</h5>
+
+              <h4 id=\"add-users\" data-toggle=\"modal\" data-target=\"#addUsers\" type = \"button\"style=\"display: inline; float: right; cursor: pointer;\"class=\"panel-title\" >Add users</h4>
+
             </div>
             <div class=\"panel-body\">
               <div class=\"row\">";
@@ -306,6 +309,37 @@ function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sen
           </div>
         </div>";
 }
+
+/*
+ * Return users for the Add Users to cirlce modal
+ */
+function getHtmlForAddUserResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest): string {
+  $profileUrl = $user->getUrlToProfile();
+  $img = getHtmlForSquareImage($user->photoSrc);
+  $name = $user->getFullName();
+  $age = $user->getAge();
+  $id = $user->id;
+
+
+  return "<div class=\"friend\">
+          <div class=\"row\">
+            <div class=\"col-xs-2\" style=\"padding-right:5px\">
+                <div class=\"friend-profile-image\"><a href=\"\">$img</a></div>
+            </div>
+            <div class=\"col-xs-7\">
+              <a href=\"$profileUrl\"><span class=\"h4\">$name</span></a><br>
+              <span class=\"subtitle\">$age years old, $user->location</span>
+            </div>
+            <div class=\"col-xs-3 text-right\">
+              <div  class=\"friend-action\" data-user-id=\"$user->id\">
+                <span id = \"$id\" type=\"button\" style = \"cursor:pointer\"  class=\"glyphicon glyphicon-plus\"></span>
+              
+              </div>
+            </div>
+          </div>
+        </div>";
+}
+
 
 /*
  * Returns the HTML for the navigation panel at the side of every page.
@@ -549,10 +583,10 @@ function getHtmlForNewCircle(){
       xhr.onreadystatechange = function (){
 
         if (xhr.readyState == 4 && xhr.status ==200){
-              var target = document.getElementById(\"outerCircle\");
-              // target.classList.add(\"hidden\");
+              var target = document.getElementById(\"outer\");
+
               target.innerHTML = xhr.responseText;
-              // target.classList.remove(\"hidden\");
+
 
         }
     }
