@@ -477,76 +477,62 @@ function getRandomPhotosFromUser(user $user, int $numberOfPhotos): array {
  * Returns an array of users who are friends of friends (who are not already friends) with the given user.
  * Optionally filters the list based on a search string.
  */
-function getFriendsOfFriendsOfUser(user $user): array {
+function getFriendsOfFriendsOfUser(user $user,string $filter = NULL): array {
   $userID =$user->getUserID();
-  $db = new db();
-  $db->connect();
-
-  $statement = $db -> prepare("select userID from user where userID != ? and
-                              userID not in
-                              -- makes sure direct friends of ther user is not selected
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              -- chooses the friends of friends
-                              and userID in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?))");
-  $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
-  $statement->execute();
-  $result = $statement->get_result();
-
+  $userIDArray = getFriendsOfFriendsOfUserAsIDs($userID, $filter);
   $friendsArray = array();
-  while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $friendsArray[$row["userID"]] = getUserWithID($row["userID"]);
+  foreach ($userIDArray as $key => $value) {
+    $friendsArray[$key]= getUserWithID($value);
   }
 
   return $friendsArray;
 }
 /*Returns an array of IDs of all the users who are friends of friends (who are not already friends) with the given user.*/
-function getFriendsOfFriendsOfUserAsIDs(int $userID): array {
+function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): array {
     $db = new db();
     $db->connect();
 
-    $statement = $db -> prepare("select userID from user where userID != ? and
-                              userID not in
-                              -- makes sure direct friends of ther user is not selected
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              -- chooses the friends of friends
-                              and userID in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?)
-                              union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2
-                              in
-                              (select userID2 as 'userID' from friendship
-                              where isConfirmed = true and userID1 = ? union
-                              select userID1 as 'userID' from friendship
-                              where isConfirmed = true and userID2 = ?))");
-    $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
+    $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
+
+    $selectFriendsOfFriendsStatement: "select userID from user where userID != ? and
+                                      userID not in
+                                      -- makes sure direct friends of ther user is not selected
+                                      (select userID2 as 'userID' from friendship
+                                      where isConfirmed = true and userID1 = ? union
+                                      select userID1 as 'userID' from friendship
+                                      where isConfirmed = true and userID2 = ?)
+                                      -- chooses the friends of friends
+                                      and userID in
+                                      (select userID2 as 'userID' from friendship
+                                      where isConfirmed = true and userID1
+                                      in
+                                      (select userID2 as 'userID' from friendship
+                                      where isConfirmed = true and userID1 = ? union
+                                      select userID1 as 'userID' from friendship
+                                      where isConfirmed = true and userID2 = ?)
+                                      union
+                                      select userID1 as 'userID' from friendship
+                                      where isConfirmed = true and userID2
+                                      in
+                                      (select userID2 as 'userID' from friendship
+                                      where isConfirmed = true and userID1 = ? union
+                                      select userID1 as 'userID' from friendship
+                                      where isConfirmed = true and userID2 = ?))";
+    $searchParameters = "AND firstName LIKE ?
+                          OR lastName LIKE ?
+                          OR CONCAT_WS('', firstName, lastName) LIKE ?
+                          OR CONCAT_WS('', lastName, firstName) LIKE ?
+                          OR email = ?
+                          OR location LIKE ? ";
+    if (is_null($filter)) {
+      $statement = $db -> prepare($selectFriendsOfFriendsStatement);
+      $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
+    } else {
+      $statement = $db -> prepare($selectFriendsOfFriendsStatement.$searchParameters);
+      $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+    }
+
+
     $statement->execute();
     $result = $statement->get_result();
 
