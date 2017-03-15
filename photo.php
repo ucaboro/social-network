@@ -50,51 +50,53 @@ if(isset($_POST['comment'])){
                 ?>
               </div>
               <div class="row">
-                <?php
-                // Get the current logged in user
-                $user = getUser();
-                // Check whether it's their photo
-                $photoBelongsToCurrentUser = $user->id == $photoOwner->getUserID();
-
-                echo "<div class=\"col-xs-12 col-sm-4\">";
-                if ($photoBelongsToCurrentUser) {
-                  // Get the array of photo collections for the current user
-                  $collections = getPhotoCollectionsByUser($user);
-                  // Check whether we need to disable the add to collection button (if no collections)
-                  $disabled = "";
-                  if (count($collections) == 0) { $disabled = "disabled"; }
-                ?>
-                <div class="dropdown">
-                  <button <?php echo $disabled; ?> style="margin-top:10px" class="btn btn-info btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Add to collection
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <?php
-                    foreach ($collections as $collection) {
-                      echo "<li><a href=\"addPhotoToCollection.php?p=$photoID&c=$collection->id\">$collection->name</a></li>";
-                    }
-                    ?>
-                  </ul>
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  // Get the current logged in user
+                  $user = getUser();
+                  // Check whether it's their photo
+                  $photoBelongsToCurrentUser = $user->id == $photoOwner->getUserID();
+                  // If it is, create the dropdown
+                  if ($photoBelongsToCurrentUser) {
+                    // Get the array of photo collections for the current user
+                    $collections = getPhotoCollectionsByUser($user);
+                    // Check whether we need to disable the add to collection button (if no collections)
+                    $disabled = "";
+                    if (count($collections) == 0) { $disabled = "disabled"; }
+                  ?>
+                  <div class="dropdown">
+                    <button <?php echo $disabled; ?> style="margin-top:10px" class="btn btn-info btn-block dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Add to collection
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <?php
+                      foreach ($collections as $collection) {
+                        echo "<li><a href=\"addPhotoToCollection.php?p=$photoID&c=$collection->id\">$collection->name</a></li>";
+                      }
+                      ?>
+                    </ul>
+                  </div>
+                  <?php
+                  }
+                  ?>
                 </div>
-                <?php
-                }
-                echo "</div>";
-
-                if (getUserID()==$photoOwner->getUserID()) {
-                  echo "<div class=\"col-xs-12 col-sm-4\">";
-                  echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-danger btn-block\" style=\"margin-top:10px\">Delete this picture</button>";
-                  echo "</div>";
-                }
-
-                $disabled = "";
-                if (getUser()->photoSrc==$photo->src) {
-                  $disabled = " disabled";
-                }
-                echo "<div class=\"col-xs-12 col-sm-4\">";
-                echo "<button$disabled type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary btn-block\" style=\"margin-top:10px\">Set as profile picture</button>";
-                echo "</div>";
-                ?>
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  if ($photoBelongsToCurrentUser) {
+                    echo "<button type=\"submit\" name=\"delete_pic\" id=\"delete_pic\" class=\"btn btn-danger btn-block\" style=\"margin-top:10px\">Delete this picture</button>";
+                  }
+                  ?>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                  <?php
+                  $disabled = "";
+                  if (getUser()->photoSrc==$photo->src) {
+                    $disabled = " disabled";
+                  }
+                  echo "<button$disabled type=\"submit\" id=\"set_profile_pic\" name=\"set_profile_pic\" class=\"btn btn-primary btn-block\" style=\"margin-top:10px\">Set as profile picture</button>";
+                  ?>
+                </div>
               </div>
             </div>
           </div>
