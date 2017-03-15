@@ -39,12 +39,17 @@ checkLoggedIn();?>
               // Get the array of friends
               if ($isSearch) {
                 $friends = getFriendsOfUser(getUser(), $searchTerm);
+                $user = getUser();
+                echo $user -> firstName;
+                echo "here";
               } else {
-                $friends = getUser()->getFriends();
+                //$friends = getUser()->getFriends();
+                  $friends = getFriendsOfUser(getUser());
               }
 
               // Output each one
               foreach ($friends as $friend) {
+                  echo $friend -> firstName;
                 echo getHtmlForUserSummarySearchResult($friend, true, false, false);
               }
               ?>
