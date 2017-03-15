@@ -110,7 +110,7 @@
         //Interest object posted from select, is that possible?
         $interestName = trim($_POST['existing_interests']);
         //$interest = getInterestObjectFromInterestName($interestName);
-        $interestID = findInterestIDFromInterestName($name);
+        $interestID = findInterestIDFromInterestName($interestName);
         if (!userObjectAlreadyHasInterestFromID($interestID , $user)) {
             //assignInterestToUserFromName($name, $userID);
             assignInterestToUser($interestID, $userID);

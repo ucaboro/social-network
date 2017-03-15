@@ -296,7 +296,7 @@
         $stmt->execute();
         $stmt->bind_result($id);
         if($stmt->fetch()){
-            return id;
+            return $id;
         }
         else{
             $stmt->close();

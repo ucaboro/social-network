@@ -1,6 +1,9 @@
 <?php
     //$existingInterestsObjectArray = getExistingInterests();
     $existingInterestNamesArray = getExistingInterestNames();
+    if(isset($_POST['new_interests_submit']) || isset($_POST['existing_interests_submit'])){
+        $user = getUser();
+    }
     $myInterestsArray = $user -> getInterestNames();
 ?>
 
@@ -34,13 +37,12 @@
                 <div class="row">
                     <div class="col-xs-10">
                         Existing Interests:
-                        <form action="settings.php" method="post">
+                        <form id="existing_interests_form" action="settings.php" method="post">
                             <select class="form-control" name="existing_interests">
                                 <?php
                                     foreach($existingInterestNamesArray as $interestName){
-                                        echo " <option value=\"" . $interestName ."\"?> " . $interestName  ." </option>";
+                                        echo " <option value=\"" . $interestName . "\"?> " . $interestName  ." </option>";
                                     }
-
                                 ?>
                             </select>
                         </form>
