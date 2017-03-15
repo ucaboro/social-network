@@ -1002,5 +1002,27 @@ function addPhotoToCollection(int $photoID, int $collectionID) {
   $stmt->execute();
 }
 
+/*
+ * Returns an array specifying which of the user's collections contain the photo with the specified ID.
+ * Key is collection ID, value is true if the collection contains the photo, false otherwise.
+ */
+function doCollectionsContainPhoto(int $photoID) {
+  $userID = getUserID();
+  $db = new db();
+  $db->connect();
+  $stmt = $db -> prepare("SELECT pc.collectionID AS colID, (pca.collectionID IS NOT NULL) AS containsPhoto FROM photocollection AS pc LEFT JOIN photocollectionassignment AS pca ON pc.collectionID = pca.collectionID WHERE pca.photoID = ? AND pc.userID = ?");
+  $stmt->bind_param("ii", $photoID, $userID);
+  $stmt->execute();
+
+  $result = $stmt->get_result();
+
+  $collectionsArray = [];
+
+  while($row = $result->fetch_array(MYSQLI_ASSOC)){
+    $collectionsArray[$row["colID"]] = $row["containsPhoto"];
+  }
+  return $collectionsArray;
+}
+
 
 ?>
