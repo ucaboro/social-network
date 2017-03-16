@@ -38,7 +38,7 @@
     else{
         $results = getUsersCollaborativeSearch();
 ?>
-        <!--Otherwise display all relevant users add a limit?!-->
+        <!--Otherwise display all relevant users-->
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h4 class="panel-title">Recommendations</h4>
@@ -51,15 +51,35 @@
             echo '<h4 class="panel-title">' . count($results) . " recommendations found</h4> <br>";
             // Output each result
             $thisUser = getUser();
-            foreach ($results as $userCommonArray) {
+            //Array of users ordered according to commonalities, with number of commonalities stored in same array
+            //foreach ($results as $userCommonArray) {
+            for($i = 0; $i<10; $i++)
+            {
+                $userCommonArray = $results[$i];
+                //User being outputted
                 $user = $userCommonArray[1];
+                //Number of interests in common with logged in user
                 $commonInterest = $userCommonArray[2];
+                //Number of friends in common with logged in user
                 $commonFriends = $userCommonArray[3];
-                $areFriends = false;//areUsersFriends($thisUser, $user);
+                $areFriends = false;
                 $sentRequest = isFriendRequestPending($thisUser, $user);
                 $receivedRequest = isFriendRequestPending($user, $thisUser);
+                //Text to be displayed below user panel
+                $blurb = "";
+                if($commonInterest > 0 && $commonFriends > 0){
+                    $blurb += "You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common";
+                }
+                else if($commonInterest > 0){
+                    $blurb ="You have " . $commonInterest . " interests in common.";
+                }
+                else if($commonFriends > 0){
+                    "You have " . $commonFriends . " friends in common.";
+                }
+                //Echo user panel
                 echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest, "recommended-friend");
-                echo "<span class=\"recommendation\">You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common.</span>
+                //Echo text
+                echo "<span class=\"recommendation\">" . $blurb . "</span>
                  <br> <br>";
             }
             ?>

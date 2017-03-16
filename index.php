@@ -2,7 +2,6 @@
 include "imports.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn();
-include "templates/script.php";
 
 $isBlogPosted=false;
 if(isset($_POST['blogSubmit'])){

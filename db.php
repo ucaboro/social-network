@@ -19,6 +19,7 @@ class db {
     if (!isset(self::$mysqli)) {
       // Details to use for connection
 
+
       // Azure-clearDB copy of the db
       /*$host = "eu-cdbr-azure-west-d.cloudapp.net";
       $username = "b572eae4b8201c";
