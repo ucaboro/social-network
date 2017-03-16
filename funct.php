@@ -429,17 +429,14 @@
         $db = new db();
         $db->connect();
         if (is_null($filter)) {
-            //$statement = $db -> prepare("SELECT * FROM user");
-            $statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN ($statementFriendsOf2User) AND userID != ?");
+            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID NOT IN ($statementFriendsOf2User) AND user.userID != ? AND photo.photoID = user.photoID");
             $statement->bind_param("iii",$currentUserID, $currentUserID, $currentUserID);
         }
         else{
             global $searchParameters411;
             $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
-            //$statement = $db -> prepare("SELECT * FROM user WHERE ". $searchParameters411);
-            $statement = $db -> prepare("SELECT * FROM user WHERE userID != ? AND userID NOT IN ($statementFriendsOf2User) AND " . $searchParameters411);
+            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID != ? AND user.userID  NOT IN ($statementFriendsOf2User) AND $searchParameters411 AND photo.photoID = user.photoID");
             $statement->bind_param("iiissssss",$currentUserID, $currentUserID, $currentUserID, $searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
-            //$statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
         }
         $statement->execute();
         $result = $statement->get_result();
@@ -448,20 +445,34 @@
         $usersArray = array();
         //Loop through results of query, assigning a row from the table to an associative array
         while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $id = $currentUser -> id;
             //Find common interest score between current user and user stored in row of table for this loop
             $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);
             //Find common friends score between current user and user stored in row of table for this loop
             $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);
+            echo "id = " . $id;
+            echo " userID = " . $row["userID"] . " name = " . $row["firstName"] . " " . $row["lastName"];
+            echo "<br>";
             //Get overall commonality score for user pair
             $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);
+            echo " score = " . $score;
             //Assign user to array with the score as a key
-            $usersArray[$score] = getUserWithID($row["userID"]); //createUserObject($row);
+            $usersArray[] = array($score, createUserObject($row), $interests, $friendsInCommon); //createUserObject($row)//getUserWithID($row["userID"]);
+            echo " usersArray[" . $score . "] = {" . $row["userID"] . "," . $interests . "," . $friendsInCommon . "} <br>";
+            echo "<hr>";
         }
         //Sort high to low according to key value
-        ksort($usersArray);
+        //ksort($usersArray);
+        usort($usersArray, 'sortByScore');
+        echo "After ksort: <br>";
+        echo " usersArray[" . $score . "] = {" . $row["userID"] . "," . $interests . "," . $friendsInCommon . "} <br>";
+            echo "<hr>";
         return $usersArray;
     }
 
+    function sortByScore($a, $b) {
+        return $a[0] <=> $b[0];;
+    }
 
     /*
      * Get an integer score of the commonalities between two users

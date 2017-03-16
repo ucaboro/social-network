@@ -51,11 +51,15 @@
             echo '<h4 class="panel-title">' . count($results) . " recommendations found</h4> <br>";
             // Output each result
             $thisUser = getUser();
-            foreach ($results as $user) {
-                $areFriends = areUsersFriends($thisUser, $user);// false
+            foreach ($results as $userCommonArray) {
+                $user = $userCommonArray[1];
+                $commonInterest = $userCommonArray[2];
+                $commonFriends = $userCommonArray[3];
+                $areFriends = false;//areUsersFriends($thisUser, $user);
                 $sentRequest = isFriendRequestPending($thisUser, $user);
                 $receivedRequest = isFriendRequestPending($user, $thisUser);
                 echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest);
+                echo "You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common.";
             }
             ?>
         </div>
