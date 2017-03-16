@@ -913,14 +913,16 @@ extensions	photos.php	/^   $extensions= array("jpeg","jpg","png");$/;"	v
 randomName	photos.php	/^   $randomName = RAND(1,50000);$/;"	v
 randomName	photos.php	/^     $randomName = RAND(1,50000);$/;"	v
 isPhotoUploaded	photos.php	/^      $isPhotoUploaded=TRUE;$/;"	v
-userID	photos.php	/^          $userID = getValueFromGET("u");$/;"	v
+u	photos.php	/^          $u = getValueFromGET("u");$/;"	v
 me	photos.php	/^          $me = getUser();$/;"	v
-user	photos.php	/^          $user = ($userID == NULL) ? $me : getUserWithID($userID);$/;"	v
+user	photos.php	/^          $user = ($u == NULL) ? $me : getUserWithID($u);$/;"	v
 userID	photos.php	/^          $userID = $user->id;$/;"	v
 isMe	photos.php	/^          $isMe = ($me->id == $userID);$/;"	v
 photoUploadErrors	photos.php	/^                   $photoUploadErrors= array();$/;"	v
 photos	photos.php	/^                $photos = getPhotosOwnedByUser($user);$/;"	v
 photoID	photos.php	/^                  foreach ($photos as $photoID => $photo) {$/;"	v
+get	photos.php	/^                  $get = "";$/;"	v
+get	photos.php	/^                  if (!is_null($u)) { $get = "?u=$u"; }$/;"	v
 collections	photos.php	/^                    $collections = getPhotoCollectionsByUser($user);$/;"	v
 photos	photos.php	/^                        $photos = $collection->getPhotos();$/;"	v
 photo	photos.php	/^                          $photo = $photos[0];$/;"	v

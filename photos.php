@@ -61,9 +61,9 @@ if(isset($_FILES['image'])){
         <div class="col-md-8">
           <!-- Profile summary -->
           <?php
-          $userID = getValueFromGET("u");
+          $u = getValueFromGET("u");
           $me = getUser();
-          $user = ($userID == NULL) ? $me : getUserWithID($userID);
+          $user = ($u == NULL) ? $me : getUserWithID($u);
           $userID = $user->id;
           echo getHtmlForSmallUserSummaryPanel($user, "Photos");
           ?>
@@ -161,7 +161,11 @@ if(isset($_FILES['image'])){
             <div class="col-xs-12">
               <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h4 class="panel-title">Photo Collections</h4>
+                  <?php
+                  $get = "";
+                  if (!is_null($u)) { $get = "?u=$u"; }
+                  ?>
+                  <h4 class="panel-title"><a href="collections.php<?php echo $get; ?>">Photo Collections</a></h4>
                 </div>
                 <div class="panel-body">
                   <div class="row">
