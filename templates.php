@@ -279,7 +279,7 @@ return "$color";
  * $sentRequest: true if the current user has sent $user a friend request which hasn't been responded to yet, false otherwise.
  * $receivedRequest: true if the current user has recieved a friend request from $user which they haven't responded to yet, false otherwise.
  */
-function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest): string {
+function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest, string $class): string {
   $profileUrl = $user->getUrlToProfile();
   $img = getHtmlForSquareImage($user->photoSrc);
   $name = $user->getFullName();
@@ -293,7 +293,7 @@ function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sen
   } else {
     $buttonHtml = "<button title=\"Add friend\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#change-friendship\" data-user-name=\"$name\" data-user-id=\"$user->id\" data-change-type=\"1\"><span class=\"glyphicon glyphicon-plus\"></span></button>";
   }
-  return "<div class=\"friend\">
+  return "<div class=\"" . $class . "\">
           <div class=\"row\">
             <div class=\"col-xs-2\" style=\"padding-right:5px\">
                 <div class=\"friend-profile-image\"><a href=\"$profileUrl\">$img</a></div>

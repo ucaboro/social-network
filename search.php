@@ -49,7 +49,7 @@ $page = "search";?>
                   $areFriends = areUsersFriends($thisUser, $user);
                   $sentRequest = isFriendRequestPending($thisUser, $user);
                   $receivedRequest = isFriendRequestPending($user, $thisUser);
-                  echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest);
+                  echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest, "friend");
                 }
                 echo "<br><br>";
                 echo "<hr>";

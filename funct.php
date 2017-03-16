@@ -450,23 +450,13 @@
             $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);
             //Find common friends score between current user and user stored in row of table for this loop
             $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);
-            echo "id = " . $id;
-            echo " userID = " . $row["userID"] . " name = " . $row["firstName"] . " " . $row["lastName"];
-            echo "<br>";
             //Get overall commonality score for user pair
             $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);
-            echo " score = " . $score;
             //Assign user to array with the score as a key
             $usersArray[] = array($score, createUserObject($row), $interests, $friendsInCommon); //createUserObject($row)//getUserWithID($row["userID"]);
-            echo " usersArray[" . $score . "] = {" . $row["userID"] . "," . $interests . "," . $friendsInCommon . "} <br>";
-            echo "<hr>";
         }
         //Sort high to low according to key value
-        //ksort($usersArray);
         usort($usersArray, 'sortByScore');
-        echo "After ksort: <br>";
-        echo " usersArray[" . $score . "] = {" . $row["userID"] . "," . $interests . "," . $friendsInCommon . "} <br>";
-            echo "<hr>";
         return $usersArray;
     }
 

@@ -180,6 +180,11 @@ a .circle:hover {
   text-decoration: none;
 }
 
+.recommended-friend{
+  color: #666;
+  font-weight: 400;
+}
+
 .btn-emoji:hover {
   text-decoration: none;
   background-color: #f9f9f9;
@@ -221,4 +226,10 @@ a.no-formatting {
 /* Simple vertical spacer div */
 .spacer-v {
   margin-top: 20px;
+}
+
+/* */
+.recommendation {
+  color: #8c8c8c;
+  font-size: 0.9em;
 }

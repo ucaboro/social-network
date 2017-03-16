@@ -58,8 +58,9 @@
                 $areFriends = false;//areUsersFriends($thisUser, $user);
                 $sentRequest = isFriendRequestPending($thisUser, $user);
                 $receivedRequest = isFriendRequestPending($user, $thisUser);
-                echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest);
-                echo "Score = " . $userCommonArray[0] . "You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common.";
+                echo getHtmlForUserSummarySearchResult($user, $areFriends, $sentRequest, $receivedRequest, "recommended-friend");
+                echo "<span class=\"recommendation\">You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common.</span>
+                 <br> <br>";
             }
             ?>
         </div>

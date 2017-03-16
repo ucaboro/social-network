@@ -51,7 +51,7 @@ $page = "friendsOfFriends";
                         $areFriends = areUsersFriends($thisUser, $friendOfFriend);
                         $sentRequest = isFriendRequestPending($thisUser, $friendOfFriend);
                         $receivedRequest = isFriendRequestPending($friendOfFriend, $thisUser);
-                        echo getHtmlForUserSummarySearchResult($friendOfFriend, $areFriends, $sentRequest, $receivedRequest);
+                        echo getHtmlForUserSummarySearchResult($friendOfFriend, $areFriends, $sentRequest, $receivedRequest, "friend");
                     }
                     ?>
                 </div>
