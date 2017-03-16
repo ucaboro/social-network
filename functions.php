@@ -464,7 +464,7 @@ function getFriendsOfFriendsOfUser(user $user,string $filter = NULL): array {
   $userIDArray = getFriendsOfFriendsOfUserAsIDs($userID, $filter);
   $friendsArray = array();
   foreach ($userIDArray as $key => $value) {
-    $friendsArray[$key]= getUserWithID($value);
+    $friendsArray[$value]= getUserWithID($value);
   }
 
   return $friendsArray;
@@ -553,7 +553,7 @@ function getUsers(string $filter): array {
   return $usersArray;
 }
 
-function areUsersFriendsOfFriends(int $userID1, int $userID2){
+function areUsersWithIDFriendsOfFriends(int $userID1, int $userID2){
     //Get list of all the userIDs of friends of friends of user1
     $friendsOfFriends = getFriendsOfFriendsOfUserAsIDs($userID1);
     //See if userID2 is in the array
@@ -624,21 +624,6 @@ function displayInfo(user $user, bool $friends, bool $friendsOfFriends): bool{
         return true;
     }
     else if($user->id == $_SESSION['userID']){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-function displayCollections(user $user, bool $friends, bool $friendsOfFriends, bool $inCommonCircle){
-    if($friends || ($user->id === $_SESSION['userID']) ){
-        return true;
-    }
-    if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
-        return true;
-    }
-    else if($user->isVisibleToCircles && $inCommonCircle){
         return true;
     }
     else{
@@ -1016,7 +1001,7 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
   $db->connect();
 
   // The first $statementFriendsOf2User selects all the
-  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( $statementFriendsOf2User UNION  $statementFriendsOf2User )");
   $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
   $statement->execute();
   $result = $statement->get_result();
@@ -1052,26 +1037,22 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
 
 }
 
-function displayCollections2(collection $collection){
+
+function displayCollections(collection $collection) : bool{
   $currentUser = getUser();
   $collectionUser = $collection->user;
     if(areUsersFriends($currentUser,$collectionUser) || ($currentUser->id == $collectionUser) ){
-        return true;
-    } elseif ($Collection->isVisibleToCircles   ) {
-      # code...
-    }
-    if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
-        return true;
-    }
-    else if($user->isVisibleToCircles && $inCommonCircle){
-        return true;
-    }
-    else{
-        return false;
+      return true;
+    } elseif ($Collection->isVisibleToCircles && isCommonCircleBetweenUsers($currentUser,$collectionUser)   ) {
+      return true;
+    } elseif ($user->isVisibleToFriendsOfFriends && areUsersWithIDFriendsOfFriends($currentUser->getUserID,$collectionUser->getUserID)) {
+      return true;
     }
 }
 
-
+/*
+ * See if the user in the circle
+ */
   function deleteFromCircle($id, $circleID){
     $db = new db();
     $db->connect();
@@ -1082,7 +1063,7 @@ function displayCollections2(collection $collection){
 }
 
 /*
- * Returns the number of mutual friends between user1 and user2.
+ * Returns 1 if both the users have a circle in common or else 0.
  */
 function isCommonCircleBetweenUsers($user1, $user2) {
 
@@ -1095,12 +1076,14 @@ function isCommonCircleBetweenUsers($user1, $user2) {
   $db->connect();
 
   // The first $statementFriendsOf2User selects all the
-  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
-  $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
+  $statement = $db -> prepare("SELECT EXISTS( SELECT * FROM circlemembership WHERE userID = ? AND circleID IN
+                              (SELECT circleID FROM circlemembership WHERE userID = ?) LIMIT 1) AS 'result' ");
+  $statement->bind_param("ii", $userID1, $userID2 );
   $statement->execute();
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  return $row["mutualFriends"];
+  return $row["result"];
 }
+
 ?>
