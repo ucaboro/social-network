@@ -155,7 +155,7 @@
         //Connect to database
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("UPDATE User SET $columnName = ? WHERE userID = ?");
+        $stmt = $database->prepare("UPDATE user SET $columnName = ? WHERE userID = ?");
         $stmt->bind_param("si", $cellContent, $userID);
         $result =$stmt->execute();
         //Check if query was successful
@@ -425,7 +425,7 @@
         //Logged in User
         $currentUser = getUser();
         $currentUserID = $currentUser -> id;
-        //Perfom search for users according to a string filter
+        //Perform search for users according to a string filter
         $db = new db();
         $db->connect();
         if (is_null($filter)) {
@@ -472,7 +472,6 @@
      */
     function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{
         $user2Age = $user2dob->diff(new DateTime())->format('%y');
-        //$user2Age = new DateTime($row["date"])->diff(new DateTime())->format('%y');
         //Number of interests in common
         $score = $interests; //getCommonInterestsBetweenUsersWithID($userID1, $userID2);
         //Number of friends in common
@@ -490,4 +489,3 @@
         return $score;
     }
 
-//$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
