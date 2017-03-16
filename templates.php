@@ -141,7 +141,7 @@ function getHtmlForCircleUsersPanel($circle) {
               <h5 style=\"display: inline; \"class=\"panel-title\">People in this circle</h5>
 
               <i id = \"add\" type=\"button\" data-toggle=\"modal\" data-target=\"#addUsers\"  class = \"glyphicon glyphicon-plus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \"></i>
-              
+
               <i id = \"delete\" type=\"button\" data-toggle=\"modal\" data-target=\"#deleteUsers\"  class = \"glyphicon glyphicon-minus\"  style=\"display: inline; float: right; color:BLACK; font-size: 15px; cursor: pointer; \">&nbsp</i>
             </div>
             <div class=\"panel-body\">

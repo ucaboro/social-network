@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand navbar-brand-center" href="index.php">
-        <img alt="Connect" src="img/logo.png" >
+        <img alt="Connect" src="static_img/logo.png" >
       </a>
     </div>
     <form class="navbar-form navbar-left hidden-xs" action="search.php" method="GET">

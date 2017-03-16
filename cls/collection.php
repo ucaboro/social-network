@@ -36,6 +36,11 @@ class collection {
   private $isVisibleToFriendsOfFriends;
 
   /*
+   * The ID of the photo which should be the cover of this collection.
+   */
+  private $coverPhotoID;
+
+  /*
    * Constructor which initialises the object and populates all fields.
    */
   public function __construct(int $id, user $user, string $name) {
@@ -50,8 +55,7 @@ class collection {
   public function getPhotos(): array {
     // Check if we already got the photos for this collection
     if (is_null($this->photos)) {
-      // Get the annotations from the database
-
+      // Get the photos from the database
       $this->photos = array();
       $db = new db();
       $db->connect();
@@ -60,18 +64,32 @@ class collection {
       $statement->execute();
       $result = $statement->get_result();
 
+      $isFirstRow = true;
+
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
+        // Set the first photo as the cover photo
+        if ($isFirstRow) {
+          $this->coverPhotoID = $row["photoID"];
+          $isFirstRow = false;
+        }
         $this->photos[$row["photoID"]] = getPhotoWithID($row["photoID"]);
       }
     }
     return $this->photos;
   }
 
+  private function getCoverPhotoID() {
+    if (is_null($this->photos)) {
+      getPhotos();
+    }
+    return $coverPhotoID;
+  }
+
   /*
    * Returns an boolean indicating whether it is visible to the circles of the user.
    */
   public function isVisibleToCircles(): bool {
-    // Check if we already got the photos for this collection
+    // Check if we already got the property
     if (is_null($this->isVisibleToCircles)) {
       // Get the annotations from the database
       $db = new db();
@@ -90,7 +108,7 @@ class collection {
    * Returns an boolean indicating whether it is visible to friends of friends of the user.
    */
   public function isVisibleToFriendsOfFriends(): bool {
-    // Check if we already got the photos for this collection
+    // Check if we already got the property
     if (is_null($this->isVisibleToFriendsOfFriends)) {
       // Get the annotations from the database
       $db = new db();
@@ -143,6 +161,18 @@ class collection {
    */
   public function getURLToCollection(): string {
     return "collection.php?c=" . $this->id;
+  }
+
+  /*
+   * Return the src for the cover photo of this collection - either the first photo in the collection or a default photo if the collection is empty.
+   */
+  public function getCoverPhotoSrc(): string {
+    $photos = $this->getPhotos();
+    if (!empty($photos)) {
+      return $photos[$this->coverPhotoID]->src;
+    } else {
+      return "static_img/default_collection.png";
+    }
   }
 
 }
