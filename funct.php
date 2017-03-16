@@ -77,7 +77,7 @@
         //Connect to database
         $database->connect();
         //Query as prepared statement
-        $stmt = $database->prepare("SELECT * FROM User WHERE userID = ? LIMIT 1");
+        $stmt = $database->prepare("SELECT * FROM user WHERE userID = ? LIMIT 1");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -98,7 +98,7 @@
         //Connect to database
         $database->connect();
         //Query as prepared statement
-        $stmt = $database->prepare("SELECT * FROM User WHERE email = ? LIMIT 1");
+        $stmt = $database->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -127,7 +127,7 @@
         //Connect to database
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO User (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
+        $stmt = $database->prepare("INSERT INTO user (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
         $stmt->bind_param("ssss", $email, $firstName, $lastName, $hashedPassword);
         $result =$stmt->execute();
         //Check if query was successful
@@ -251,7 +251,7 @@
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO interests (name) 
+        $stmt = $database->prepare("INSERT INTO interests (name)
                                     VALUES (?)");
         $stmt->bind_param("s", $interest);
         $result = $stmt->execute();
@@ -487,4 +487,3 @@
     }
 
 //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
-

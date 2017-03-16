@@ -164,7 +164,6 @@ function getUserID() {
     return $_SESSION["userID"];
   }
   else{
-    // TODO:  Should change this to null or something for final version. Do we need to add checking for the null case?
       return 1;
   }
 }
@@ -351,7 +350,6 @@ return $blogPostsArray;
  */
 function getRecentActivityFeed() {
   // Get ther currently logged in user.
-  // TODO: Neet to make sure the function is actually returning the currently logged-in user.
   $user = getUser();
   $userID = $user->getUserID();
 
@@ -684,7 +682,6 @@ function getPhotoCollectionsByUser(user $user): array {
   $photocollectionsArray = array();
 
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    // TODO: Need to make sure if photo collection need a date.
     $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user,$row["name"]);
   }
   return $photocollectionsArray;
