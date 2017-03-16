@@ -6,22 +6,6 @@
 ?>
 <!DOCTYPE html>
 <html lang="en-gb">
-<!-- I'm forced to use a earlier version of bootstrap, as apparently the new version doesn't like datepicker or something. No time to work out why.-->
-<script src="bootstrap-3.3.7-dist/js/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-<script type='text/javascript' src='//code.jquery.com/jquery-1.8.3.js'></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker3.min.css">
-<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
-<script type='text/javascript'>
-    $(function(){
-        $('.input-group.date').datepicker({
-            calendarWeeks: true,
-            todayHighlight: true,
-            autoclose: true
-        });
-    });
-</script>
 <?php echo getHtmlForHead(); ?>
 <body>
 <?php echo getHtmlForTopNavbar(); ?>

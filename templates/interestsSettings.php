@@ -17,30 +17,33 @@
             <div class="col-xs-12">
                 <!--Display current interests-->
                 <h5>My Interests:</h5>
-                    <ul>
+                <div class="panel panel-default">
+                  <div class="panel-body">
                     <?php
-                        foreach($myInterestsArray as $interest){
-                            echo "<li>" . $interest -> getName();  /*. " <button>
-                                                                        <span class=\"glyphicon glyphicon-trash\"></span>
-                                                                    </button></li>"; // user deleteInterestWithID($interest->getID())*/
-                        }
+                    if (empty($myInterestsArray)) {
+                      echo "No interests yet.";
+                    } else {
+                      echo "<form class=\"form-inline\" method=\"POST\"><ul>";
+                      foreach($myInterestsArray as $interest){
+                          echo "<li>" . $interest->getName() .
+                                  "<button name=\"delete_interest\" value=\"" . $interest->getID() . "\" type=\"submit\" class=\"close delete\"><span>&times;</span></button>
+                                </li>";  /*. " <button>
+                                                                      <span class=\"glyphicon glyphicon-trash\"></span>
+                                                                  </button></li>"; // user deleteInterestWithID($interest->getID())*/
+                      }
+                      echo "</ul></form>";
+                    }
                     ?>
-                        <!-- <button class='glyphicon glyphicon-trash aria-label'></button>-->
-                    </ul>
-                <ul class="dropdown-menu">
-                    <li><a href="profile.php">My profile</a></li>
-                    <li><a href="settings.php">Settings</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="logout.php" onclick="return confirm('Are you sure you want to log out?')">Log out</a></li>
-                </ul>
+                    <!-- <button class='glyphicon glyphicon-trash aria-label'></button>-->
+
+                  </div>
+                </div>
 
                 <!--Add new Interests-->
-                <br>
                 <h5>Add new interests:</h5>
                 <!--From dropdown of interests already in the database-->
                 <div class="row">
                     <div class="col-xs-10">
-                        Existing Interests:
                         <form id="existing_interests_form" action="settings.php" method="post">
                             <select class="form-control" name="existing_interests">
                                 <?php
@@ -52,7 +55,6 @@
                         </form>
                     </div>
                     <div class="col-xs-2">
-                        <br>
                         <button class="btn btn-primary" type="submit" name="existing_interests_submit" value="Submit" form="existing_interests_form">Add</button>
                     </div>
                 </div>
@@ -61,7 +63,7 @@
                 <!--Allow user to add new custom interest-->
                 <div class="row">
                     <div class="col-xs-10">
-                        New Interests:
+                        Custom Interests:
                         <form id="new_interests_form" action="settings.php" method="POST">
                             <div class="form-group">
                                 <input class="form-control" maxlength="20" name="new_interests" placeholder="Add new interest here..">

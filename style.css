@@ -237,6 +237,13 @@ button.close-img {
   opacity: 1;
 }
 
+.delete {
+  font-size: 20px;
+  line-height: 20px;
+  margin-left: 10px;
+  float: none;
+}
+
 /* */
 .recommendation {
   color: #8c8c8c;

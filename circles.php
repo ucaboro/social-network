@@ -23,7 +23,10 @@ checkLoggedIn();?>
             </div>
           </div>
       </div>
+      <?php
+      echo getHtmlForNewCircle();
+      echo getHtmlForJavascriptImports();
+        ?>
     </div>
-    <?php echo getHtmlForJavascriptImports(); ?>
   </body>
 </html>

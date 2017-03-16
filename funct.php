@@ -173,15 +173,8 @@
     }
 
 
+
     function getBlogsFromSearchTerm(string $term){
-        //TODO: Change this to getUser(); $location = ($location == "") ? "location unknown" : $location;
-        /*if(isset($_SESSION["userID"]))
-        {
-            $currentUserID = $_SESSION["userID"];
-        }
-        else{
-            $currentUserID = null;
-        }*/
         $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
@@ -208,7 +201,7 @@
     /*
      * Create and return a new blog object from the associative array produced by a SQL query
      */
-    function createBlogObject($row){
+    function createBlogObject($row) {
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
 
@@ -224,8 +217,7 @@
 //new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
 
 
-    function addNewCustomInterest(string $interestName, int $userID): void
-    {
+    function addNewCustomInterest(string $interestName, int $userID) {
         //Get interest id from name, if in database, if not in database will return -1
         $interestID = findInterestIDFromInterestName($interestName);
         //If interest does not already exist in the database
@@ -240,8 +232,7 @@
     /*
      * Upload a new user created interest to the interests database
      */
-    function uploadNewInterest(string $interest, int $userID): void
-    {
+    function uploadNewInterest(string $interest, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -263,7 +254,7 @@
     /*
      * Link a user and an interest in the interests assignment database, i.e. record that the user has that interest
      */
-    function assignInterestToUser(int $interestID, int $userID): void{
+    function assignInterestToUser(int $interestID, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -274,7 +265,7 @@
     }
 
     //Should use object for this
-    function assignInterestToUserFromName(string $name, int $userID): void{
+    function assignInterestToUserFromName(string $name, int $userID) {
         $interestID = findInterestIDFromInterestName($name);
         assignInterestToUser($interestID, $userID);
     }
@@ -372,12 +363,15 @@
         return $names;
     }
 
-    function deleteInterestWithID(int $interestID){
+    /*
+     * Removes the interest with the specified ID from the currently logged in user.
+     */
+    function removeInterestWithID(int $interestID){
+        $userID = getUserID();
         $db = new db();
         $db->connect();
-        $stmt = $db -> prepare("DELETE FROM interestsassignment where interestID = ?;
-                          DELETE FROM interests where interestID = ?;");
-        $stmt->bind_param("ii", $interestID, $interestID);
+        $stmt = $db -> prepare("DELETE FROM interestsassignment WHERE interestID = ? AND userID = ?");
+        $stmt->bind_param("ii", $interestID, $userID);
         $stmt->execute();
     }
 
@@ -479,4 +473,3 @@
         }
         return $score;
     }
-
