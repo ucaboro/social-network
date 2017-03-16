@@ -419,15 +419,26 @@
     * Ordered according to commonalities with logged in user
     */
     function getUsersCollaborativeSearch(string $filter = NULL): array {
+        global $statementFriendsOf2User;
         //Logged in User
         $currentUser = getUser();
+        $currentUserID = $currentUser -> id;
         //Perfom search for users according to a string filter
         $db = new db();
         $db->connect();
-        global $searchParameters411;
-        $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
-        $statement = $db -> prepare(" SELECT * FROM user WHERE ". $searchParameters411);
-        $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+        if (is_null($filter)) {
+            $statement = $db -> prepare("SELECT * FROM user");
+            //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User);
+            //$statement->bind_param("ii",$currentUserID, $currentUserID);
+        }
+        else{
+            global $searchParameters411;
+            $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
+            $statement = $db -> prepare("SELECT * FROM user WHERE ". $searchParameters411);
+            //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
+            //$statement->bind_param("iissssss",$currentUserID, $currentUserID, $searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+            $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+        }
         $statement->execute();
         $result = $statement->get_result();
 
@@ -440,9 +451,9 @@
             //Find common friends score between current user and user stored in row of table for this loop
             $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);
             //Get overall commonality score for user pair
-            $score = getUsersCommonalityScore($currentUser, $row["location"], $row["date"], $interests, $friendsInCommon);
+            $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);
             //Assign user to array with the score as a key
-            $usersArray[$score] = createUserObject($row);
+            $usersArray[$score] = getUserWithID($row["userID"]); //createUserObject($row);
         }
         //Sort high to low according to key value
         ksort($usersArray);
@@ -453,14 +464,16 @@
     /*
      * Get an integer score of the commonalities between two users
      */
-    function getUsersCommonalityScore(user $user1, string $user2Location, $user2dob, int $interests, int $friendsInCommon): int{
+    function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{
         $user2Age = $user2dob->diff(new DateTime())->format('%y');
+        //$user2Age = new DateTime($row["date"])->diff(new DateTime())->format('%y');
         //Number of interests in common
         $score = $interests; //getCommonInterestsBetweenUsersWithID($userID1, $userID2);
         //Number of friends in common
         $score += $friendsInCommon;
-        //If they live in same city
-        if($user1 -> location === $user2Location){
+        //If they live in same city, must check against null, so it doensn't count people with no location as living in the same place
+        if(!is_null($user2Location) && ($user1 -> location === $user2Location))
+        {
             $score += 4;
         }
         $ageDiff = abs( ($user1 -> getAge() ) - $user2Age );
@@ -470,3 +483,6 @@
         }
         return $score;
     }
+
+//$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
+

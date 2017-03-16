@@ -32,7 +32,7 @@
         <!-- If searching -->
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h4 class="panel-title"><?php echo count($results); ?> results found</h4>
+                <h4 class="panel-title"><?php echo count($results); ?> Recommendations found</h4>
             </div>
 <?php
     }
@@ -49,7 +49,7 @@
 ?>
         <div class="panel-body">
             <?php
-            echo '<h4 class="panel-title">' . count($results) . " users found</h4> <br>";
+            echo '<h4 class="panel-title">' . count($results) . " recommendations found</h4> <br>";
             // Output each result
             $thisUser = getUser();
             foreach ($results as $user) {

@@ -443,7 +443,7 @@ function getPhotoWithID(int $photoID) {
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], $row["date"], $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
   return new photo($row["photoID"], $user, new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
@@ -994,6 +994,20 @@ function doCollectionsContainPhoto(int $photoID) {
   return $collectionsArray;
 }
 
+function getCommonInterestsBetweenUsersWithID(int $userID1, int $userID2){
+    $db = new db();
+    $db->connect();
+
+    $statement = $db -> prepare("SELECT COUNT(interestID) AS commonInterests FROM interestsassignment WHERE userID = ? AND interestID IN
+                              (SELECT interestID FROM interestsassignment WHERE userID = ?)");
+    $statement->bind_param("ii", $userID1, $userID2 );
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    return $row["commonInterests"];
+}
+
 /*
  * Returns the number of common interests between user1 and user2.
  */
@@ -1002,17 +1016,8 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
   $userID1 = $user1->getUserID();
   $userID2 = $user2->getUserID();
 
-  $db = new db();
-  $db->connect();
+  return getCommonInterestsBetweenUsersWithID($userID1, $userID2);
 
-  $statement = $db -> prepare("SELECT COUNT(interestID) AS commonInterests FROM interestsassignment WHERE userID = ? AND interestID IN
-                              (SELECT interestID FROM interestsassignment WHERE userID = ?)");
-  $statement->bind_param("ii", $userID1, $userID2 );
-  $statement->execute();
-  $result = $statement->get_result();
-
-  $row = $result->fetch_array(MYSQLI_ASSOC);
-  return $row["commonInterests"];
 }
 
 /*
@@ -1033,8 +1038,8 @@ function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {
     $db->connect();
 
     // The first $statementFriendsOf2User selects all the
-    $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
-    $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
+    $statement = $db -> prepare("SELECT COUNT(userID) mutualFriends FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+    $statement->bind_param("iiii", $userID1, $userID1, $userID2, $userID2 );
     $statement->execute();
     $result = $statement->get_result();
 
