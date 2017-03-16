@@ -179,7 +179,7 @@
         $db = new db();
         $db->connect();
         $searchTerm = '% '.$term.' %';
-        $statement = $db -> prepare(" SELECT * FROM BlogPost WHERE post LIKE ? OR headline LIKE ?");
+        $statement = $db -> prepare(" SELECT * FROM blogpost WHERE post LIKE ? OR headline LIKE ?");
         $statement->bind_param("ss",$searchTerm,$searchTerm);
         $statement->execute();
         $result = $statement->get_result();
@@ -203,7 +203,7 @@
         $db = new db();
         $db->connect();
         $searchTerm = '% '.$term.' %';
-        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE
+        $statement = $db -> prepare("SELECT * FROM blogpost WHERE
                                     (post LIKE ? OR headline LIKE ?)
                                     AND userID IN
                                     (SELECT userID2 as 'userID' FROM friendship

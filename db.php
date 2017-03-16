@@ -20,16 +20,16 @@ class db {
       // Details to use for connection
 
       // Azure-clearDB copy of the db
-      $host = "eu-cdbr-azure-west-d.cloudapp.net";
+      /*$host = "eu-cdbr-azure-west-d.cloudapp.net";
       $username = "b572eae4b8201c";
       $password = "e865fdac";
       $dbname = "social_media";
 
       // local copy of the db
-      // $host = "localhost";
-      // $username = "root";
-      // $password = "";
-      // $dbname = "smedia";
+      $host = "localhost";
+      $username = "root";
+      $password = "";
+      $dbname = "smedia";*/
 
       // GearHost copy of the db
       // $host = "mysql4.gear.host";
@@ -38,10 +38,10 @@ class db {
       // $dbname = "smedia";
 
       // FreeMySQLHosting copy of the db
-      // $host = "sql8.freemysqlhosting.net";
-      // $username = "sql8164205";
-      // $password = "jQAmi2gr6v";
-      // $dbname = "sql8164205";
+       $host = "sql8.freemysqlhosting.net";
+       $username = "sql8164205";
+       $password = "jQAmi2gr6v";
+       $dbname = "sql8164205";
 
       // Create connection object and assign it to property
       self::$mysqli = new mysqli($host, $username, $password, $dbname);
