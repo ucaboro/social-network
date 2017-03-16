@@ -829,7 +829,7 @@ db	functions.php	/^  $db = new db();$/;"	v
 stmt	functions.php	/^  $stmt = $db -> prepare("UPDATE photocollection SET name = ? WHERE collectionID = ?");$/;"	v
 deletePhotoCollectionWithID	functions.php	/^function deletePhotoCollectionWithID(int $collectionID) {$/;"	f
 db	functions.php	/^  $db = new db();$/;"	v
-stmt	functions.php	/^  $stmt = $db -> prepare("DELETE FROM photocollectionassignment where collectionID = ?;$/;"	v
+stmt	functions.php	/^  $stmt = $db -> prepare("DELETE FROM photocollection where collectionID = ?");$/;"	v
 doCollectionsContainPhoto	functions.php	/^function doCollectionsContainPhoto(int $photoID) {$/;"	f
 userID	functions.php	/^  $userID = getUserID();$/;"	v
 db	functions.php	/^  $db = new db();$/;"	v

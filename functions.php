@@ -929,9 +929,8 @@ function renamePhotoCollection($newName, int $collectionID) {
 function deletePhotoCollectionWithID(int $collectionID) {
   $db = new db();
   $db->connect();
-  $stmt = $db -> prepare("DELETE FROM photocollectionassignment where collectionID = ?;
-                          DELETE FROM photocollection where collectionID = ?;");
-  $stmt->bind_param("ii", $collectionID, $collectionID);
+  $stmt = $db -> prepare("DELETE FROM photocollection where collectionID = ?");
+  $stmt->bind_param("i", $collectionID);
   $stmt->execute();
 }
 
