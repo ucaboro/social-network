@@ -180,6 +180,11 @@ a .circle:hover {
   text-decoration: none;
 }
 
+.recommended-friend{
+  color: #666;
+  font-weight: 400;
+}
+
 .btn-emoji:hover {
   text-decoration: none;
   background-color: #f9f9f9;
@@ -223,10 +228,17 @@ a.no-formatting {
   margin-top: 20px;
 }
 
+
 /* Custom styling for the close button on an image */
 button.close-img {
   margin-right: 5px;
   background-color: #fff;
   padding: 5px;
   opacity: 1;
+}
+
+/* */
+.recommendation {
+  color: #8c8c8c;
+  font-size: 0.9em;
 }

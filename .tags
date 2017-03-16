@@ -448,6 +448,10 @@ host	db.php	/^      \/\/ $host = "mysql4.gear.host";$/;"	v
 username	db.php	/^      \/\/ $username = "smedia";$/;"	v
 password	db.php	/^      \/\/ $password = "Ki5STdco?Jk!";$/;"	v
 dbname	db.php	/^      \/\/ $dbname = "smedia";$/;"	v
+host	db.php	/^      \/\/ $host = "sql8.freemysqlhosting.net";$/;"	v
+username	db.php	/^      \/\/ $username = "sql8164205";$/;"	v
+password	db.php	/^      \/\/ $password = "jQAmi2gr6v";$/;"	v
+dbname	db.php	/^      \/\/ $dbname = "sql8164205";$/;"	v
 query	db.php	/^  public function query($query) {$/;"	f
 prepare	db.php	/^  public function prepare($query) {$/;"	f
 getError	db.php	/^  public function getError() {$/;"	f
@@ -483,18 +487,18 @@ user	funct.php	/^        $user = getUserRowFromID($_SESSION['userID']);$/;"	v
 storedHash	funct.php	/^        $storedHash = $user['password'];$/;"	v
 getUserRowFromID	funct.php	/^    function getUserRowFromID($id){$/;"	f
 database	funct.php	/^        $database = new db();$/;"	v
-stmt	funct.php	/^        $stmt = $database->prepare("SELECT * FROM User WHERE userID = ? LIMIT 1");$/;"	v
+stmt	funct.php	/^        $stmt = $database->prepare("SELECT * FROM user WHERE userID = ? LIMIT 1");$/;"	v
 result	funct.php	/^        $result = $stmt->get_result();$/;"	v
 getUserFromEmail	funct.php	/^    function getUserFromEmail($email){$/;"	f
 database	funct.php	/^        $database = new db();$/;"	v
-stmt	funct.php	/^        $stmt = $database->prepare("SELECT * FROM User WHERE email = ? LIMIT 1");$/;"	v
+stmt	funct.php	/^        $stmt = $database->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");$/;"	v
 result	funct.php	/^        $result = $stmt->get_result();$/;"	v
 getUserIDFromEmail	funct.php	/^    function getUserIDFromEmail($email){$/;"	f
 user	funct.php	/^        $user = getUserFromEmail($email);$/;"	v
 register	funct.php	/^    function register($firstName, $lastName, $email, $password){$/;"	f
 hashedPassword	funct.php	/^        $hashedPassword = passwordEncrypt($password);$/;"	v
 database	funct.php	/^        $database = new db();$/;"	v
-stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO User (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");$/;"	v
+stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO user (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");$/;"	v
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
 updateUserCell	funct.php	/^    function updateUserCell($columnName, $cellContent, $userID){$/;"	f
 database	funct.php	/^        $database = new db();$/;"	v
@@ -521,7 +525,7 @@ addNewCustomInterest	funct.php	/^    function addNewCustomInterest(string $inter
 interestID	funct.php	/^        $interestID = findInterestIDFromInterestName($interestName);$/;"	v
 uploadNewInterest	funct.php	/^    function uploadNewInterest(string $interest, int $userID): void$/;"	f
 database	funct.php	/^        $database= new db();$/;"	v
-stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO interests (name) $/;"	v
+stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO interests (name)$/;"	v
 result	funct.php	/^        $result = $stmt->execute();$/;"	v
 interestID	funct.php	/^        $interestID = $database->lastInsertId();$/;"	v
 assignInterestToUser	funct.php	/^    function assignInterestToUser(int $interestID, int $userID): void{$/;"	f
@@ -564,14 +568,16 @@ filter	funct.php	/^    function getUsersCollaborativeSearch(string $filter = NUL
 currentUser	funct.php	/^        $currentUser = getUser();$/;"	v
 currentUserID	funct.php	/^        $currentUserID = $currentUser -> id;$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
-statement	funct.php	/^            $statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN ($statementFriendsOf2User) AND userID != ?");$/;"	v
+statement	funct.php	/^            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID NOT IN ($statementFriendsOf2User) AND user.userID != ? AND photo.photoID = user.photoID");$/;"	v
 searchTerm	funct.php	/^            $searchTerm = '%'.preg_replace('\/\\s+\/','',$filter).'%';$/;"	v
-statement	funct.php	/^            $statement = $db -> prepare("SELECT * FROM user WHERE userID != ? AND userID NOT IN ($statementFriendsOf2User) AND " . $searchParameters411);$/;"	v
+statement	funct.php	/^            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID != ? AND user.userID  NOT IN ($statementFriendsOf2User) AND $searchParameters411 AND photo.photoID = user.photoID");$/;"	v
 result	funct.php	/^        $result = $statement->get_result();$/;"	v
 usersArray	funct.php	/^        $usersArray = array();$/;"	v
+id	funct.php	/^            $id = $currentUser -> id;$/;"	v
 interests	funct.php	/^            $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);$/;"	v
 friendsInCommon	funct.php	/^            $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);$/;"	v
 score	funct.php	/^            $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);$/;"	v
+sortByScore	funct.php	/^    function sortByScore($b, $a) {$/;"	f
 getUsersCommonalityScore	funct.php	/^    function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{$/;"	f
 user2Age	funct.php	/^        $user2Age = $user2dob->diff(new DateTime())->format('%y');$/;"	v
 score	funct.php	/^        $score = $interests; \/\/getCommonInterestsBetweenUsersWithID($userID1, $userID2);$/;"	v
@@ -666,7 +672,6 @@ statement	functions.php	/^  $statement = $db -> prepare("SELECT postID,headline,
 result	functions.php	/^$result = $statement->get_result();$/;"	v
 blogPostsArray	functions.php	/^$blogPostsArray = array();$/;"	v
 getRecentActivityFeed	functions.php	/^function getRecentActivityFeed() {$/;"	f
-is	functions.php	/^  \/\/ TODO: Neet to make sure the function is actually returning the currently logged-in user.$/;"	f
 user	functions.php	/^  $user = getUser();$/;"	v
 userID	functions.php	/^  $userID = $user->getUserID();$/;"	v
 db	functions.php	/^  $db = new db();$/;"	v
@@ -849,7 +854,7 @@ userID1	functions.php	/^  $userID1 = $user1->getUserID();$/;"	v
 userID2	functions.php	/^  $userID2 = $user2->getUserID();$/;"	v
 getCommonFriendsBetweenUsersWithID	functions.php	/^function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {$/;"	f
 db	functions.php	/^    $db = new db();$/;"	v
-statement	functions.php	/^    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");$/;"	v
+statement	functions.php	/^    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( $statementFriendsOf2User) AND userID IN  ($statementFriendsOf2User )");$/;"	v
 result	functions.php	/^    $result = $statement->get_result();$/;"	v
 row	functions.php	/^    $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
 isInTheCircle	functions.php	/^ function isInTheCircle($userID, $circleID) {$/;"	f
@@ -987,9 +992,13 @@ isSearch	templates/findFriends.php	/^                    $isSearch = !is_null($s
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch($searchTerm);$/;"	v
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch();$/;"	v
 thisUser	templates/findFriends.php	/^            $thisUser = getUser();$/;"	v
-areFriends	templates/findFriends.php	/^                $areFriends = areUsersFriends($thisUser, $user);\/\/ false$/;"	v
+user	templates/findFriends.php	/^                $user = $userCommonArray[1];$/;"	v
+commonInterest	templates/findFriends.php	/^                $commonInterest = $userCommonArray[2];$/;"	v
+commonFriends	templates/findFriends.php	/^                $commonFriends = $userCommonArray[3];$/;"	v
+areFriends	templates/findFriends.php	/^                $areFriends = false;\/\/areUsersFriends($thisUser, $user);$/;"	v
 sentRequest	templates/findFriends.php	/^                $sentRequest = isFriendRequestPending($thisUser, $user);$/;"	v
 receivedRequest	templates/findFriends.php	/^                $receivedRequest = isFriendRequestPending($user, $thisUser);$/;"	v
+interestsArray	templates/interestsList.php	/^$interestsArray = $user -> getInterests();$/;"	v
 existingInterestNamesArray	templates/interestsSettings.php	/^    $existingInterestNamesArray = getExistingInterestNames();$/;"	v
 user	templates/interestsSettings.php	/^        $user = getUser();$/;"	v
 myInterestsArray	templates/interestsSettings.php	/^    $myInterestsArray = $user -> getInterests();$/;"	v
@@ -1083,7 +1092,7 @@ color	templates.php	/^  $color = "#2ECC40";$/;"	v
 color	templates.php	/^  $color = "#FFB90F";$/;"	v
 color	templates.php	/^  $color = "#FF851B";$/;"	v
 color	templates.php	/^  $color = "#8FD8D8";}$/;"	v
-getHtmlForUserSummarySearchResult	templates.php	/^function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest): string {$/;"	f
+getHtmlForUserSummarySearchResult	templates.php	/^function getHtmlForUserSummarySearchResult(user $user, bool $isFriend, bool $sentRequest, bool $receivedRequest, string $class): string {$/;"	f
 profileUrl	templates.php	/^  $profileUrl = $user->getUrlToProfile();$/;"	v
 img	templates.php	/^  $img = getHtmlForSquareImage($user->photoSrc);$/;"	v
 name	templates.php	/^  $name = $user->getFullName();$/;"	v

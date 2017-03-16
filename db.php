@@ -37,6 +37,11 @@ class db {
       // $password = "Ki5STdco?Jk!";
       // $dbname = "smedia";
 
+      // FreeMySQLHosting copy of the db
+      // $host = "sql8.freemysqlhosting.net";
+      // $username = "sql8164205";
+      // $password = "jQAmi2gr6v";
+      // $dbname = "sql8164205";
 
       // Create connection object and assign it to property
       self::$mysqli = new mysqli($host, $username, $password, $dbname);

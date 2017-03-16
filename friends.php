@@ -51,7 +51,7 @@ $page = "friends";?>
               // Output each one
               foreach ($friends as $friend) {
                   echo $friend -> firstName;
-                echo getHtmlForUserSummarySearchResult($friend, true, false, false);
+                echo getHtmlForUserSummarySearchResult($friend, true, false, false, "friend");
               }
               ?>
             </div>

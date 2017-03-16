@@ -77,7 +77,7 @@
         //Connect to database
         $database->connect();
         //Query as prepared statement
-        $stmt = $database->prepare("SELECT * FROM User WHERE userID = ? LIMIT 1");
+        $stmt = $database->prepare("SELECT * FROM user WHERE userID = ? LIMIT 1");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -98,7 +98,7 @@
         //Connect to database
         $database->connect();
         //Query as prepared statement
-        $stmt = $database->prepare("SELECT * FROM User WHERE email = ? LIMIT 1");
+        $stmt = $database->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -127,7 +127,7 @@
         //Connect to database
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO User (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
+        $stmt = $database->prepare("INSERT INTO user (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
         $stmt->bind_param("ssss", $email, $firstName, $lastName, $hashedPassword);
         $result =$stmt->execute();
         //Check if query was successful
@@ -251,7 +251,7 @@
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO interests (name) 
+        $stmt = $database->prepare("INSERT INTO interests (name)
                                     VALUES (?)");
         $stmt->bind_param("s", $interest);
         $result = $stmt->execute();
@@ -429,17 +429,14 @@
         $db = new db();
         $db->connect();
         if (is_null($filter)) {
-            //$statement = $db -> prepare("SELECT * FROM user");
-            $statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN ($statementFriendsOf2User) AND userID != ?");
+            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID NOT IN ($statementFriendsOf2User) AND user.userID != ? AND photo.photoID = user.photoID");
             $statement->bind_param("iii",$currentUserID, $currentUserID, $currentUserID);
         }
         else{
             global $searchParameters411;
             $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
-            //$statement = $db -> prepare("SELECT * FROM user WHERE ". $searchParameters411);
-            $statement = $db -> prepare("SELECT * FROM user WHERE userID != ? AND userID NOT IN ($statementFriendsOf2User) AND " . $searchParameters411);
+            $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID != ? AND user.userID  NOT IN ($statementFriendsOf2User) AND $searchParameters411 AND photo.photoID = user.photoID");
             $statement->bind_param("iiissssss",$currentUserID, $currentUserID, $currentUserID, $searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
-            //$statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
         }
         $statement->execute();
         $result = $statement->get_result();
@@ -448,6 +445,7 @@
         $usersArray = array();
         //Loop through results of query, assigning a row from the table to an associative array
         while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            $id = $currentUser -> id;
             //Find common interest score between current user and user stored in row of table for this loop
             $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);
             //Find common friends score between current user and user stored in row of table for this loop
@@ -455,13 +453,19 @@
             //Get overall commonality score for user pair
             $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);
             //Assign user to array with the score as a key
-            $usersArray[$score] = getUserWithID($row["userID"]); //createUserObject($row);
+            $usersArray[] = array($score, createUserObject($row), $interests, $friendsInCommon); //createUserObject($row)//getUserWithID($row["userID"]);
         }
         //Sort high to low according to key value
-        ksort($usersArray);
+        usort($usersArray, 'sortByScore');
         return $usersArray;
     }
 
+    /*
+     * Sorts the array of users for collaborative searching, according to the first value in the array ($score), from high to low
+     */
+    function sortByScore($b, $a) {
+        return $a[0] <=> $b[0];;
+    }
 
     /*
      * Get an integer score of the commonalities between two users
@@ -487,4 +491,3 @@
     }
 
 //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
-
