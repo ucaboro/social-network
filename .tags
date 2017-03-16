@@ -436,22 +436,21 @@ success	collections.php	/^                success:function(result){$/;"	j
 db	db.php	/^class db {$/;"	c
 mysqli	db.php	/^  private static $mysqli;$/;"	v
 connect	db.php	/^  public function connect() {$/;"	f
-host	db.php	/^      \/\/ $host = "eu-cdbr-azure-west-d.cloudapp.net";$/;"	v
-username	db.php	/^      \/\/ $username = "b572eae4b8201c";$/;"	v
-password	db.php	/^      \/\/ $password = "e865fdac";$/;"	v
-dbname	db.php	/^      \/\/ $dbname = "social_media";$/;"	v
-host	db.php	/^      \/\/ $host = "localhost";$/;"	v
-username	db.php	/^      \/\/ $username = "root";$/;"	v
-password	db.php	/^      \/\/ $password = "";$/;"	v
-dbname	db.php	/^      \/\/ $dbname = "smedia";$/;"	v
+username	db.php	/^      $username = "b572eae4b8201c";$/;"	v
+password	db.php	/^      $password = "e865fdac";$/;"	v
+dbname	db.php	/^      $dbname = "social_media";$/;"	v
+host	db.php	/^      $host = "localhost";$/;"	v
+username	db.php	/^      $username = "root";$/;"	v
+password	db.php	/^      $password = "";$/;"	v
+dbname	db.php	/^      $dbname = "smedia";*\/$/;"	v
 host	db.php	/^      \/\/ $host = "mysql4.gear.host";$/;"	v
 username	db.php	/^      \/\/ $username = "smedia";$/;"	v
 password	db.php	/^      \/\/ $password = "Ki5STdco?Jk!";$/;"	v
 dbname	db.php	/^      \/\/ $dbname = "smedia";$/;"	v
-host	db.php	/^      $host = "sql8.freemysqlhosting.net";$/;"	v
-username	db.php	/^      $username = "sql8164205";$/;"	v
-password	db.php	/^      $password = "jQAmi2gr6v";$/;"	v
-dbname	db.php	/^      $dbname = "sql8164205";$/;"	v
+host	db.php	/^       $host = "sql8.freemysqlhosting.net";$/;"	v
+username	db.php	/^       $username = "sql8164205";$/;"	v
+password	db.php	/^       $password = "jQAmi2gr6v";$/;"	v
+dbname	db.php	/^       $dbname = "sql8164205";$/;"	v
 query	db.php	/^  public function query($query) {$/;"	f
 prepare	db.php	/^  public function prepare($query) {$/;"	f
 getError	db.php	/^  public function getError() {$/;"	f
@@ -502,14 +501,14 @@ stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO user (email, fi
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
 updateUserCell	funct.php	/^    function updateUserCell($columnName, $cellContent, $userID){$/;"	f
 database	funct.php	/^        $database = new db();$/;"	v
-stmt	funct.php	/^        $stmt = $database->prepare("UPDATE User SET $columnName = ? WHERE userID = ?");$/;"	v
+stmt	funct.php	/^        $stmt = $database->prepare("UPDATE user SET $columnName = ? WHERE userID = ?");$/;"	v
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
 passwordEncrypt	funct.php	/^    function passwordEncrypt($password){$/;"	f
 password_check	funct.php	/^    function password_check($password, $storedHash){$/;"	f
 getBlogsFromSearchTerm00	funct.php	/^    function getBlogsFromSearchTerm00(string $term){$/;"	f
 db	funct.php	/^        $db = new db();$/;"	v
 searchTerm	funct.php	/^        $searchTerm = '% '.$term.' %';$/;"	v
-statement	funct.php	/^        $statement = $db -> prepare(" SELECT * FROM BlogPost WHERE post LIKE ? OR headline LIKE ?");$/;"	v
+statement	funct.php	/^        $statement = $db -> prepare(" SELECT * FROM blogpost WHERE post LIKE ? OR headline LIKE ?");$/;"	v
 result	funct.php	/^        $result = $statement->get_result();$/;"	v
 blogArray	funct.php	/^        $blogArray = array();$/;"	v
 getBlogsFromSearchTerm	funct.php	/^    function getBlogsFromSearchTerm(string $term){$/;"	f
@@ -517,7 +516,7 @@ currentUserID	funct.php	/^            $currentUserID = $_SESSION["userID"];$/;"	
 currentUserID	funct.php	/^            $currentUserID = 1;$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
 searchTerm	funct.php	/^        $searchTerm = '% '.$term.' %';$/;"	v
-statement	funct.php	/^        $statement = $db -> prepare("SELECT * FROM BlogPost WHERE$/;"	v
+statement	funct.php	/^        $statement = $db -> prepare("SELECT * FROM blogpost WHERE$/;"	v
 result	funct.php	/^        $result = $statement->get_result();$/;"	v
 blogArray	funct.php	/^        $blogArray = array();$/;"	v
 createBlogObject	funct.php	/^    function createBlogObject($row){$/;"	f
@@ -593,16 +592,11 @@ sendMessage	functions.php	/^ function sendMessage($message, $circleID) {$/;"	f
 userID	functions.php	/^  $userID = getUser()->id;$/;"	v
 db	functions.php	/^  $db = new db();$/;"	v
 stmt	functions.php	/^  $stmt = $db->prepare("INSERT INTO circlemessage (circleID, userID, message, time) VALUES (?,?,?,NOW())");$/;"	v
-getNewCircleID	functions.php	/^ function getNewCircleID () {$/;"	f
-db	functions.php	/^  $db = new db();$/;"	v
-stmt	functions.php	/^  $stmt = $db->prepare("SELECT circleID FROM `circle` ORDER BY circleID DESC LIMIT 1");$/;"	v
-result	functions.php	/^  $result = $stmt->get_result();$/;"	v
-row	functions.php	/^  $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
 addNewCircle	functions.php	/^ function addNewCircle ($name, $color) {$/;"	f
-circleID	functions.php	/^  $circleID = getNewCircleID();$/;"	v
 userID	functions.php	/^  $userID = getUser()->id;$/;"	v
 db	functions.php	/^  $db = new db();$/;"	v
 stmt	functions.php	/^  $stmt = $db->prepare("INSERT INTO circle (circleID, circleName, circleColor) VALUES (?,?,?)");$/;"	v
+circleID	functions.php	/^  $circleID = $db->lastInsertId();$/;"	v
 stmt	functions.php	/^  $stmt = $db->prepare("INSERT INTO circlemembership (circleID, userID) VALUES (?,?)");$/;"	v
 checkUserInCircle	functions.php	/^ function checkUserInCircle ($userID, $circleID) {$/;"	f
 db	functions.php	/^  $db = new db();$/;"	v
