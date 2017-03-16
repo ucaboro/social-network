@@ -7,17 +7,16 @@ $statementFriendsOf2User="SELECT userID2 AS 'userID' FROM friendship WHERE isCon
 
 $statementFriendsOfFriendsOf7User = " SELECT userID FROM user WHERE userID != ? AND
                                       userID NOT IN
-                                      (".$statementFriendsOf2User.")
+                                      ($statementFriendsOf2User)
                                       AND userID IN
                                       (
                                       SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
                                       AND userID1 IN
-                                      (".$statementFriendsOf2User.")
+                                      ($statementFriendsOf2User)
                                       UNION
                                       SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
                                       AND userID2 IN
-                                      (".$statementFriendsOf2User.")
-                                      )";
+                                      ($statementFriendsOf2User))";
 
 $searchParameters411 = "( firstName LIKE ?
                       OR lastName LIKE ?
@@ -417,7 +416,7 @@ function getRecentActivityFeed() {
 
   // Gets the last 20 messages sent in the circles that the user is currently part of.
   $statement = $db -> prepare("SELECT * FROM photo WHERE isArchived=0 AND photoID IN
-                              (SELECT photoID FROM photo WHERE userID IN ( " . $statementFriendsOf2User . ")
+                              (SELECT photoID FROM photo WHERE userID IN ( $statementFriendsOf2User)
                               UNION
                               SELECT photoID FROM photocollectionassignment WHERE collectionID IN (
                               SELECT collectionID FROM photocollection WHERE isVisibleToCircles = 1 AND userID IN
@@ -540,7 +539,7 @@ function getFriendsOfUser(user $user, string $filter = NULL): array {
   } else {
     // If a search parameter exists then it looks if that term is contained in either the firstName,
     // lastName or location, it would also select the user whose e-mail is an excact match
-    $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN ( " .$statementFriendsOf2User. ") AND " . $searchParameters411);
+    $statement = $db -> prepare(" SELECT userID FROM user WHERE userID IN ($statementFriendsOf2User) AND $searchParameters411 ");
     $statement->bind_param("iissssss",$userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
   }
   $statement->execute();
@@ -1075,12 +1074,12 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
 
 }
 
-function displayCollections(collection $collection){
+function displayCollections2(collection $collection){
   $currentUser = getUser();
   $collectionUser = $collection->user;
     if(areUsersFriends($currentUser,$collectionUser) || ($currentUser->id == $collectionUser) ){
         return true;
-    } elseif ($Collection->isVisibleToCircles && ) {
+    } elseif ($Collection->isVisibleToCircles  ) {
       # code...
     }
     if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
