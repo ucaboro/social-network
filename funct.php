@@ -389,6 +389,84 @@
     }
 
     function getUsersCollaborative(): array{
-
+        //getCommonInterestsBetweenUsers($user1, $user2);
         return array();
+    }
+
+    /*
+    * Get an integer score of the commonalities between two users
+    */
+    function getUsersObjectCommonalityScore(user $user1, user $user2, int $interests, int $friendsInCommon): int{
+        //Number of interests in common
+        $score = $interests; //getCommonInterestsBetweenUsers($user1, $user2);
+        //Number of friends in common
+        $score += $friendsInCommon;
+        //If they live in same city
+        if($user1 -> location === $user2 -> location){
+            $score += 4;
+        }
+        $ageDiff = abs( ($user1 -> getAge() ) - ($user2 -> getAge()) );
+        $ageSimilarity = 4 - $ageDiff;
+        if($ageSimilarity > 0){
+            $score += $ageSimilarity;
+        }
+        return $score;
+    }
+
+
+    /*
+    * Returns an array of users who match the given search string.
+    * Ordered according to commonalities with logged in user
+    */
+    function getUsersCollaborativeSearch(string $filter = NULL): array {
+        //Logged in User
+        $currentUser = getUser();
+        //Perfom search for users according to a string filter
+        $db = new db();
+        $db->connect();
+        global $searchParameters411;
+        $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
+        $statement = $db -> prepare(" SELECT * FROM user WHERE ". $searchParameters411);
+        $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+        $statement->execute();
+        $result = $statement->get_result();
+
+        //Return ordered array according to commonalities
+        $usersArray = array();
+        //Loop through results of query, assigning a row from the table to an associative array
+        while($row = $result->fetch_array(MYSQLI_ASSOC)){
+            //Find common interest score between current user and user stored in row of table for this loop
+            $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);
+            //Find common friends score between current user and user stored in row of table for this loop
+            $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);
+            //Get overall commonality score for user pair
+            $score = getUsersCommonalityScore($currentUser, $row["location"], $row["date"], $interests, $friendsInCommon);
+            //Assign user to array with the score as a key
+            $usersArray[$score] = createUserObject($row);
+        }
+        //Sort high to low according to key value
+        ksort($usersArray);
+        return $usersArray;
+    }
+
+
+    /*
+     * Get an integer score of the commonalities between two users
+     */
+    function getUsersCommonalityScore(user $user1, string $user2Location, $user2dob, int $interests, int $friendsInCommon): int{
+        $user2Age = $user2dob->diff(new DateTime())->format('%y');
+        //Number of interests in common
+        $score = $interests; //getCommonInterestsBetweenUsersWithID($userID1, $userID2);
+        //Number of friends in common
+        $score += $friendsInCommon;
+        //If they live in same city
+        if($user1 -> location === $user2Location){
+            $score += 4;
+        }
+        $ageDiff = abs( ($user1 -> getAge() ) - $user2Age );
+        $ageSimilarity = 4 - $ageDiff;
+        if($ageSimilarity > 0){
+            $score += $ageSimilarity;
+        }
+        return $score;
     }

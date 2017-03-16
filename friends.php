@@ -60,7 +60,9 @@ checkLoggedIn();?>
         <div class="col-md-4">
           <div class="row">
             <div class="col-xs-12">
-              <?php echo getHtmlForNavigationPanel(); ?>
+              <?php echo getHtmlForNavigationPanel();
+                include "templates/findFriends.php";
+              ?>
             </div>
           </div>
         </div>

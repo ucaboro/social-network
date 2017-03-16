@@ -92,7 +92,6 @@ function getValueFromGET(string $key) {
   return $stmt;
 }
 
-
 /*
  * Gets last circleID and increments by 1 for proper new circle creation
  */
@@ -158,7 +157,6 @@ function getValueFromGET(string $key) {
 
 }
 
-
 /*
  *  asigns userID to a specifc circleID
  */
@@ -172,8 +170,6 @@ function getValueFromGET(string $key) {
   $stmt->execute();
 
 }
-
-
 
 /*
  * Returns a user object representing the currently logged-in user, or NULL if no user is logged in.
@@ -372,9 +368,6 @@ while($row = $result->fetch_array(MYSQLI_ASSOC)){
 return $blogPostsArray;
 }
 
-
-
-
 /*
  * Returns an array of feed items represeting the recent activity feed for the currently logged in user.
  * Items are in date-descending order. Values are interaction objects. The last 20 items only are returned.
@@ -519,7 +512,6 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
     }
     return $friendsArray;
 }
-
 
 /*
  * Returns an array of users who are friends with the given user.
@@ -1002,7 +994,6 @@ function doCollectionsContainPhoto(int $photoID) {
   return $collectionsArray;
 }
 
-
 /*
  * Returns the number of common interests between user1 and user2.
  */
@@ -1027,24 +1018,28 @@ function getCommonInterestsBetweenUsers($user1, $user2) {
 /*
  * Returns the number of mutual friends between user1 and user2.
  */
-function getCommonFriendsBetweenUsers($user1, $user2) {
+function getCommonFriendsBetweenUsers(user $user1, user $user2) {
 
   $userID1 = $user1->getUserID();
   $userID2 = $user2->getUserID();
 
-  global $statementFriendsOf2User;
+  return getCommonFriendsBetweenUsersWithID($userID1, $userID2);
+}
 
-  $db = new db();
-  $db->connect();
+function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {
+    global $statementFriendsOf2User;
 
-  // The first $statementFriendsOf2User selects all the
-  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
-  $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
-  $statement->execute();
-  $result = $statement->get_result();
+    $db = new db();
+    $db->connect();
 
-  $row = $result->fetch_array(MYSQLI_ASSOC);
-  return $row["mutualFriends"];
+    // The first $statementFriendsOf2User selects all the
+    $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+    $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
+    $statement->execute();
+    $result = $statement->get_result();
+
+    $row = $result->fetch_array(MYSQLI_ASSOC);
+    return $row["mutualFriends"];
 }
 
 /*
@@ -1092,7 +1087,6 @@ function displayCollections2(collection $collection){
         return false;
     }
 }
-
 
   function deleteFromCircle($id, $circleID){
     $db = new db();
