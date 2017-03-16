@@ -505,13 +505,7 @@ stmt	funct.php	/^        $stmt = $database->prepare("UPDATE user SET $columnName
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
 passwordEncrypt	funct.php	/^    function passwordEncrypt($password){$/;"	f
 password_check	funct.php	/^    function password_check($password, $storedHash){$/;"	f
-getBlogsFromSearchTerm00	funct.php	/^    function getBlogsFromSearchTerm00(string $term){$/;"	f
-db	funct.php	/^        $db = new db();$/;"	v
-searchTerm	funct.php	/^        $searchTerm = '% '.$term.' %';$/;"	v
-statement	funct.php	/^        $statement = $db -> prepare(" SELECT * FROM blogpost WHERE post LIKE ? OR headline LIKE ?");$/;"	v
-result	funct.php	/^        $result = $statement->get_result();$/;"	v
-blogArray	funct.php	/^        $blogArray = array();$/;"	v
-getBlogsFromSearchTerm	funct.php	/^    function getBlogsFromSearchTerm(string $term){$/;"	f
+getBlogsFromSearchTerm	funct.php	/^    function getBlogsFromSearchTerm(string $term) {$/;"	f
 currentUserID	funct.php	/^            $currentUserID = $_SESSION["userID"];$/;"	v
 currentUserID	funct.php	/^            $currentUserID = 1;$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
@@ -519,19 +513,19 @@ searchTerm	funct.php	/^        $searchTerm = '% '.$term.' %';$/;"	v
 statement	funct.php	/^        $statement = $db -> prepare("SELECT * FROM blogpost WHERE$/;"	v
 result	funct.php	/^        $result = $statement->get_result();$/;"	v
 blogArray	funct.php	/^        $blogArray = array();$/;"	v
-createBlogObject	funct.php	/^    function createBlogObject($row){$/;"	f
-addNewCustomInterest	funct.php	/^    function addNewCustomInterest(string $interestName, int $userID): void$/;"	f
+createBlogObject	funct.php	/^    function createBlogObject($row) {$/;"	f
+addNewCustomInterest	funct.php	/^    function addNewCustomInterest(string $interestName, int $userID) {$/;"	f
 interestID	funct.php	/^        $interestID = findInterestIDFromInterestName($interestName);$/;"	v
-uploadNewInterest	funct.php	/^    function uploadNewInterest(string $interest, int $userID): void$/;"	f
+uploadNewInterest	funct.php	/^    function uploadNewInterest(string $interest, int $userID) {$/;"	f
 database	funct.php	/^        $database= new db();$/;"	v
 stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO interests (name)$/;"	v
 result	funct.php	/^        $result = $stmt->execute();$/;"	v
 interestID	funct.php	/^        $interestID = $database->lastInsertId();$/;"	v
-assignInterestToUser	funct.php	/^    function assignInterestToUser(int $interestID, int $userID): void{$/;"	f
+assignInterestToUser	funct.php	/^    function assignInterestToUser(int $interestID, int $userID) {$/;"	f
 database	funct.php	/^        $database= new db();$/;"	v
 stmt	funct.php	/^        $stmt = $database->prepare("INSERT INTO interestsassignment (interestID, userID) VALUES (?, ?)");$/;"	v
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
-assignInterestToUserFromName	funct.php	/^    function assignInterestToUserFromName(string $name, int $userID): void{$/;"	f
+assignInterestToUserFromName	funct.php	/^    function assignInterestToUserFromName(string $name, int $userID) {$/;"	f
 interestID	funct.php	/^        $interestID = findInterestIDFromInterestName($name);$/;"	v
 findInterestIDFromInterestName	funct.php	/^    function findInterestIDFromInterestName(string $name): int{$/;"	f
 id	funct.php	/^        $id = -1;$/;"	v
@@ -558,9 +552,8 @@ removeInterestWithID	funct.php	/^    function removeInterestWithID(int $interest
 userID	funct.php	/^        $userID = getUserID();$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
 stmt	funct.php	/^        $stmt = $db -> prepare("DELETE FROM interestsassignment WHERE interestID = ? AND userID = ?");$/;"	v
-getUsersCollaborative	funct.php	/^    function getUsersCollaborative(): array{$/;"	f
 getUsersObjectCommonalityScore	funct.php	/^    function getUsersObjectCommonalityScore(user $user1, user $user2, int $interests, int $friendsInCommon): int{$/;"	f
-score	funct.php	/^        $score = $interests; \/\/getCommonInterestsBetweenUsers($user1, $user2);$/;"	v
+score	funct.php	/^        $score = $interests;$/;"	v
 ageDiff	funct.php	/^        $ageDiff = abs( ($user1 -> getAge() ) - ($user2 -> getAge()) );$/;"	v
 ageSimilarity	funct.php	/^        $ageSimilarity = 4 - $ageDiff;$/;"	v
 getUsersCollaborativeSearch	funct.php	/^    function getUsersCollaborativeSearch(string $filter = NULL): array {$/;"	f
@@ -580,7 +573,7 @@ score	funct.php	/^            $score = getUsersCommonalityScore($currentUser, $r
 sortByScore	funct.php	/^    function sortByScore($b, $a) {$/;"	f
 getUsersCommonalityScore	funct.php	/^    function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{$/;"	f
 user2Age	funct.php	/^        $user2Age = $user2dob->diff(new DateTime())->format('%y');$/;"	v
-score	funct.php	/^        $score = $interests; \/\/getCommonInterestsBetweenUsersWithID($userID1, $userID2);$/;"	v
+score	funct.php	/^        $score = $interests;$/;"	v
 ageDiff	funct.php	/^        $ageDiff = abs( ($user1 -> getAge() ) - $user2Age );$/;"	v
 ageSimilarity	funct.php	/^        $ageSimilarity = 4 - $ageDiff;$/;"	v
 statementFriendsOf2User	functions.php	/^$statementFriendsOf2User="SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION$/;"	v
@@ -987,12 +980,15 @@ isSearch	templates/findFriends.php	/^                    $isSearch = !is_null($s
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch($searchTerm);$/;"	v
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch();$/;"	v
 thisUser	templates/findFriends.php	/^            $thisUser = getUser();$/;"	v
+userCommonArray	templates/findFriends.php	/^                $userCommonArray = $results[$i];$/;"	v
 user	templates/findFriends.php	/^                $user = $userCommonArray[1];$/;"	v
 commonInterest	templates/findFriends.php	/^                $commonInterest = $userCommonArray[2];$/;"	v
 commonFriends	templates/findFriends.php	/^                $commonFriends = $userCommonArray[3];$/;"	v
-areFriends	templates/findFriends.php	/^                $areFriends = false;\/\/areUsersFriends($thisUser, $user);$/;"	v
+areFriends	templates/findFriends.php	/^                $areFriends = false;$/;"	v
 sentRequest	templates/findFriends.php	/^                $sentRequest = isFriendRequestPending($thisUser, $user);$/;"	v
 receivedRequest	templates/findFriends.php	/^                $receivedRequest = isFriendRequestPending($user, $thisUser);$/;"	v
+blurb	templates/findFriends.php	/^                $blurb = "";$/;"	v
+blurb	templates/findFriends.php	/^                    $blurb ="You have " . $commonInterest . " interests in common.";$/;"	v
 interestsArray	templates/interestsList.php	/^$interestsArray = $user -> getInterests();$/;"	v
 existingInterestNamesArray	templates/interestsSettings.php	/^    $existingInterestNamesArray = getExistingInterestNames();$/;"	v
 user	templates/interestsSettings.php	/^        $user = getUser();$/;"	v

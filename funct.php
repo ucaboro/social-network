@@ -173,7 +173,7 @@
     }
 
 
-    function getBlogsFromSearchTerm(string $term){
+    function getBlogsFromSearchTerm(string $term) {
         //TODO: Change this to getUser();
         if(isset($_SESSION["userID"]))
         {
@@ -208,13 +208,12 @@
     /*
      * Create and return a new blog object from the associative array produced by a SQL query
      */
-    function createBlogObject($row){
+    function createBlogObject($row) {
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
 
 
-    function addNewCustomInterest(string $interestName, int $userID): void
-    {
+    function addNewCustomInterest(string $interestName, int $userID) {
         //Get interest id from name, if in database, if not in database will return -1
         $interestID = findInterestIDFromInterestName($interestName);
         //If interest does not already exist in the database
@@ -229,8 +228,7 @@
     /*
      * Upload a new user created interest to the interests database
      */
-    function uploadNewInterest(string $interest, int $userID): void
-    {
+    function uploadNewInterest(string $interest, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -252,7 +250,7 @@
     /*
      * Link a user and an interest in the interests assignment database, i.e. record that the user has that interest
      */
-    function assignInterestToUser(int $interestID, int $userID): void{
+    function assignInterestToUser(int $interestID, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -263,7 +261,7 @@
     }
 
     //Should use object for this
-    function assignInterestToUserFromName(string $name, int $userID): void{
+    function assignInterestToUserFromName(string $name, int $userID) {
         $interestID = findInterestIDFromInterestName($name);
         assignInterestToUser($interestID, $userID);
     }
