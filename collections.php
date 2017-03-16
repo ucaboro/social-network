@@ -105,7 +105,11 @@ checkLoggedIn();
     </div>
 </div>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<?php
+echo getHtmlForJavascriptImports();
+?>
+
+<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
 <script  type="text/javascript">
     $(document).ready(function() {
 
@@ -129,12 +133,5 @@ checkLoggedIn();
 
     });
 </script>
-
-<!-- JQuery javascript -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<!-- Bootstrap JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!-- Custom JavaScript -->
-<!--<script src="script.js"></script>-->
 </body>
 </html>

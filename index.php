@@ -1,27 +1,27 @@
-<?php include "imports.php";
-include "templates/script.php";
+<?php
+include "imports.php";
 //Ensures user is logged in before displaying page
 checkLoggedIn();
 
-  $isBlogPosted=false;
-  if(isset($_POST['blogSubmit'])){
-    $blogTitle=$_POST["blog-title"];
-    $blogpost=$_POST["blog-post"];
-    // $date = new DateTime();
-    // $dateString = $date->format('YmdHis');
+$isBlogPosted=false;
+if(isset($_POST['blogSubmit'])){
+  $blogTitle=$_POST["blog-title"];
+  $blogpost=$_POST["blog-post"];
+  // $date = new DateTime();
+  // $dateString = $date->format('YmdHis');
 
-    $blogPostErrors = array();
-    if (empty($blogTitle)) {
-      $blogPostErrors[] = "Please provide a title for the blog post.";
-    }
-    if (empty($blogpost)) {
-      $blogPostErrors[] = "Please provide content for the blog post.";
-    }
-    if(empty($blogPostErrors)) {
-        addNewBlogPost($blogTitle,$blogpost);
-        $isBlogPosted=true;
-    }
+  $blogPostErrors = array();
+  if (empty($blogTitle)) {
+    $blogPostErrors[] = "Please provide a title for the blog post.";
   }
+  if (empty($blogpost)) {
+    $blogPostErrors[] = "Please provide content for the blog post.";
+  }
+  if(empty($blogPostErrors)) {
+    addNewBlogPost($blogTitle,$blogpost);
+    $isBlogPosted=true;
+  }
+}
 ?>
 <!DOCTYPE html>
 
@@ -120,9 +120,9 @@ checkLoggedIn();
         </div>
       </div>
     </div>
-    <?php echo getHtmlForJavascriptImports();
-          echo getHtmlForNewCircle();
-           ?>
-
+    <?php
+    echo getHtmlForNewCircle();
+    echo getHtmlForJavascriptImports();
+    ?>
   </body>
 </html>
