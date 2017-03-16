@@ -70,7 +70,7 @@
             return false;
         }
     }
-    //Get User from Id, but not as a object, rather as an associative array that contains the hashed password
+    //Get user from Id, but not as a object, rather as an associative array that contains the hashed password
     function getUserRowFromID($id){
         //Create database object
         $database = new db();
@@ -173,21 +173,15 @@
     }
 
 
-    function getBlogsFromSearchTerm(string $term) {
-        //TODO: Change this to getUser();
-        if(isset($_SESSION["userID"]))
-        {
-            $currentUserID = $_SESSION["userID"];
-        }
-        else{
-            // TODO:  Should change this to null or something for final version
-            $currentUserID = 1;
-        }
+
+    function getBlogsFromSearchTerm(string $term){
+        $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
-        $searchTerm = '% '.$term.' %';
+        //$searchTerm = '%'.$term.'%';
+        $searchTerm = '([[:blank:][:punct:]]|^)' . $term .'([[:blank:][:punct:]]|$)';
         $statement = $db -> prepare("SELECT * FROM blogpost WHERE
-                                    (post LIKE ? OR headline LIKE ?)
+                                    (post REGEXP ? OR headline REGEXP ?)
                                     AND userID IN
                                     (SELECT userID2 as 'userID' FROM friendship
                                     WHERE userID1 = ? AND isConfirmed = True UNION
@@ -211,6 +205,17 @@
     function createBlogObject($row) {
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
+
+    //Create blog object but with dummy user, when only the id of the user will be needed
+    function createBlogObjectWithDummyUser($row){
+        return new blogPost($row["postID"], $row["headline"], $row["post"], createDummyUser($row["userID"]), new DateTime($row["time"]));
+    }
+
+    //Create a dummy user, when only the userID will be accessed, to prevent the need for an extra query, is hacky, lazy implementation of user attribute would have been better
+    function createDummyUser(int $userID): user{
+        return new user($userID, "Jane", "Doe", "", new DateTime(), "", "", 0, 0);
+    }
+//new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
 
 
     function addNewCustomInterest(string $interestName, int $userID) {

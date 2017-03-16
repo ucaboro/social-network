@@ -19,8 +19,8 @@ $page = "search";?>
                   <div class="input-group">
                     <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                     <?php
-                    $searchTerm = getValueFromGET("search");
-                    $isSearch = !is_null($searchTerm);
+                        $searchTerm = getValueFromGET("search");
+                        $isSearch = !is_null($searchTerm);
                     ?>
                     <input class="form-control" name="search" placeholder="Search all users..." value="<?php if ($isSearch) { echo $searchTerm; } ?>">
                   </div>
@@ -54,8 +54,15 @@ $page = "search";?>
                 echo "<br><br>";
                 echo "<hr>";
                 echo '<h4 class="panel-title">' . count($blogResults) . " blogs found</h4> <br>";
+                //For each blog that is returned as a result of the search, decide visibility, then display if visible
                 foreach ($blogResults as $blog) {
-                    echo getHtmlForBlogPostSummary($blog, true);
+                    //Get user who owns the blog
+                    $blogsUser = $blog -> user;
+                    $blogsUserID = $blogsUser -> id;
+                    //If visible for currently logged in user, display blog
+                    if(displayBlog($blogsUser, true, true)) {
+                        echo getHtmlForBlogPostSummary($blog, true);
+                    }
                 }
                 ?>
               </div>
