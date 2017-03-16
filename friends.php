@@ -1,6 +1,7 @@
 <?php include "imports.php";
 //Ensures user is logged in before displaying page
-checkLoggedIn();?>
+checkLoggedIn();
+$page = "friends";?>
 <!DOCTYPE html>
 
 <html lang="en-gb">

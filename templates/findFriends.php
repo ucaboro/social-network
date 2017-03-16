@@ -1,7 +1,6 @@
 <?php
-    $page = "friends"
+    //$page = "friends"
 ?>
-
 <!-- Search bar -->
 <div class="panel panel-primary">
     <div class="panel-heading">

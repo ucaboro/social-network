@@ -808,7 +808,7 @@ function addPhotoToDB($photoName){
   $db = new db();
   $db->connect();
   $stmt = $db->prepare("INSERT INTO photo (userID,filename,time) VALUES (?, ?, NOW())");
-  $stmt->bind_param("iss",$thisUserID,$photoName);
+  $stmt->bind_param("is",$thisUserID,$photoName);
   $stmt->execute();
 }
 
