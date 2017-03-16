@@ -172,23 +172,6 @@
         return (password_verify($password, $storedHash));
     }
 
-    /*
-     * Returns an array of all blogs that contain a given search term as a whole word
-     */
-    function getBlogsFromSearchTerm00(string $term){
-        $db = new db();
-        $db->connect();
-        $searchTerm = '% '.$term.' %';
-        $statement = $db -> prepare(" SELECT * FROM blogpost WHERE post LIKE ? OR headline LIKE ?");
-        $statement->bind_param("ss",$searchTerm,$searchTerm);
-        $statement->execute();
-        $result = $statement->get_result();
-        $blogArray = array();
-        while($row = $result->fetch_array(MYSQLI_ASSOC)){
-            $blogArray[$row["postID"]] = createBlogObject($row); //Do i want to get this to output in a certain order?
-        }
-        return $blogArray;
-    }
 
     function getBlogsFromSearchTerm(string $term){
         //TODO: Change this to getUser();
@@ -339,9 +322,6 @@
         }
     }
 
-    /*
-     *
-     */
     function interestAlreadyInDatabase(string $interestName): bool{
         if(findInterestIDFromInterestName($interestName) > 0){
             return true;
@@ -390,31 +370,27 @@
         $stmt->execute();
     }
 
-    function getUsersCollaborative(): array{
-        //getCommonInterestsBetweenUsers($user1, $user2);
-        return array();
-    }
-
     /*
     * Get an integer score of the commonalities between two users
     */
     function getUsersObjectCommonalityScore(user $user1, user $user2, int $interests, int $friendsInCommon): int{
         //Number of interests in common
-        $score = $interests; //getCommonInterestsBetweenUsers($user1, $user2);
+        $score = $interests;
         //Number of friends in common
         $score += $friendsInCommon;
         //If they live in same city
         if($user1 -> location === $user2 -> location){
             $score += 4;
         }
+        //Difference in ages between two users
         $ageDiff = abs( ($user1 -> getAge() ) - ($user2 -> getAge()) );
+        //Arbitrary measure of similarity in age
         $ageSimilarity = 4 - $ageDiff;
         if($ageSimilarity > 0){
             $score += $ageSimilarity;
         }
         return $score;
     }
-
 
     /*
     * Returns an array of users who match the given search string.
@@ -428,10 +404,12 @@
         //Perform search for users according to a string filter
         $db = new db();
         $db->connect();
+        //If no filter provided, no filter is applied
         if (is_null($filter)) {
             $statement = $db -> prepare("SELECT * FROM user , photo WHERE user.userID NOT IN ($statementFriendsOf2User) AND user.userID != ? AND photo.photoID = user.photoID");
             $statement->bind_param("iii",$currentUserID, $currentUserID, $currentUserID);
         }
+        //If filter provided, search for users with names like that filter
         else{
             global $searchParameters411;
             $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
@@ -473,7 +451,7 @@
     function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{
         $user2Age = $user2dob->diff(new DateTime())->format('%y');
         //Number of interests in common
-        $score = $interests; //getCommonInterestsBetweenUsersWithID($userID1, $userID2);
+        $score = $interests;
         //Number of friends in common
         $score += $friendsInCommon;
         //If they live in same city, must check against null, so it doensn't count people with no location as living in the same place
@@ -481,7 +459,9 @@
         {
             $score += 4;
         }
+        //Difference in ages of two users
         $ageDiff = abs( ($user1 -> getAge() ) - $user2Age );
+        //Arbitrary measure of similarity in ages
         $ageSimilarity = 4 - $ageDiff;
         if($ageSimilarity > 0){
             $score += $ageSimilarity;
