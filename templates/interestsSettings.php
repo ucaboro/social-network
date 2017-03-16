@@ -20,9 +20,9 @@
                     <ul>
                     <?php
                         foreach($myInterestsArray as $interest){
-                            echo "<li>" . $interest -> getName()  . " <button>
+                            echo "<li>" . $interest -> getName();  /*. " <button>
                                                                         <span class=\"glyphicon glyphicon-trash\"></span>
-                                                                    </button></li>"; // user deleteInterestWithID($interest->getID())
+                                                                    </button></li>"; // user deleteInterestWithID($interest->getID())*/
                         }
                     ?>
                         <!-- <button class='glyphicon glyphicon-trash aria-label'></button>-->
