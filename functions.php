@@ -1075,9 +1075,13 @@ function getCommonFriendsBetweenUsers($user1, $user2) {
 
 }
 
-function displayCollections(user $user, bool $friends, bool $friendsOfFriends, bool $inCommonCircle){
-    if($friends || ($user->id === $_SESSION['userID']) ){
+function displayCollections(collection $collection){
+  $currentUser = getUser();
+  $collectionUser = $collection->user;
+    if(areUsersFriends($currentUser,$collectionUser) || ($currentUser->id == $collectionUser) ){
         return true;
+    } elseif ($Collection->isVisibleToCircles && ) {
+      # code...
     }
     if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
         return true;
