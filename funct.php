@@ -387,3 +387,8 @@
         $stmt->bind_param("ii", $interestID, $interestID);
         $stmt->execute();
     }
+
+    function getUsersCollaborative(): array{
+
+        return array();
+    }
