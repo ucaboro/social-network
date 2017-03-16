@@ -470,7 +470,10 @@
         return $usersArray;
     }
 
-    function sortByScore($a, $b) {
+    /*
+     * Sorts the array of users for collaborative searching, according to the first value in the array ($score), from high to low
+     */
+    function sortByScore($b, $a) {
         return $a[0] <=> $b[0];;
     }
 
