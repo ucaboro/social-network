@@ -386,11 +386,11 @@ result	cls/user.php	/^\/\/          $result = $statement->get_result();$/;"	v
 interestIDs	cls/user.php	/^\/\/          $this->interestIDs = $result->fetch_array(MYSQLI_NUM);$/;"	v
 getInterests	cls/user.php	/^  public function getInterests(): array{$/;"	f
 db	cls/user.php	/^          $db = new db();$/;"	v
-statement	cls/user.php	/^          $statement = $db -> prepare("SELECT * FROM interests,interestsassignment $/;"	v
+statement	cls/user.php	/^          $statement = $db -> prepare("SELECT * FROM interests,interestsassignment$/;"	v
 result	cls/user.php	/^          $result = $statement->get_result();$/;"	v
 interests	cls/user.php	/^              $this->interests = array();$/;"	v
 interestNames	cls/user.php	/^              $this->interestNames = array();$/;"	v
-interestNames	cls/user.php	/^              $this->interestNames = array();$/;"	v
+interestIDs	cls/user.php	/^              $this->interestIDs = array();$/;"	v
 interests	cls/user.php	/^              return $this->interests = array();$/;"	v
 getInterestNames	cls/user.php	/^  public function getInterestNames(): array{$/;"	f
 dummy	cls/user.php	/^          $dummy = $this->getInterests();$/;"	v
@@ -436,10 +436,10 @@ success	collections.php	/^                success:function(result){$/;"	j
 db	db.php	/^class db {$/;"	c
 mysqli	db.php	/^  private static $mysqli;$/;"	v
 connect	db.php	/^  public function connect() {$/;"	f
-host	db.php	/^      $host = "eu-cdbr-azure-west-d.cloudapp.net";$/;"	v
-username	db.php	/^      $username = "b572eae4b8201c";$/;"	v
-password	db.php	/^      $password = "e865fdac";$/;"	v
-dbname	db.php	/^      $dbname = "social_media";$/;"	v
+host	db.php	/^      \/\/ $host = "eu-cdbr-azure-west-d.cloudapp.net";$/;"	v
+username	db.php	/^      \/\/ $username = "b572eae4b8201c";$/;"	v
+password	db.php	/^      \/\/ $password = "e865fdac";$/;"	v
+dbname	db.php	/^      \/\/ $dbname = "social_media";$/;"	v
 host	db.php	/^      \/\/ $host = "localhost";$/;"	v
 username	db.php	/^      \/\/ $username = "root";$/;"	v
 password	db.php	/^      \/\/ $password = "";$/;"	v
@@ -448,10 +448,10 @@ host	db.php	/^      \/\/ $host = "mysql4.gear.host";$/;"	v
 username	db.php	/^      \/\/ $username = "smedia";$/;"	v
 password	db.php	/^      \/\/ $password = "Ki5STdco?Jk!";$/;"	v
 dbname	db.php	/^      \/\/ $dbname = "smedia";$/;"	v
-host	db.php	/^      \/\/ $host = "sql8.freemysqlhosting.net";$/;"	v
-username	db.php	/^      \/\/ $username = "sql8164205";$/;"	v
-password	db.php	/^      \/\/ $password = "jQAmi2gr6v";$/;"	v
-dbname	db.php	/^      \/\/ $dbname = "sql8164205";$/;"	v
+host	db.php	/^      $host = "sql8.freemysqlhosting.net";$/;"	v
+username	db.php	/^      $username = "sql8164205";$/;"	v
+password	db.php	/^      $password = "jQAmi2gr6v";$/;"	v
+dbname	db.php	/^      $dbname = "sql8164205";$/;"	v
 query	db.php	/^  public function query($query) {$/;"	f
 prepare	db.php	/^  public function prepare($query) {$/;"	f
 getError	db.php	/^  public function getError() {$/;"	f

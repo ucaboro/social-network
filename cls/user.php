@@ -169,7 +169,7 @@ class user {
       if (is_null($this->interests)){
           $db = new db();
           $db->connect();
-          $statement = $db -> prepare("SELECT * FROM interests,interestsassignment 
+          $statement = $db -> prepare("SELECT * FROM interests,interestsassignment
                                         WHERE interests.interestID = interestsassignment.interestID
                                         AND userID = ?");
           $statement->bind_param("i", $this->id);
@@ -185,7 +185,7 @@ class user {
           if(is_null($this->interests)){
               $this->interests = array();
               $this->interestNames = array();
-              $this->interestNames = array();
+              $this->interestIDs = array();
               return $this->interests = array();
           }
           else{
