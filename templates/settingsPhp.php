@@ -114,10 +114,6 @@
         if (!userObjectAlreadyHasInterestFromID($interestID , $user)) {
             //assignInterestToUserFromName($name, $userID);
             assignInterestToUser($interestID, $userID);
-            echo "adding existing interest " . $interestName;
-        }
-        else{
-            echo "User already has " . $interestName . " stored as an interest";
         }
     }
 
@@ -128,9 +124,5 @@
         //Upload interest if user does not already have it stored in the database // Might be better to keep a list of interests and comapre to that
         if (!userObjectAlreadyHasInterest($interestName, $user)) {
             uploadNewInterest($interestName, $userID);
-            echo "changing new custom interest " . $interestName;
-        }
-        else{
-            echo "User already has " . $interestName . " stored as an interest";
         }
     }
