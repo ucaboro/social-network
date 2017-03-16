@@ -1001,7 +1001,7 @@ function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {
     $db->connect();
 
     // The first $statementFriendsOf2User selects all the
-    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( $statementFriendsOf2User AND userID IN  $statementFriendsOf2User )");
+    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( $statementFriendsOf2User) AND userID IN  ($statementFriendsOf2User )");
     $statement->bind_param("iiii", $userID1, $userID1, $userID2, $userID2 );
     $statement->execute();
     $result = $statement->get_result();
