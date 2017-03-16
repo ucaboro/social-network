@@ -4,6 +4,8 @@
     error_reporting(E_ALL | E_STRICT | E_NOTICE);
     //Start session
     session_start();
+    $statementFriendsOf2User="SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
+                              SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ? ";
 
     //Simple redirect function
     function redirectTo($location){
@@ -427,17 +429,17 @@
         $db = new db();
         $db->connect();
         if (is_null($filter)) {
-            $statement = $db -> prepare("SELECT * FROM user");
-            //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User);
-            //$statement->bind_param("ii",$currentUserID, $currentUserID);
+            //$statement = $db -> prepare("SELECT * FROM user");
+            $statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN ($statementFriendsOf2User) AND userID != ?");
+            $statement->bind_param("iii",$currentUserID, $currentUserID, $currentUserID);
         }
         else{
             global $searchParameters411;
             $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
-            $statement = $db -> prepare("SELECT * FROM user WHERE ". $searchParameters411);
-            //$statement = $db -> prepare("SELECT * FROM user WHERE userID NOT IN " . $statementFriendsOf2User . " AND " . $searchParameters411);
-            //$statement->bind_param("iissssss",$currentUserID, $currentUserID, $searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
-            $statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+            //$statement = $db -> prepare("SELECT * FROM user WHERE ". $searchParameters411);
+            $statement = $db -> prepare("SELECT * FROM user WHERE userID != ? AND userID NOT IN ($statementFriendsOf2User) AND " . $searchParameters411);
+            $statement->bind_param("iiissssss",$currentUserID, $currentUserID, $currentUserID, $searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+            //$statement->bind_param("ssssss",$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
         }
         $statement->execute();
         $result = $statement->get_result();
