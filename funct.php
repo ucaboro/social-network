@@ -173,19 +173,12 @@
     }
 
 
+
     function getBlogsFromSearchTerm(string $term){
-        //TODO: Change this to getUser();
-        if(isset($_SESSION["userID"]))
-        {
-            $currentUserID = $_SESSION["userID"];
-        }
-        else{
-            // TODO:  Should change this to null or something for final version
-            $currentUserID = 1;
-        }
+        $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
-        $searchTerm = '% '.$term.' %';
+        $searchTerm = '%'.$term.'%';
         $statement = $db -> prepare("SELECT * FROM blogpost WHERE
                                     (post LIKE ? OR headline LIKE ?)
                                     AND userID IN
@@ -208,13 +201,23 @@
     /*
      * Create and return a new blog object from the associative array produced by a SQL query
      */
-    function createBlogObject($row){
+    function createBlogObject($row) {
         return new blogPost($row["postID"], $row["headline"], $row["post"], getUserWithID($row["userID"]), new DateTime($row["time"]));
     }
 
+    //Create blog object but with dummy user, when only the id of the user will be needed
+    function createBlogObjectWithDummyUser($row){
+        return new blogPost($row["postID"], $row["headline"], $row["post"], createDummyUser($row["userID"]), new DateTime($row["time"]));
+    }
 
-    function addNewCustomInterest(string $interestName, int $userID): void
-    {
+    //Create a dummy user, when only the userID will be accessed, to prevent the need for an extra query, is hacky, lazy implementation of user attribute would have been better
+    function createDummyUser(int $userID): user{
+        return new user($userID, "Jane", "Doe", "", new DateTime(), "", "", 0, 0);
+    }
+//new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+
+
+    function addNewCustomInterest(string $interestName, int $userID) {
         //Get interest id from name, if in database, if not in database will return -1
         $interestID = findInterestIDFromInterestName($interestName);
         //If interest does not already exist in the database
@@ -229,8 +232,7 @@
     /*
      * Upload a new user created interest to the interests database
      */
-    function uploadNewInterest(string $interest, int $userID): void
-    {
+    function uploadNewInterest(string $interest, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -252,7 +254,7 @@
     /*
      * Link a user and an interest in the interests assignment database, i.e. record that the user has that interest
      */
-    function assignInterestToUser(int $interestID, int $userID): void{
+    function assignInterestToUser(int $interestID, int $userID) {
         $database= new db();
         $database->connect();
         //Perform query as prepared statement
@@ -263,7 +265,7 @@
     }
 
     //Should use object for this
-    function assignInterestToUserFromName(string $name, int $userID): void{
+    function assignInterestToUserFromName(string $name, int $userID) {
         $interestID = findInterestIDFromInterestName($name);
         assignInterestToUser($interestID, $userID);
     }
