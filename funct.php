@@ -70,7 +70,7 @@
             return false;
         }
     }
-    //Get User from Id, but not as a object, rather as an associative array that contains the hashed password
+    //Get user from Id, but not as a object, rather as an associative array that contains the hashed password
     function getUserRowFromID($id){
         //Create database object
         $database = new db();
