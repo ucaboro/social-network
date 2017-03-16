@@ -685,7 +685,7 @@ function getPhotoCollectionsByUser(user $user): array {
 
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
     // TODO: Need to make sure if photo collection need a date.
-    $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user, new DateTime("2017-04-20 14:44"),$row["name"]);
+    $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"],$user,$row["name"]);
   }
   return $photocollectionsArray;
 }
