@@ -24,7 +24,7 @@ checkLoggedIn();?>
                           $areFiends = true;
                           $areFriendsOfFriends = true;
                       }
-                      else if(areUsersFriendsOfFriends($userID, $_SESSION['userID'])){
+                      else if(areUsersWithIDFriendsOfFriends($userID, $_SESSION['userID'])){
                           $areFiends = false;
                           $areFriendsOfFriends = true;
                       }
