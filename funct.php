@@ -178,9 +178,10 @@
         $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
-        $searchTerm = '%'.$term.'%';
+        //$searchTerm = '%'.$term.'%';
+        $searchTerm = '([[:blank:][:punct:]]|^)' . $term .'([[:blank:][:punct:]]|$)';
         $statement = $db -> prepare("SELECT * FROM blogpost WHERE
-                                    (post LIKE ? OR headline LIKE ?)
+                                    (post REGEXP ? OR headline REGEXP ?)
                                     AND userID IN
                                     (SELECT userID2 as 'userID' FROM friendship
                                     WHERE userID1 = ? AND isConfirmed = True UNION
