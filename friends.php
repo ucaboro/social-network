@@ -1,6 +1,7 @@
 <?php include "imports.php";
 //Ensures user is logged in before displaying page
-checkLoggedIn();?>
+checkLoggedIn();
+$page = "friends";?>
 <!DOCTYPE html>
 
 <html lang="en-gb">
@@ -39,12 +40,17 @@ checkLoggedIn();?>
               // Get the array of friends
               if ($isSearch) {
                 $friends = getFriendsOfUser(getUser(), $searchTerm);
+                $user = getUser();
+                echo $user -> firstName;
+                echo "here";
               } else {
-                $friends = getUser()->getFriends();
+                //$friends = getUser()->getFriends();
+                  $friends = getFriendsOfUser(getUser());
               }
 
               // Output each one
               foreach ($friends as $friend) {
+                  echo $friend -> firstName;
                 echo getHtmlForUserSummarySearchResult($friend, true, false, false);
               }
               ?>
@@ -55,7 +61,9 @@ checkLoggedIn();?>
         <div class="col-md-4">
           <div class="row">
             <div class="col-xs-12">
-              <?php echo getHtmlForNavigationPanel(); ?>
+              <?php echo getHtmlForNavigationPanel();
+                include "templates/findFriends.php";
+              ?>
             </div>
           </div>
         </div>

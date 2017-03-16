@@ -1,6 +1,7 @@
 <?php include "imports.php";
 //Ensures user is logged in before displaying page
-checkLoggedIn();?>
+checkLoggedIn();
+$page = "search";?>
 <!DOCTYPE html>
 
 <html lang="en-gb">
@@ -34,10 +35,10 @@ checkLoggedIn();?>
             $results = getUsers($searchTerm);
             $blogResults = getBlogsFromSearchTerm($searchTerm);
           ?>
-            <!-- Friends list -->
+            <!-- Search Results -->
             <div class="panel panel-primary">
               <div class="panel-heading">
-                <h4 class="panel-title"><?php echo (count($results) + count($results)); ?> results found</h4>
+                <h4 class="panel-title"><?php echo (count($results) + count($blogResults)); ?> results found</h4>
               </div>
               <div class="panel-body">
                 <?php
@@ -62,7 +63,7 @@ checkLoggedIn();?>
           <?php
           }
           ?>
-          <!-- /END Friends list -->
+          <!-- /END Search Results -->
         </div>
         <div class="col-md-4">
           <div class="row">
