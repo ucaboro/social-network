@@ -796,7 +796,7 @@ function addNewBlogPost($blogTitle,$blogpost){
   $db = new db();
   $db->connect();
   $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, NOW(), ?)");
-  $stmt->bind_param("isss",$thisUserID,$blogpost,$blogTitle);
+  $stmt->bind_param("iss",$thisUserID,$blogpost,$blogTitle);
   $stmt->execute();
 }
 
@@ -1001,7 +1001,7 @@ function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {
     $db->connect();
 
     // The first $statementFriendsOf2User selects all the
-    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+    $statement = $db -> prepare("SELECT COUNT(userID) AS mutualFriends FROM user WHERE userID IN ( $statementFriendsOf2User AND userID IN  $statementFriendsOf2User )");
     $statement->bind_param("iiii", $userID1, $userID1, $userID2, $userID2 );
     $statement->execute();
     $result = $statement->get_result();
