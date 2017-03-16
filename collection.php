@@ -51,7 +51,10 @@ if(isset($_FILES['image'])){
         $isPhotoUploaded=TRUE;
     }
 }
-
+$collectionID = getValueFromGET("c");
+if (isset($_POST["delete-photo"])) {
+  removePhotoFromCollection($_POST["delete-photo"], $collectionID);
+}
 ?>
 <!DOCTYPE html>
 
@@ -64,12 +67,11 @@ if(isset($_FILES['image'])){
         <div class="col-md-8">
             <!-- Profile summary -->
             <?php
-            $collectionID = getValueFromGET("c");
             $collection = getPhotoCollectionFromID($collectionID);
             $me = getUser();
             $user = $collection->user;
             $userID = $user->id;
-            echo getHtmlForSmallUserSummaryPanel($user, "Photos");
+            echo getHtmlForSmallUserSummaryPanel($user, "Photo collection '$collection->name'");
             ?>
             <!-- /END Profile summary -->
 
@@ -80,7 +82,7 @@ if(isset($_FILES['image'])){
                 ?>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h4 class="panel-title">Upload Photos to collection</h4>
+                        <h4 class="panel-title">Upload photos to '<?php echo $collection->name; ?>'</h4>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -127,7 +129,7 @@ if(isset($_FILES['image'])){
             <!-- Photos in Collection -->
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h4 class="panel-title">Photos</h4>
+                    <h4 class="panel-title">Photos in '<?php echo $collection->name; ?>'</h4>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -137,8 +139,11 @@ if(isset($_FILES['image'])){
                         if (count($photos) > 0) {
                             // Output each one
                             foreach ($photos as $photoID => $photo) {
-                                echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                            <a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
+                              echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">";
+                              if ($isMe) {
+                                echo "<button type=\"button\" class=\"close close-img\" aria-label=\"Close\" data-toggle=\"modal\" data-target=\"#remove-photo\" data-photo-id=\"$photo->id\"><span aria-hidden=\"true\">&times;</span></button>";
+                              }
+                              echo "<a href=\"photo.php?p=$photoID\">" . getHtmlForSquareImage($photo->src) . "</a>
                           </div>";
                             }
                         } else {
@@ -190,8 +195,44 @@ if(isset($_FILES['image'])){
     </div>
 </div>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script  type="text/javascript">
+<!-- Delete collection modal popup -->
+<!-- Adapted from http://getbootstrap.com/javascript/#modals -->
+<div id="remove-photo" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Remove photo</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to remove this photo from the collection? The photo will not be deleted.</p>
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button id="modal-remove-photo" name="delete-photo" value="" class="btn btn-primary">Remove</button>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<?php
+echo getHtmlForJavascriptImports();
+?>
+
+<script>
+  $('#remove-photo').on('show.bs.modal', function (event) {
+    // Get all the necessary data
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var id = button.data('photo-id'); // Extract info from data-* attributes
+    var modal = $(this);
+    // Update the collection ID
+    modal.find('#modal-remove-photo').attr('value', id);
+  });
+</script>
+
+<script>
     $(document).ready(function() {
 
         $('#add_collection_invoke').click(function() {
@@ -214,12 +255,5 @@ if(isset($_FILES['image'])){
 
     });
 </script>
-
-<!-- JQuery javascript -->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<!-- Bootstrap JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!-- Custom JavaScript -->
-<!--<script src="script.js"></script>-->
 </body>
 </html>

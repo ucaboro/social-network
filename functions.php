@@ -44,7 +44,7 @@ function getArrayFromResult($result, $keyColumn, $valueColumn) {
  * Returns the specified value from the GET request, or NULL if no such value was passed.
  */
 function getValueFromGET(string $key) {
-  if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET[$key])) {
+  if (isset($_GET[$key])) {
     return $_GET[$key];
   } else {
     return NULL;

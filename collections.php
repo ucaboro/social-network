@@ -146,9 +146,6 @@ echo getHtmlForJavascriptImports();
     var id = button.data('collection-id');
     var modal = $(this);
 
-    console.log(name);
-    console.log(id);
-
     // Update the collection name
     modal.find('#modal-collection-name').text(name);
 
