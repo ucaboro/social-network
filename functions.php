@@ -18,35 +18,12 @@ $statementFriendsOfFriendsOf7User = " SELECT userID FROM user WHERE userID != ? 
                                       AND userID2 IN
                                       ($statementFriendsOf2User))";
 
-$searchParameters411 = "( firstName LIKE ?
-                      OR lastName LIKE ?
-                      OR CONCAT_WS('', firstName, lastName) LIKE ?
-                      OR CONCAT_WS('', lastName, firstName) LIKE ?
-                      OR email = ?
-                      OR location LIKE ? )";
-
-
-$statementFriendsOfFriendsOf7User2 = "SELECT userID FROM user WHERE userID != ? AND
-                                      userID NOT IN
-                                      (
-                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
-                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
-                                      )
-                                      AND userID IN
-                                      (
-                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
-                                      AND userID1 IN
-                                      (
-                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
-                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
-                                      )
-                                      UNION
-                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE
-                                      AND userID2 IN
-                                      (
-                                      SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
-                                      SELECT userID1 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID2 = ?
-                                      )) ";
+$searchParameters411 = "(  firstName LIKE ?
+                        OR lastName LIKE ?
+                        OR CONCAT_WS('', firstName, lastName) LIKE ?
+                        OR CONCAT_WS('', lastName, firstName) LIKE ?
+                        OR email = ?
+                        OR location LIKE ? )";
 
 /* Returns the mysqli_result object as an array.
  * $result: the mysqli_result object.
@@ -498,6 +475,7 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
     $db->connect();
 
     global $statementFriendsOfFriendsOf7User;
+    global $searchParameters;
 
     $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
 
@@ -1079,7 +1057,7 @@ function displayCollections2(collection $collection){
   $collectionUser = $collection->user;
     if(areUsersFriends($currentUser,$collectionUser) || ($currentUser->id == $collectionUser) ){
         return true;
-    } elseif ($Collection->isVisibleToCircles  ) {
+    } elseif ($Collection->isVisibleToCircles   ) {
       # code...
     }
     if($user->isVisibleToFriendsOfFriends && $friendsOfFriends){
@@ -1101,5 +1079,28 @@ function displayCollections2(collection $collection){
     $stmt = $db->prepare("DELETE FROM circlemembership WHERE circleID =? AND userID = ?");
     $stmt->bind_param("ii", $circleID, $id);
     $stmt->execute();
+}
+
+/*
+ * Returns the number of mutual friends between user1 and user2.
+ */
+function isCommonCircleBetweenUsers($user1, $user2) {
+
+  $userID1 = $user1->getUserID();
+  $userID2 = $user2->getUserID();
+
+  global $statementFriendsOf2User;
+
+  $db = new db();
+  $db->connect();
+
+  // The first $statementFriendsOf2User selects all the
+  $statement = $db -> prepare("SELECT COUNT(userID) FROM user WHERE userID IN ( ".$statementFriendsOf2User." UNION ". $statementFriendsOf2User." )");
+  $statement->bind_param("ii", $userID1, $userID1, $userID2, $userID2 );
+  $statement->execute();
+  $result = $statement->get_result();
+
+  $row = $result->fetch_array(MYSQLI_ASSOC);
+  return $row["mutualFriends"];
 }
 ?>
