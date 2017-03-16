@@ -796,7 +796,7 @@ function addNewBlogPost($blogTitle,$blogpost){
   $db = new db();
   $db->connect();
   $stmt = $db->prepare("INSERT INTO blogpost (userID,post,time,headline) VALUES (?, ?, NOW(), ?)");
-  $stmt->bind_param("isss",$thisUserID,$blogpost,$blogTitle);
+  $stmt->bind_param("iss",$thisUserID,$blogpost,$blogTitle);
   $stmt->execute();
 }
 
