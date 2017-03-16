@@ -23,13 +23,15 @@
                     if (empty($myInterestsArray)) {
                       echo "No interests yet.";
                     } else {
-                      echo "<ul>";
+                      echo "<form class=\"form-inline\" method=\"POST\"><ul>";
                       foreach($myInterestsArray as $interest){
-                          echo "<li>" . $interest -> getName();  /*. " <button>
+                          echo "<li>" . $interest->getName() .
+                                  "<button name=\"delete_interest\" value=\"" . $interest->getID() . "\" type=\"submit\" class=\"close delete\"><span>&times;</span></button>
+                                </li>";  /*. " <button>
                                                                       <span class=\"glyphicon glyphicon-trash\"></span>
                                                                   </button></li>"; // user deleteInterestWithID($interest->getID())*/
                       }
-                      echo "</ul>";
+                      echo "</ul></form>";
                     }
                     ?>
                     <!-- <button class='glyphicon glyphicon-trash aria-label'></button>-->

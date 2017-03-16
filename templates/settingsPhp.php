@@ -126,3 +126,10 @@
             uploadNewInterest($interestName, $userID);
         }
     }
+
+    // Delete interest
+    if (isset($_POST['delete_interest'])) {
+      $interestID = $_POST['delete_interest'];
+      echo removeInterestWithID($interestID);
+    }
+?>

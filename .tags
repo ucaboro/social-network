@@ -554,9 +554,10 @@ getExistingInterestNames	funct.php	/^    function getExistingInterestNames(): ar
 names	funct.php	/^        $names = array();$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
 result	funct.php	/^        $result = $db -> query("SELECT name FROM interests");$/;"	v
-deleteInterestWithID	funct.php	/^    function deleteInterestWithID(int $interestID){$/;"	f
+removeInterestWithID	funct.php	/^    function removeInterestWithID(int $interestID){$/;"	f
+userID	funct.php	/^        $userID = getUserID();$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
-stmt	funct.php	/^        $stmt = $db -> prepare("DELETE FROM interestsassignment where interestID = ?;$/;"	v
+stmt	funct.php	/^        $stmt = $db -> prepare("DELETE FROM interestsassignment WHERE interestID = ? AND userID = ?");$/;"	v
 getUsersCollaborative	funct.php	/^    function getUsersCollaborative(): array{$/;"	f
 getUsersObjectCommonalityScore	funct.php	/^    function getUsersObjectCommonalityScore(user $user1, user $user2, int $interests, int $friendsInCommon): int{$/;"	f
 score	funct.php	/^        $score = $interests; \/\/getCommonInterestsBetweenUsers($user1, $user2);$/;"	v
@@ -1023,6 +1024,7 @@ infoPrivacy	templates/settingsPhp.php	/^            $infoPrivacy = $_POST['info_
 interestName	templates/settingsPhp.php	/^        $interestName = trim($_POST['existing_interests']);$/;"	v
 interestID	templates/settingsPhp.php	/^        $interestID = findInterestIDFromInterestName($interestName);$/;"	v
 interestName	templates/settingsPhp.php	/^        $interestName = trim($_POST['new_interests']);$/;"	v
+interestID	templates/settingsPhp.php	/^      $interestID = $_POST['delete_interest'];$/;"	v
 getHtmlForHead	templates.php	/^function getHtmlForHead() {$/;"	f
 getHtmlForTopNavbar	templates.php	/^function getHtmlForTopNavbar() {$/;"	f
 getHtmlForJavascriptImports	templates.php	/^function getHtmlForJavascriptImports() {$/;"	f

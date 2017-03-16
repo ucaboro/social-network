@@ -381,12 +381,15 @@
         return $names;
     }
 
-    function deleteInterestWithID(int $interestID){
+    /*
+     * Removes the interest with the specified ID from the currently logged in user.
+     */
+    function removeInterestWithID(int $interestID){
+        $userID = getUserID();
         $db = new db();
         $db->connect();
-        $stmt = $db -> prepare("DELETE FROM interestsassignment where interestID = ?;
-                          DELETE FROM interests where interestID = ?;");
-        $stmt->bind_param("ii", $interestID, $interestID);
+        $stmt = $db -> prepare("DELETE FROM interestsassignment WHERE interestID = ? AND userID = ?");
+        $stmt->bind_param("ii", $interestID, $userID);
         $stmt->execute();
     }
 
@@ -488,4 +491,3 @@
         }
         return $score;
     }
-
