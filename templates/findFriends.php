@@ -68,7 +68,7 @@
                 //Text to be displayed below user panel
                 $blurb = "";
                 if($commonInterest > 0 && $commonFriends > 0){
-                    $blurb += "You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common";
+                    $blurb = $blurb. "You have " . $commonInterest . " interests in common and " . $commonFriends . " friends in common";
                 }
                 else if($commonInterest > 0){
                     $blurb ="You have " . $commonInterest . " interests in common.";
@@ -86,5 +86,3 @@
         </div>
     </div>
    <!-- /END Reccomendations -->
-
-
