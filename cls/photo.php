@@ -61,7 +61,7 @@ class photo extends interaction {
       $result = $statement->get_result();
 
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $this->annotations[] = new user($row["userID"], $row["firstName"], $row["lastName"], "", $row["date"], $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+        $this->annotations[] = new user($row["userID"], $row["firstName"], $row["lastName"], "", $row["date"], $row["location"], $row["blogVisibility"], $row["infoVisibility"]);
       }
     }
     return $this->annotations;
@@ -78,13 +78,13 @@ class photo extends interaction {
       $this->comments = array();
       $db = new db();
       $db->connect();
-      $statement = $db -> prepare("SELECT pc.commentID, pc.userID, pc.time, pc.comment, u.firstName, u.lastName, u.date, u.location, u.email, u.blogVisibility, u.infoVisibility, p.filename FROM photocomment AS pc LEFT JOIN user AS u ON pc.userID = u.userID LEFT JOIN photo AS p ON u.photoID = p.photoID WHERE pc.photoID = ? ORDER BY pc.time DESC");
+      $statement = $db -> prepare("SELECT pc.commentID, pc.userID, pc.time, pc.comment, u.firstName, u.lastName, u.date, u.location, u.blogVisibility, u.infoVisibility, p.filename FROM photocomment AS pc LEFT JOIN user AS u ON pc.userID = u.userID LEFT JOIN photo AS p ON u.photoID = p.photoID WHERE pc.photoID = ? ORDER BY pc.time DESC");
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();
 
       while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], $row["date"], $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+        $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], $row["date"], $row["location"], $row["blogVisibility"], $row["infoVisibility"]);
         $this->comments [] = new comment($row["commentID"], $this, $user, new DateTime($row["time"]), $row["comment"]);
       }
     }

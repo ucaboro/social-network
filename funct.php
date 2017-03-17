@@ -98,7 +98,7 @@
         //Connect to database
         $database->connect();
         //Query as prepared statement
-        $stmt = $database->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");
+        $stmt = $database->prepare("SELECT * FROM user,useremail WHERE user.userID=useremail.userID AND email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -127,8 +127,13 @@
         //Connect to database
         $database->connect();
         //Perform query as prepared statement
-        $stmt = $database->prepare("INSERT INTO user (email, firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
-        $stmt->bind_param("ssss", $email, $firstName, $lastName, $hashedPassword);
+        $stmt = $database->prepare("INSERT INTO user (firstName, lastName, password, photoID) VALUES (?, ?, ?, ?,0)");
+        $stmt->bind_param("sss", $firstName, $lastName, $hashedPassword);
+        $result =$stmt->execute();
+
+        $userID = $db->lastInsertId();
+        $stmt = $database->prepare("INSERT INTO useremail (userID,email) VALUES (?, ?)");
+        $stmt->bind_param("is", $email,$userID);
         $result =$stmt->execute();
         //Check if query was successful
         if (!$result) {

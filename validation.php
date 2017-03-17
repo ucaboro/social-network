@@ -39,7 +39,7 @@
         $database = new db();
         $database->connect();
         //Get all emails stored in database with SQL query
-        $result = $database->query("SELECT email FROM user ");
+        $result = $database->query("SELECT email FROM useremail ");
         //Check if query failed
         if (!$result) {
             printf("Errormessage: %s\n", $database->getError());

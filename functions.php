@@ -22,7 +22,6 @@ $searchParameters411 = "(  firstName LIKE ?
                         OR lastName LIKE ?
                         OR CONCAT_WS('', firstName, lastName) LIKE ?
                         OR CONCAT_WS('', lastName, firstName) LIKE ?
-                        OR email = ?
                         OR location LIKE ? )";
 
 /* Returns the mysqli_result object as an array.
@@ -252,7 +251,7 @@ function getUserWithID($id) {
     else{
         $db = new db();
         $db->connect();
-        $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,
+        $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, photo.filename AS filename,
                               user.date AS date, location, blogVisibility, infoVisibility  FROM user, photo WHERE photo.photoID = user.photoID AND user.userID = ?");
         $statement->bind_param("i", $id);
         $statement->execute();
@@ -383,13 +382,13 @@ function getRecentActivityFeed() {
 function getPhotoWithID(int $photoID) {
   $db = new db();
   $db->connect();
-  $statement = $db -> prepare("SELECT photo.photoID, photo.userID, photo.filename, photo.time, firstName, lastName, email, date, location, blogVisibility, infoVisibility, p2.filename AS profilePhoto FROM photo LEFT JOIN user ON photo.userID = user.userID LEFT JOIN photo AS p2 ON user.photoID = p2.photoID WHERE photo.photoID = ? AND photo.isArchived = 0");
+  $statement = $db -> prepare("SELECT photo.photoID, photo.userID, photo.filename, photo.time, firstName, lastName, date, location, blogVisibility, infoVisibility, p2.filename AS profilePhoto FROM photo LEFT JOIN user ON photo.userID = user.userID LEFT JOIN photo AS p2 ON user.photoID = p2.photoID WHERE photo.photoID = ? AND photo.isArchived = 0");
   $statement->bind_param("i", $photoID);
   $statement->execute();
   $result = $statement->get_result();
 
   $row = $result->fetch_array(MYSQLI_ASSOC);
-  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+  $user = new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["profilePhoto"], new DateTime($row["date"]), $row["location"], $row["blogVisibility"], $row["infoVisibility"]);
   return new photo($row["photoID"], $user, new DateTime($row["time"]), "img/".$row["filename"] );
 }
 
@@ -790,7 +789,7 @@ function addPhotoToDB($photoName){
 }
 
 function createUserObject($row){
-    return new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["email"], $row["blogVisibility"], $row["infoVisibility"]);
+    return new user($row["userID"], $row["firstName"], $row["lastName"], "img/" . $row["filename"], new DateTime($row["date"]), $row["location"], $row["blogVisibility"], $row["infoVisibility"]);
 }
 
 /*

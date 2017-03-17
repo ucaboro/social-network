@@ -38,7 +38,7 @@ class user {
   /*
    *
    */
-  public $email;
+  private $email;
 
   /*
    *
@@ -75,14 +75,13 @@ class user {
   /*
    * Constructor which initialises the object and populates all fields.
    */
-  public function __construct(int $id, string $firstName, string $lastName, $photoSrc, $dateOfBirth, $location, $email, $blogVisibility, $infoVisibility) {
+  public function __construct(int $id, string $firstName, string $lastName, $photoSrc, $dateOfBirth, $location, $blogVisibility, $infoVisibility) {
     $this->id = $id;
     $this->firstName = $firstName;
     $this->lastName = $lastName;
     $this->photoSrc = $photoSrc;
     $this->dateOfBirth = $dateOfBirth;
     $this->location = $location;
-    $this->email = $email;
     $this->blogVisibility = $blogVisibility;
     $this->infoVisibility = $infoVisibility;
   }
@@ -113,6 +112,26 @@ class user {
    */
   public function getAge() {
     return $this->dateOfBirth->diff(new DateTime())->format('%y');
+  }
+
+  /*
+   * Returns a email address of the user.
+   */
+  public function getEmail() {
+    // Get the array of friends from the database the first time.
+    if (is_null($this->email)) {
+      $db = new db();
+      $db->connect();
+      $statement = $db -> prepare("SELECT email FROM useremail WHERE userID = ?");
+      $statement->bind_param("i", $this->id);
+      $statement->execute();
+      $result = $statement->get_result();
+
+      $row = $result->fetch_array(MYSQLI_ASSOC);
+      $this->email = $row["email"];
+    }
+    // Return the saved email
+    return $this->email;
   }
 
   /*
