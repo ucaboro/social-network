@@ -3,7 +3,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand navbar-brand-center" href="index.php">
-        <img alt="Connect" src="static_img/logo.png" >
+        <img alt="Connect" src="static_img/logo2.png" >
       </a>
     </div>
       <?php
