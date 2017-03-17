@@ -117,7 +117,8 @@ class collection {
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();
-      $this->isVisibleToCircles = $row["status"];
+      $row = $result->fetch_array(MYSQLI_ASSOC);
+      $this->isVisibleToFriendsOfFriends = $row["status"];
     }
     return $this->isVisibleToFriendsOfFriends;
   }

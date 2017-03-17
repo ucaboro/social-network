@@ -1,5 +1,5 @@
 <?php
-  require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now. Yea I agree with that.
+require_once "funct.php"; //Later we can make them one file, but i suppose this will do for now. Yea I agree with that.
 
 
 $statementFriendsOf2User="SELECT userID2 AS 'userID' FROM friendship WHERE isConfirmed = TRUE AND userID1 = ? UNION
@@ -1026,16 +1026,17 @@ function getCommonFriendsBetweenUsersWithID(int $userID1, int $userID2) {
 }
 
 
-function displayCollections(collection $collection) : bool{
+function shouldDisplayCollection(collection $collection) : bool{
   $currentUser = getUser();
   $collectionUser = $collection->user;
-    if(areUsersFriends($currentUser,$collectionUser) || ($currentUser->id == $collectionUser) ){
+    if(areUsersFriends($currentUser, $collectionUser) || ($currentUser->id == $collectionUser->id) ){
       return true;
-    } elseif ($collection->isVisibleToCircles() && isCommonCircleBetweenUsers($currentUser,$collectionUser)   ) {
+    } elseif ($collection->isVisibleToCircles() && isCommonCircleBetweenUsers($currentUser, $collectionUser)) {
       return true;
-    } elseif ($collectionUser->isVisibleToFriendsOfFriends() && areUsersWithIDFriendsOfFriends($currentUser->getUserID,$collectionUser->getUserID)) {
+    } elseif ($collection->isVisibleToFriendsOfFriends() && areUsersWithIDFriendsOfFriends($currentUser->id, $collectionUser->id)) {
       return true;
     }
+    return false;
 }
 
 

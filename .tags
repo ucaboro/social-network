@@ -272,7 +272,8 @@ isVisibleToFriendsOfFriends	cls/collection.php	/^  public function isVisibleToFr
 db	cls/collection.php	/^      $db = new db();$/;"	v
 statement	cls/collection.php	/^      $statement = $db -> prepare("SELECT isVisibleToFriendsOfFriends AS status FROM photocollection WHERE collectionID = ?");$/;"	v
 result	cls/collection.php	/^      $result = $statement->get_result();$/;"	v
-isVisibleToCircles	cls/collection.php	/^      $this->isVisibleToCircles = $row["status"];$/;"	v
+row	cls/collection.php	/^      $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
+isVisibleToFriendsOfFriends	cls/collection.php	/^      $this->isVisibleToFriendsOfFriends = $row["status"];$/;"	v
 setIsVisibleToCircles	cls/collection.php	/^  public function setIsVisibleToCircles($status) {$/;"	f
 intStatus	cls/collection.php	/^    $intStatus = ($status == TRUE) ? 1 : 0 ;$/;"	v
 db	cls/collection.php	/^    $db = new db();$/;"	v
@@ -428,6 +429,7 @@ user	collections.php	/^          $user = ($userID == NULL) ? $me : getUserWithID
 userID	collections.php	/^          $userID = $user->id;$/;"	v
 isMe	collections.php	/^          $isMe = ($me->id == $userID);$/;"	v
 collections	collections.php	/^              $collections = getPhotoCollectionsByUser($user);$/;"	v
+collectionID	collections.php	/^              foreach ($collections as $collectionID => $collection) {$/;"	v
 photos	collections.php	/^                      $photos = $collection->getPhotos();$/;"	v
 photoSrc	collections.php	/^                      $photoSrc = $collection->getCoverPhotoSrc();$/;"	v
 img	collections.php	/^                      $img = getHtmlForSquareImage($photoSrc);$/;"	v
@@ -571,6 +573,7 @@ id	funct.php	/^            $id = $currentUser -> id;$/;"	v
 interests	funct.php	/^            $interests = getCommonInterestsBetweenUsersWithID($currentUser -> id, $row["userID"]);$/;"	v
 friendsInCommon	funct.php	/^            $friendsInCommon = getCommonFriendsBetweenUsersWithID($currentUser -> id, $row["userID"]);$/;"	v
 score	funct.php	/^            $score = getUsersCommonalityScore($currentUser, $row["location"], new DateTime($row["date"]), $interests, $friendsInCommon);$/;"	v
+usersArray	funct.php	/^        $usersArray = array_slice($usersArray,0,10);$/;"	v
 sortByScore	funct.php	/^    function sortByScore($b, $a) {$/;"	f
 getUsersCommonalityScore	funct.php	/^    function getUsersCommonalityScore(user $user1, $user2Location, DateTime $user2dob, int $interests, int $friendsInCommon): int{$/;"	f
 user2Age	funct.php	/^        $user2Age = $user2dob->diff(new DateTime())->format('%y');$/;"	v
@@ -632,11 +635,11 @@ statement	functions.php	/^  $statement = $db -> prepare("SELECT * FROM circlemes
 result	functions.php	/^  $result = $statement->get_result();$/;"	v
 messagesArray	functions.php	/^  $messagesArray = array();$/;"	v
 message	functions.php	/^    $message = new message($row["messageID"],$circle,getUserWithID($row["userID"]), new DateTime($row["time"]),$row["message"]);$/;"	v
-getUserWithID	functions.php	/^function getUserWithID(int $id) {$/;"	f
-db	functions.php	/^  $db = new db();$/;"	v
-statement	functions.php	/^  $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,$/;"	v
-result	functions.php	/^  $result = $statement->get_result();$/;"	v
-row	functions.php	/^  $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
+getUserWithID	functions.php	/^function getUserWithID($id) {$/;"	f
+db	functions.php	/^        $db = new db();$/;"	v
+statement	functions.php	/^        $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,$/;"	v
+result	functions.php	/^        $result = $statement->get_result();$/;"	v
+row	functions.php	/^        $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
 getPhotosOwnedByUser	functions.php	/^function getPhotosOwnedByUser(user $user, int $limit = 0): array {$/;"	f
 limit	functions.php	/^function getPhotosOwnedByUser(user $user, int $limit = 0): array {$/;"	v
 userID	functions.php	/^  $userID =$user->getUserID();$/;"	v
@@ -853,7 +856,7 @@ result	functions.php	/^    $result = $statement->get_result();$/;"	v
 row	functions.php	/^    $row = $result->fetch_array(MYSQLI_ASSOC);$/;"	v
 flag	functions.php	/^      $flag=0;$/;"	v
 flag	functions.php	/^          $flag=1;$/;"	v
-displayCollections	functions.php	/^function displayCollections(collection $collection) : bool{$/;"	f
+shouldDisplayCollection	functions.php	/^function shouldDisplayCollection(collection $collection) : bool{$/;"	f
 currentUser	functions.php	/^  $currentUser = getUser();$/;"	v
 collectionUser	functions.php	/^  $collectionUser = $collection->user;$/;"	v
 deleteFromCircle	functions.php	/^  function deleteFromCircle($id, $circleID){$/;"	f
@@ -986,7 +989,6 @@ isSearch	templates/findFriends.php	/^                    $isSearch = !is_null($s
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch($searchTerm);$/;"	v
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch();$/;"	v
 thisUser	templates/findFriends.php	/^            $thisUser = getUser();$/;"	v
-userCommonArray	templates/findFriends.php	/^                $userCommonArray = $results[$i];$/;"	v
 user	templates/findFriends.php	/^                $user = $userCommonArray[1];$/;"	v
 commonInterest	templates/findFriends.php	/^                $commonInterest = $userCommonArray[2];$/;"	v
 commonFriends	templates/findFriends.php	/^                $commonFriends = $userCommonArray[3];$/;"	v
@@ -999,9 +1001,9 @@ interestsArray	templates/interestsList.php	/^$interestsArray = $user -> getInter
 existingInterestNamesArray	templates/interestsSettings.php	/^    $existingInterestNamesArray = getExistingInterestNames();$/;"	v
 user	templates/interestsSettings.php	/^        $user = getUser();$/;"	v
 myInterestsArray	templates/interestsSettings.php	/^    $myInterestsArray = $user -> getInterests();$/;"	v
-user	templates/navbar.php	/^        $user = getUser();$/;"	v
-url	templates/navbar.php	/^        $url = $user->getUrlToProfile();$/;"	v
-name	templates/navbar.php	/^        $name = $user->getFullName();$/;"	v
+user	templates/navbar.php	/^      $user = getUser();$/;"	v
+url	templates/navbar.php	/^          $url = $user->getUrlToProfile();$/;"	v
+name	templates/navbar.php	/^          $name = $user->getFullName();$/;"	v
 user	templates/settingsPhp.php	/^    $user = getUser();$/;"	v
 dob	templates/settingsPhp.php	/^    $dob = ($user->dateOfBirth == null) ? "" : $user->dateOfBirth->format('Y-m-d'); \/\/This defaults to today apparently$/;"	v
 location	templates/settingsPhp.php	/^    $location = ($user->location == null) ? "" : $user->location;$/;"	v
