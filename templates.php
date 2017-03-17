@@ -387,8 +387,7 @@ function getHtmlForSmallUserSummaryPanel(user $user, string $title) {
           </div>
         </div>
       </div>
-    </div>
-  </div>";
+    </div>";
 }
 
 function getHtmlForSmallUserSummaryPanelCollection(user $user, string $title) {
@@ -411,8 +410,7 @@ function getHtmlForSmallUserSummaryPanelCollection(user $user, string $title) {
           </div>
         </div>
       </div>
-    </div>
-  <!--</div>-->";
+    </div>";
 }
 
 /*
