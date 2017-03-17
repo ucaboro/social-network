@@ -150,7 +150,7 @@ function getUserID() {
     return $_SESSION["userID"];
   }
   else{
-      return 1;
+      return null;
   }
 }
 
@@ -245,17 +245,22 @@ function getMessagesInCircle(circle $circle) {
 /*
  * Returns a user object for the user with the specified ID.
  */
-function getUserWithID(int $id) {
-  $db = new db();
-  $db->connect();
-  $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,
+function getUserWithID($id) {
+    if(is_null($id)){
+        return null;
+    }
+    else{
+        $db = new db();
+        $db->connect();
+        $statement = $db->prepare("SELECT user.userID AS userID, firstName, lastName, email, photo.filename AS filename,
                               user.date AS date, location, blogVisibility, infoVisibility  FROM user, photo WHERE photo.photoID = user.photoID AND user.userID = ?");
-  $statement->bind_param("i", $id);
-  $statement->execute();
-  $result = $statement->get_result();
+        $statement->bind_param("i", $id);
+        $statement->execute();
+        $result = $statement->get_result();
 
-  $row = $result->fetch_array(MYSQLI_ASSOC);
-  return createUserObject($row);
+        $row = $result->fetch_array(MYSQLI_ASSOC);
+        return createUserObject($row);
+    }
 }
 
 /*

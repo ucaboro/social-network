@@ -73,6 +73,12 @@ if (isset($_POST["delete-photo"])) {
             $userID = $user->id;
             echo getHtmlForSmallUserSummaryPanel($user, "Photo collection '$collection->name'");
             ?>
+            <div class="checkbox">
+                <label><input type="checkbox" id="Collection_FOF_checkbox2" value="">Visible to Friends of Friends</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" id="Collection_circle_checkbox2" value="">Visible to Circles</label>
+            </div>
             <!-- /END Profile summary -->
 
             <!-- Upload Photos to collection -->

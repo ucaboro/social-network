@@ -1,6 +1,14 @@
-<?php include "imports.php";
-//Ensures user is logged in before displaying page
-checkLoggedIn();?>
+<?php
+    include "imports.php";
+    //Ensures user is logged in before displaying page
+    checkLoggedIn();
+    if(isset($_POST['add_friend'])){
+        requestFriendship($_POST['add_friend']);
+    }
+    else if(isset($_POST['remove_friend'])){
+        deleteFriendship($_POST['remove_friend']);
+    }
+?>
 <!DOCTYPE html>
 
 <html lang="en-gb">
@@ -51,7 +59,10 @@ checkLoggedIn();?>
                       else{
                           echo "<h5>This person's profile is currently private. <i class=\"glyphicon glyphicon-lock\"></i></h5>";
                       }
-                      ?>
+
+                        //echo "<form method=\"POST\"><button name=\"add_friend\" value=\" . $userID . \" type=\"submit\" class=\"btn-default\" onclick=\"return confirm('Are you sure you want to add this user as a friend')\">Add as friend</button></form>";
+                        //"<button name=\"delete_interest\" value=\"" . $interest->getID() . "\" type=\"submit\" class=\"close delete\"><span>&times;</span></button>";' . $user->firstName . '
+                        ?>
                     </div>
                   </div>
                   <div class="row">
@@ -64,12 +75,15 @@ checkLoggedIn();?>
                           else if($areFiends)
                           {
                              echo "You are friends.";
+                              echo "<form method=\"POST\"><button name=\"remove_friend\" value=\"$userID\" type=\"submit\" class=\"btn btn-primary\">Delete as friend</button></form>";
                           }
                           else if($areFriendsOfFriends){
                                 echo "You aren't friends but you have friends in common.";
+                              echo "<form method=\"POST\"><button name=\"add_friend\" value=\"$userID\" type=\"submit\" class=\"btn btn-primary\">Add as friend</button></form>";
                           }
                           else{
                             echo "You aren't friends.";
+                              echo "<form method=\"POST\"><button name=\"add_friend\" value=\"$userID\" type=\"submit\" class=\"btn btn-primary\">Add as friend</button></form>";
                           }
                       ?>
                     </div>

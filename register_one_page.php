@@ -100,6 +100,7 @@
           <div class="row">
             <div class="col-xs-12">
               <button class="btn btn-primary" type="submit" name="submit" value="Submit" form="registration-form">Register</button>
+                <a class="btn btn-primary" href="login.php">Log in</a>
             </div>
           </div>
             <?php

@@ -441,6 +441,8 @@
         }
         //Sort high to low according to key value
         usort($usersArray, 'sortByScore');
+        //Limit results to 10 users
+        $usersArray = array_slice($usersArray,0,10);
         return $usersArray;
     }
 

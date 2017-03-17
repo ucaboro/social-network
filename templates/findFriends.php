@@ -52,10 +52,10 @@
             // Output each result
             $thisUser = getUser();
             //Array of users ordered according to commonalities, with number of commonalities stored in same array
-            //foreach ($results as $userCommonArray) {
-            for($i = 0; $i<10; $i++)
+            foreach ($results as $userCommonArray)
+            //for($i = 0; $i<10; $i++)
             {
-                $userCommonArray = $results[$i];
+                //$userCommonArray = $results[$i];
                 //User being outputted
                 $user = $userCommonArray[1];
                 //Number of interests in common with logged in user
