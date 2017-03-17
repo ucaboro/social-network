@@ -173,13 +173,8 @@ if(isset($_FILES['image'])){
                     $collections = getPhotoCollectionsByUser($user);
                     if (count($collections) > 0) {
                       foreach ($collections as $collection) {
-                        $photos = $collection->getPhotos();
-                        if (isset($photos[0])) {
-                          $photo = $photos[0];
-                        } else {
-                          $photo = getPhotoWithID(1);
-                        }
-                        $img = getHtmlForSquareImage($photo->src);
+                        $photoSrc = $collection->getCoverPhotoSrc();
+                        $img = getHtmlForSquareImage($photoSrc);
                         $url = $collection->getURLToCollection();
                         echo "<div class=\"col-xs-6\">
                                 <div class=\"photo-collection\">

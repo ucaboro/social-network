@@ -38,7 +38,6 @@ if(isset($_POST['collection-id'])) {
               $collections = getPhotoCollectionsByUser($user);
               if (count($collections) > 0) {
                   foreach ($collections as $collection) {
-                      $photos = $collection->getPhotos();
                       $photoSrc = $collection->getCoverPhotoSrc();
                       $img = getHtmlForSquareImage($photoSrc);
                       $url = $collection->getURLToCollection();

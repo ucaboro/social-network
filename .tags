@@ -429,7 +429,6 @@ user	collections.php	/^          $user = ($userID == NULL) ? $me : getUserWithID
 userID	collections.php	/^          $userID = $user->id;$/;"	v
 isMe	collections.php	/^          $isMe = ($me->id == $userID);$/;"	v
 collections	collections.php	/^              $collections = getPhotoCollectionsByUser($user);$/;"	v
-photos	collections.php	/^                      $photos = $collection->getPhotos();$/;"	v
 photoSrc	collections.php	/^                      $photoSrc = $collection->getCoverPhotoSrc();$/;"	v
 img	collections.php	/^                      $img = getHtmlForSquareImage($photoSrc);$/;"	v
 url	collections.php	/^                      $url = $collection->getURLToCollection();$/;"	v
@@ -929,10 +928,8 @@ photoID	photos.php	/^                  foreach ($photos as $photoID => $photo) {
 get	photos.php	/^                  $get = "";$/;"	v
 get	photos.php	/^                  if (!is_null($u)) { $get = "?u=$u"; }$/;"	v
 collections	photos.php	/^                    $collections = getPhotoCollectionsByUser($user);$/;"	v
-photos	photos.php	/^                        $photos = $collection->getPhotos();$/;"	v
-photo	photos.php	/^                          $photo = $photos[0];$/;"	v
-photo	photos.php	/^                          $photo = getPhotoWithID(1);$/;"	v
-img	photos.php	/^                        $img = getHtmlForSquareImage($photo->src);$/;"	v
+photoSrc	photos.php	/^                        $photoSrc = $collection->getCoverPhotoSrc();$/;"	v
+img	photos.php	/^                        $img = getHtmlForSquareImage($photoSrc);$/;"	v
 url	photos.php	/^                        $url = $collection->getURLToCollection();$/;"	v
 success	photos.php	/^            success:function(result){$/;"	j
 postID	post.php	/^          $postID = getValueFromGET("p");$/;"	v
