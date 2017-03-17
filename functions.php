@@ -376,7 +376,7 @@ function getRecentActivityFeed() {
   // Gets the last 20 messages sent in the circles that the user is currently part of.
   $statement = $db -> prepare("SELECT * FROM photo WHERE isArchived=0 AND photoID IN
                               (SELECT photoID FROM photo WHERE userID IN ( $statementFriendsOf2User)
-                              AND
+                              UNION
                               SELECT photoID FROM photocollectionassignment WHERE collectionID IN (
                               SELECT collectionID FROM photocollection WHERE isVisibleToCircles = 1 AND userID IN
                               (SELECT userID FROM circlemembership WHERE circleID IN
