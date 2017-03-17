@@ -1,5 +1,5 @@
 <?php include "imports.php";
-echo getHtmlForJavascriptImports();
+
 
 //Ensures user is logged in before displaying page
 checkLoggedIn(); ?>
@@ -8,7 +8,8 @@ checkLoggedIn(); ?>
 <html lang="en-gb">
   <?php echo getHtmlForHead(); ?>
   <body>
-    <?php echo getHtmlForTopNavbar(); ?>
+    <?php echo getHtmlForTopNavbar();
+     echo getHtmlForJavascriptImports(); ?>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-8">
@@ -31,7 +32,6 @@ checkLoggedIn(); ?>
                   $circleID = $_GET["c"];
                     $circle = getCircleWithID($circleID);
                      echo getHtmlForCircleShape($circle);?>
-
                 </div>
                 <div class="col-xs-12 col-sm-9">
                   <form>

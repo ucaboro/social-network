@@ -261,7 +261,7 @@ result	cls/collection.php	/^      $result = $statement->get_result();$/;"	v
 isFirstRow	cls/collection.php	/^      $isFirstRow = true;$/;"	v
 coverPhotoID	cls/collection.php	/^          $this->coverPhotoID = $row["photoID"];$/;"	v
 isFirstRow	cls/collection.php	/^          $isFirstRow = false;$/;"	v
-getCoverPhotoID	cls/collection.php	/^  private function getCoverPhotoID() {$/;"	f
+getCoverPhotoID	cls/collection.php	/^  \/*private function getCoverPhotoID() {$/;"	f
 isVisibleToCircles	cls/collection.php	/^  public function isVisibleToCircles(): bool {$/;"	f
 db	cls/collection.php	/^      $db = new db();$/;"	v
 statement	cls/collection.php	/^      $statement = $db -> prepare("SELECT isVisibleToCircles AS status FROM photocollection WHERE collectionID =?");$/;"	v
@@ -282,8 +282,8 @@ isVisibleToCircles	cls/collection.php	/^    $this->isVisibleToCircles = $intStat
 setIsVisibleToFriendsOfFriends	cls/collection.php	/^  public function setIsVisibleToFriendsOfFriends($status) {$/;"	f
 intStatus	cls/collection.php	/^    $intStatus = ($status == TRUE) ? 1 : 0 ;$/;"	v
 db	cls/collection.php	/^    $db = new db();$/;"	v
-statement	cls/collection.php	/^    $statement = $db -> prepare("UPDATE photocollection SET isisVisibleToFriendsOfFriends = ? WHERE collectionID = ?");$/;"	v
-isVisibleToCircles	cls/collection.php	/^    $this->isVisibleToCircles = $intStatus;$/;"	v
+statement	cls/collection.php	/^    $statement = $db -> prepare("UPDATE photocollection SET isVisibleToFriendsOfFriends = ? WHERE collectionID = ?");$/;"	v
+isVisibleToFriendsOfFriends	cls/collection.php	/^    $this->isVisibleToFriendsOfFriends = $intStatus;$/;"	v
 getURLToCollection	cls/collection.php	/^  public function getURLToCollection(): string {$/;"	f
 getCoverPhotoSrc	cls/collection.php	/^  public function getCoverPhotoSrc(): string {$/;"	f
 photos	cls/collection.php	/^    $photos = $this->getPhotos();$/;"	v
@@ -414,10 +414,16 @@ lastAddedPhotoID	collection.php	/^        $lastAddedPhotoID =   $db->lastInsertI
 collectionID	collection.php	/^        $collectionID = getValueFromGET("c");$/;"	v
 isPhotoUploaded	collection.php	/^        $isPhotoUploaded=TRUE;$/;"	v
 collectionID	collection.php	/^$collectionID = getValueFromGET("c");$/;"	v
-collection	collection.php	/^            $collection = getPhotoCollectionFromID($collectionID);$/;"	v
-me	collection.php	/^            $me = getUser();$/;"	v
-user	collection.php	/^            $user = $collection->user;$/;"	v
-userID	collection.php	/^            $userID = $user->id;$/;"	v
+collection	collection.php	/^$collection = getPhotoCollectionFromID($collectionID);$/;"	v
+me	collection.php	/^                $me = getUser();$/;"	v
+user	collection.php	/^                $user = $collection->user;$/;"	v
+userID	collection.php	/^                $userID = $user->id;$/;"	v
+profileUrl	collection.php	/^                $profileUrl = $user->getUrlToProfile();$/;"	v
+img	collection.php	/^                $img = getHtmlForSquareImage($user->photoSrc);$/;"	v
+name	collection.php	/^                $name = $user->getFullName();$/;"	v
+title	collection.php	/^                $title = "Photo collection '$collection->name'";$/;"	v
+isVisibleToCircle	collection.php	/^                $isVisibleToCircle = $collection -> isVisibleToCircles();$/;"	v
+isVisibileToFOF	collection.php	/^                $isVisibileToFOF = $collection -> isVisibleToFriendsOfFriends();$/;"	v
 isMe	collection.php	/^            $isMe = ($me->id == $userID);$/;"	v
 photoUploadErrors	collection.php	/^                        $photoUploadErrors= array();$/;"	v
 photos	collection.php	/^                        $photos = $collection->getPhotos();$/;"	v
@@ -1110,6 +1116,10 @@ getHtmlForSmallUserSummaryPanel	templates.php	/^function getHtmlForSmallUserSumm
 profileUrl	templates.php	/^  $profileUrl = $user->getUrlToProfile();$/;"	v
 img	templates.php	/^  $img = getHtmlForSquareImage($user->photoSrc);$/;"	v
 name	templates.php	/^  $name = $user->getFullName();$/;"	v
+getHtmlForSmallUserSummaryPanelCollection	templates.php	/^function getHtmlForSmallUserSummaryPanelCollection(user $user, string $title) {$/;"	f
+profileUrl	templates.php	/^    $profileUrl = $user->getUrlToProfile();$/;"	v
+img	templates.php	/^    $img = getHtmlForSquareImage($user->photoSrc);$/;"	v
+name	templates.php	/^    $name = $user->getFullName();$/;"	v
 getHtmlForBlogPostsListPanel	templates.php	/^function getHtmlForBlogPostsListPanel(user $user, int $limit, bool $isSummary) {$/;"	f
 posts	templates.php	/^  $posts = getBlogPostsByUser($user, $limit);$/;"	v
 postsHtml	templates.php	/^  $postsHtml = "";$/;"	v

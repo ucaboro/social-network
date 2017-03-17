@@ -249,3 +249,7 @@ button.close-img {
   color: #8c8c8c;
   font-size: 0.9em;
 }
+
+.btn-space {
+  margin: 5px 0px;
+}
