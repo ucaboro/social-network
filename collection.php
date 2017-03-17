@@ -55,6 +55,21 @@ $collectionID = getValueFromGET("c");
 if (isset($_POST["delete-photo"])) {
   removePhotoFromCollection($_POST["delete-photo"], $collectionID);
 }
+
+//Changing visibility of currently displayed circle
+$collection = getPhotoCollectionFromID($collectionID);
+if(isset($_POST['invisible_circles'])){
+    $collection -> setIsVisibleToCircles(false);
+}
+else if(isset($_POST['visible_circles'])){
+    $collection -> setIsVisibleToCircles(true);
+}
+else if(isset($_POST['invisible_FOF'])){
+    $collection -> setIsVisibleToFriendsOfFriends(false);
+}
+else if(isset($_POST['visible_FOF'])){
+    $collection -> setIsVisibleToFriendsOfFriends(true);
+}
 ?>
 <!DOCTYPE html>
 
@@ -67,19 +82,51 @@ if (isset($_POST["delete-photo"])) {
         <div class="col-md-8">
             <!-- Profile summary -->
             <?php
-            $collection = getPhotoCollectionFromID($collectionID);
-            $me = getUser();
-            $user = $collection->user;
-            $userID = $user->id;
-            echo getHtmlForSmallUserSummaryPanel($user, "Photo collection '$collection->name'");
+                //$collection = getPhotoCollectionFromID($collectionID);
+                $me = getUser();
+                $user = $collection->user;
+                $userID = $user->id;
+                //echo getHtmlForSmallUserSummaryPanel($user, "Photo collection '$collection->name'");
+                $profileUrl = $user->getUrlToProfile();
+                $img = getHtmlForSquareImage($user->photoSrc);
+                $name = $user->getFullName();
+                $title = "Photo collection '$collection->name'";
+                echo "<div class=\"panel panel-primary\">
+                        <div class=\"panel-body\">
+                          <div class=\"row\">
+                            <div class=\"col-xs-2\">
+                              <a href=\"$profileUrl\">$img</a>
+                            </div>
+                            <div class=\"col-xs-10\">
+                              <div class=\"row\">
+                                <div class=\"col-xs-12\">
+                                  <span class=\"h2\"><a class=\"no-formatting\" href=\"$profileUrl\">$name</a></span><br>
+                                  <span class=\"h4\">$title</span>
+                                </div>";
+                //Buttons for visibility
+                $isVisibleToCircle = $collection -> isVisibleToCircles();
+                $isVisibileToFOF = $collection -> isVisibleToFriendsOfFriends();
+                if($isVisibleToCircle){
+                    echo "<form method=\"POST\"><button name=\"invisible_circles\" value=\"$collectionID\" type=\"submit\" class=\"btn btn-primary btn-xs btn-space\">Visible to circles</button></form>";
+                }
+                else{
+                    echo "<form method=\"POST\"><button name=\"visible_circles\" value=\"$collectionID\" type=\"submit\" class=\"btn btn-primary btn-xs btn-space\">Invisible to circles</button></form>";
+                }
+                if($isVisibileToFOF){
+                    echo "<form method=\"POST\"><button name=\"invisible_FOF\" value=\"$collectionID\" type=\"submit\" class=\"btn btn-primary btn-xs\">Visible to friends of friends</button></form>";
+                }
+                else{
+                    echo "<form method=\"POST\"><button name=\"visible_FOF\" value=\"$collectionID\" type=\"submit\" class=\"btn btn-primary btn-xs\">Invisible to friends of friends</button></form>";
+                }
+                        echo "</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>";
             ?>
-            <div class="checkbox">
-                <label><input type="checkbox" id="Collection_FOF_checkbox2" value="">Visible to Friends of Friends</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" id="Collection_circle_checkbox2" value="">Visible to Circles</label>
-            </div>
-            <!-- /END Profile summary -->
+
+
+
 
             <!-- Upload Photos to collection -->
             <?php

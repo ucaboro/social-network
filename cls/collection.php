@@ -78,12 +78,12 @@ class collection {
     return $this->photos;
   }
 
-  private function getCoverPhotoID() {
+  /*private function getCoverPhotoID() {
     if (is_null($this->photos)) {
       getPhotos();
     }
     return $coverPhotoID;
-  }
+  }*/
 
   /*
    * Returns an boolean indicating whether it is visible to the circles of the user.
@@ -117,7 +117,9 @@ class collection {
       $statement->bind_param("i", $this->id);
       $statement->execute();
       $result = $statement->get_result();
-      $this->isVisibleToCircles = $row["status"];
+      $row = $result->fetch_array(MYSQLI_ASSOC);
+      $this->isVisibleToFriendsOfFriends = $row["status"];
+//        $this->isVisibleToCircles = $result["status"];
     }
     return $this->isVisibleToFriendsOfFriends;
   }
@@ -148,11 +150,11 @@ class collection {
 
     $db = new db();
     $db->connect();
-    $statement = $db -> prepare("UPDATE photocollection SET isisVisibleToFriendsOfFriends = ? WHERE collectionID = ?");
+    $statement = $db -> prepare("UPDATE photocollection SET isVisibleToFriendsOfFriends = ? WHERE collectionID = ?");
     $statement->bind_param("ii",$intStatus, $this->id);
     $statement->execute();
 
-    $this->isVisibleToCircles = $intStatus;
+    $this->isVisibleToFriendsOfFriends = $intStatus;
 
   }
 

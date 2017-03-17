@@ -383,11 +383,36 @@ function getHtmlForSmallUserSummaryPanel(user $user, string $title) {
               <span class=\"h2\"><a class=\"no-formatting\" href=\"$profileUrl\">$name</a></span><br>
               <span class=\"h4\">$title</span>
             </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>";
+}
+
+function getHtmlForSmallUserSummaryPanelCollection(user $user, string $title) {
+    $profileUrl = $user->getUrlToProfile();
+    $img = getHtmlForSquareImage($user->photoSrc);
+    $name = $user->getFullName();
+    return "<div class=\"panel panel-primary\">
+    <div class=\"panel-body\">
+      <div class=\"row\">
+        <div class=\"col-xs-2\">
+          <a href=\"$profileUrl\">$img</a>
+        </div>
+        <div class=\"col-xs-10\">
+          <div class=\"row\">
+            <div class=\"col-xs-12\">
+              <span class=\"h2\"><a class=\"no-formatting\" href=\"$profileUrl\">$name</a></span><br>
+              <span class=\"h4\">$title</span>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!--</div>-->";
 }
 
 /*
