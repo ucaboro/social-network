@@ -3,7 +3,6 @@
 checkLoggedIn();
 
 $photoStorageLocation="img/";
-//TODO: all this photo upload code has to be edited so that the photo is uploaded to the correct collection / generally checked, i just coped it
 $isPhotoUploaded=false;
 if(isset($_FILES['image'])){
     // Initialises an empty array for storing photo upload errors.

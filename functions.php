@@ -287,26 +287,6 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   return $photosArray;
 }
 
-// function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
-//     $userID =$user->getUserID();
-//     //TODO: do we want a limit?
-//     // Sets a default number of photos to be returned if no limit is specified.
-//     if ($limit == 0) { $limit = 18; }
-//     $db = new db();
-//     $db->connect();
-//     $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
-//     $statement ->bind_param("iii", $userID,$collectionID, $limit);
-//     $statement->execute();
-//     $result = $statement->get_result();
-//
-//     $photosArray = array();
-//     while($row = $result->fetch_array(MYSQLI_ASSOC)){
-//         $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
-//     }
-//
-//     return $photosArray;
-// }
-
 /*
  * Returns an array of the blog posts that the specified user has posted. Key is blogPost ID, value is blogPost object.
  * Optional limit on the number of items returned. Set $limit to 0 for no limit. Posts are returned in date-descending order.

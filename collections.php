@@ -55,7 +55,6 @@ if(isset($_POST['collection-id'])) {
                   // "<button title=\"Delete collection\" class=\"btn btn-link\" data-toggle=\"modal\" data-target=\"#change-friendship\" data-user-name=\"$name\" data-user-id=\"$user->id\" data-change-type=\"0\"><span class=\"glyphicon glyphicon-trash\"></span></button>";
               } else {
                   if ($isMe) {
-                      //TODO: Replace this line with a + button?
                       echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div> <br><br>";
                   } else {
                       echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
