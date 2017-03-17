@@ -653,7 +653,7 @@ function getPhotoCollectionFromID(int $collectionID){
     $statement->execute();
     $result = $statement->get_result();
     $row = $result->fetch_array(MYSQLI_ASSOC);
-    return new Collection($row["collectionID"], getUserWithID($row["userID"]),$row["name"]);
+    return new collection($row["collectionID"], getUserWithID($row["userID"]),$row["name"]);
 }
 
 /*
@@ -665,6 +665,7 @@ function getPhotoCollectionsByUser(user $user): array {
 
   $userID = $user->getUserID();
 
+  // Ask the database for the list of collections
   $statement = $db -> prepare("SELECT collectionID, name FROM photocollection WHERE userID = ?");
   $statement->bind_param("i", $userID);
   $statement->execute();
@@ -672,8 +673,14 @@ function getPhotoCollectionsByUser(user $user): array {
 
   $photocollectionsArray = array();
 
+  // Loop through the list
   while($row = $result->fetch_array(MYSQLI_ASSOC)){
-    $photocollectionsArray[$row["collectionID"]] = new Collection($row["collectionID"], $user, $row["name"]);
+    $collectionID = $row["collectionID"];
+    $collection = new collection($collectionID, $user, $row["name"]);
+    // Check the logged in user should be able to see this collection
+    if (shouldDisplayCollection($collection)) {
+      $photocollectionsArray[$collectionID] = $collection;
+    }
 
   }
   return $photocollectionsArray;

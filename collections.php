@@ -36,13 +36,6 @@ if(isset($_POST['collection-id'])) {
             <div class="row">
               <?php
               $collections = getPhotoCollectionsByUser($user);
-              // Check the visibility of each collection
-              foreach ($collections as $collectionID => $collection) {
-                // If you're not supposed to see it, remove it from the array
-                if (!shouldDisplayCollection($collection)) {
-                  unset($collections[$collectionID]);
-                }
-              }
               if (count($collections) > 0) {
                   foreach ($collections as $collection) {
                       $photos = $collection->getPhotos();

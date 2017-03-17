@@ -429,7 +429,6 @@ user	collections.php	/^          $user = ($userID == NULL) ? $me : getUserWithID
 userID	collections.php	/^          $userID = $user->id;$/;"	v
 isMe	collections.php	/^          $isMe = ($me->id == $userID);$/;"	v
 collections	collections.php	/^              $collections = getPhotoCollectionsByUser($user);$/;"	v
-collectionID	collections.php	/^              foreach ($collections as $collectionID => $collection) {$/;"	v
 photos	collections.php	/^                      $photos = $collection->getPhotos();$/;"	v
 photoSrc	collections.php	/^                      $photoSrc = $collection->getCoverPhotoSrc();$/;"	v
 img	collections.php	/^                      $img = getHtmlForSquareImage($photoSrc);$/;"	v
@@ -751,6 +750,8 @@ userID	functions.php	/^  $userID = $user->getUserID();$/;"	v
 statement	functions.php	/^  $statement = $db -> prepare("SELECT collectionID, name FROM photocollection WHERE userID = ?");$/;"	v
 result	functions.php	/^  $result = $statement->get_result();$/;"	v
 photocollectionsArray	functions.php	/^  $photocollectionsArray = array();$/;"	v
+collectionID	functions.php	/^    $collectionID = $row["collectionID"];$/;"	v
+collection	functions.php	/^    $collection = new collection($collectionID, $user, $row["name"]);$/;"	v
 getBlogPostWithID	functions.php	/^function getBlogPostWithID($postID) {$/;"	f
 db	functions.php	/^  $db = new db();$/;"	v
 statement	functions.php	/^  $statement = $db -> prepare("SELECT * FROM blogpost WHERE postID = ?");$/;"	v

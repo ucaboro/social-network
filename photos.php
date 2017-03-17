@@ -190,7 +190,6 @@ if(isset($_FILES['image'])){
                       }
                     } else {
                       if ($isMe) {
-                        //TODO: Replace this line with a + button?
                         echo "<div class=\"col-xs-12\">You haven't created any photo collections yet.</div>";
                       } else {
                         echo "<div class=\"col-xs-12\">This user hasn't added any photo collections yet.</div>";
