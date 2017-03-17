@@ -178,6 +178,7 @@
         $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
+        global $statementFriendsOf2User;
         //$searchTerm = '%'.$term.'%';
         $searchTerm = '([[:blank:][:punct:]]|^)' . $term .'([[:blank:][:punct:]]|$)';
         $statement = $db -> prepare("SELECT * FROM blogpost WHERE
