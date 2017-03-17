@@ -727,7 +727,7 @@ areUsersWithIDFriendsOfFriends	functions.php	/^function areUsersWithIDFriendsOfF
 friendsOfFriends	functions.php	/^    $friendsOfFriends = getFriendsOfFriendsOfUserAsIDs($userID1);$/;"	v
 areUsersFriendsWithID	functions.php	/^function areUsersFriendsWithID(int $userID1, int $userID2) : bool{$/;"	f
 db	functions.php	/^    $db = new db();$/;"	v
-statement	functions.php	/^    $statement = $db -> prepare(" SELECT (CASE$/;"	v
+statement	functions.php	/^    $statement = $db -> prepare(" SELECT (CASE    WHEN (userID1 = ? and userID2 = ?) || (userID2 = ? and userID1 = ?) THEN 1$/;"	v
 result	functions.php	/^    $result = $statement->get_result();$/;"	v
 areUsersFriends	functions.php	/^function areUsersFriends(user $user1, user $user2): bool {$/;"	f
 userID1	functions.php	/^  $userID1 = $user1->getUserID();$/;"	v

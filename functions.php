@@ -365,7 +365,7 @@ function getRecentActivityFeed() {
   // Gets the last 20 messages sent in the circles that the user is currently part of.
   $statement = $db -> prepare("SELECT * FROM circlemessage WHERE circleID IN
                               (SELECT circleID FROM circlemembership WHERE userID = ?)
-                                ORDER BY TIME DESC LIMIT 20");
+                                ORDER BY time DESC LIMIT 20");
   $statement ->bind_param("i",$userID);
   $statement->execute();
   $result = $statement->get_result();
@@ -381,7 +381,7 @@ function getRecentActivityFeed() {
                               SELECT collectionID FROM photocollection WHERE isVisibleToCircles = 1 AND userID IN
                               (SELECT userID FROM circlemembership WHERE circleID IN
                               (SELECT circleID FROM circlemembership WHERE userID = ?))))
-                              ORDER BY TIME DESC LIMIT 20");
+                              ORDER BY time DESC LIMIT 20");
   $statement ->bind_param("iii",$userID,$userID,$userID);
   $statement->execute();
   $result = $statement->get_result();
