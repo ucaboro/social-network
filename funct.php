@@ -178,15 +178,13 @@
         $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;
         $db = new db();
         $db->connect();
+        global $statementFriendsOf2User;
         //$searchTerm = '%'.$term.'%';
         $searchTerm = '([[:blank:][:punct:]]|^)' . $term .'([[:blank:][:punct:]]|$)';
         $statement = $db -> prepare("SELECT * FROM blogpost WHERE
                                     (post REGEXP ? OR headline REGEXP ?)
                                     AND userID IN
-                                    (SELECT userID2 as 'userID' FROM friendship
-                                    WHERE userID1 = ? AND isConfirmed = True UNION
-                                    SELECT userID1 as 'userID' FROM friendship
-                                    WHERE isConfirmed = TRUE AND userID2 = ?)
+                                    ($statementFriendsOf2User)
                                     ORDER BY time DESC
                                     LIMIT 20;");
         $statement->bind_param("ssii",$searchTerm,$searchTerm,$currentUserID,$currentUserID);

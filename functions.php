@@ -287,25 +287,25 @@ function getPhotosOwnedByUser(user $user, int $limit = 0): array {
   return $photosArray;
 }
 
-function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
-    $userID =$user->getUserID();
-    //TODO: do we want a limit?
-    // Sets a default number of photos to be returned if no limit is specified.
-    if ($limit == 0) { $limit = 18; }
-    $db = new db();
-    $db->connect();
-    $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
-    $statement ->bind_param("iii", $userID,$collectionID, $limit);
-    $statement->execute();
-    $result = $statement->get_result();
-
-    $photosArray = array();
-    while($row = $result->fetch_array(MYSQLI_ASSOC)){
-        $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
-    }
-
-    return $photosArray;
-}
+// function getPhotosOwnedByUserInCollection(user $user, int $collectionID, int $limit = 0): array {
+//     $userID =$user->getUserID();
+//     //TODO: do we want a limit?
+//     // Sets a default number of photos to be returned if no limit is specified.
+//     if ($limit == 0) { $limit = 18; }
+//     $db = new db();
+//     $db->connect();
+//     $statement = $db -> prepare("SELECT * FROM photo WHERE userID = ? AND collectionID = ? AND isArchived=0 LIMIT ?");
+//     $statement ->bind_param("iii", $userID,$collectionID, $limit);
+//     $statement->execute();
+//     $result = $statement->get_result();
+//
+//     $photosArray = array();
+//     while($row = $result->fetch_array(MYSQLI_ASSOC)){
+//         $photosArray[$row["photoID"]] = getPhotoWithID($row["photoID"]);
+//     }
+//
+//     return $photosArray;
+// }
 
 /*
  * Returns an array of the blog posts that the specified user has posted. Key is blogPost ID, value is blogPost object.
@@ -457,7 +457,7 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
     $db->connect();
 
     global $statementFriendsOfFriendsOf7User;
-    global $searchParameters;
+    global $searchParameters411;
 
     $searchTerm = '%'.preg_replace('/\s+/','',$filter).'%';
 
@@ -465,8 +465,8 @@ function getFriendsOfFriendsOfUserAsIDs(int $userID, string $filter = NULL): arr
       $statement = $db -> prepare($statementFriendsOfFriendsOf7User);
       $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID);
     } else {
-      $statement = $db -> prepare($statementFriendsOfFriendsOf7User." AND ".$searchParameters);
-      $statement->bind_param("iiiiiii", $userID, $userID, $userID, $userID, $userID, $userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
+      $statement = $db -> prepare("$statementFriendsOfFriendsOf7User AND $searchParameters411");
+      $statement->bind_param("iiiiiiissssss", $userID, $userID, $userID, $userID, $userID, $userID,$userID,$searchTerm,$searchTerm,$searchTerm,$searchTerm,$filter,$searchTerm);
     }
 
 
