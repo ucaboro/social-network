@@ -16,8 +16,8 @@ checkLoggedIn();?>
               <div class="row">
                 <div class="col-xs-3">
                   <?php
-                      $userID = getValueFromGET("u");
-                      $user = ($userID == NULL) ? getUser() : getUserWithID($userID);
+                      $u = getValueFromGET("u");
+                      $user = (is_null($u)) ? getUser() : getUserWithID($u);
                       //If no value provided from get, it takes value from currently logged in user (i.e. defaults to your profile)
                       $userID = $user->id;
                       if(areUsersFriendsWithID($userID, $_SESSION['userID'])) {
@@ -82,7 +82,10 @@ checkLoggedIn();?>
           <!-- Photos -->
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h4 class="panel-title">Photos</h4>
+              <?php
+              $get = (is_null($u)) ? "" : "?u=$u";
+              ?>
+              <h4 class="panel-title"><a href="photos.php<?php echo $get; ?>">Photos</a></h4>
             </div>
             <div class="panel-body">
               <div class="row">
@@ -98,7 +101,7 @@ checkLoggedIn();?>
                   }
                   // Output the see more icon
                   echo "<div class=\"col-xs-6 col-sm-3\" style=\"padding:8px 15px;\">
-                          <a href=\"photos.php?u=$user->id\">See more</a>
+                          <a href=\"photos.php$get\">See more</a>
                         </div>";
                 } else {
                   if ($isMe) {

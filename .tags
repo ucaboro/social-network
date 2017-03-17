@@ -505,15 +505,16 @@ stmt	funct.php	/^        $stmt = $database->prepare("UPDATE user SET $columnName
 result	funct.php	/^        $result =$stmt->execute();$/;"	v
 passwordEncrypt	funct.php	/^    function passwordEncrypt($password){$/;"	f
 password_check	funct.php	/^    function password_check($password, $storedHash){$/;"	f
-getBlogsFromSearchTerm	funct.php	/^    function getBlogsFromSearchTerm(string $term) {$/;"	f
-currentUserID	funct.php	/^            $currentUserID = $_SESSION["userID"];$/;"	v
-currentUserID	funct.php	/^            $currentUserID = 1;$/;"	v
+getBlogsFromSearchTerm	funct.php	/^    function getBlogsFromSearchTerm(string $term){$/;"	f
+currentUserID	funct.php	/^        $currentUserID = (isset($_SESSION["userID"])) ? $_SESSION["userID"] : null;$/;"	v
 db	funct.php	/^        $db = new db();$/;"	v
-searchTerm	funct.php	/^        $searchTerm = '% '.$term.' %';$/;"	v
+searchTerm	funct.php	/^        $searchTerm = '([[:blank:][:punct:]]|^)' . $term .'([[:blank:][:punct:]]|$)';$/;"	v
 statement	funct.php	/^        $statement = $db -> prepare("SELECT * FROM blogpost WHERE$/;"	v
 result	funct.php	/^        $result = $statement->get_result();$/;"	v
 blogArray	funct.php	/^        $blogArray = array();$/;"	v
 createBlogObject	funct.php	/^    function createBlogObject($row) {$/;"	f
+createBlogObjectWithDummyUser	funct.php	/^    function createBlogObjectWithDummyUser($row){$/;"	f
+createDummyUser	funct.php	/^    function createDummyUser(int $userID): user{$/;"	f
 addNewCustomInterest	funct.php	/^    function addNewCustomInterest(string $interestName, int $userID) {$/;"	f
 interestID	funct.php	/^        $interestID = findInterestIDFromInterestName($interestName);$/;"	v
 uploadNewInterest	funct.php	/^    function uploadNewInterest(string $interest, int $userID) {$/;"	f
@@ -936,8 +937,8 @@ time	post.php	/^          $time = $post->time->format('d M Y H:i');$/;"	v
 user	post.php	/^          $user = $post->user;$/;"	v
 img	post.php	/^          $img = getHtmlForSquareImage($user->photoSrc);$/;"	v
 profileUrl	post.php	/^          $profileUrl = $user->getUrlToProfile();$/;"	v
-userID	profile.php	/^                      $userID = getValueFromGET("u");$/;"	v
-user	profile.php	/^                      $user = ($userID == NULL) ? getUser() : getUserWithID($userID);$/;"	v
+u	profile.php	/^                      $u = getValueFromGET("u");$/;"	v
+user	profile.php	/^                      $user = (is_null($u)) ? getUser() : getUserWithID($u);$/;"	v
 userID	profile.php	/^                      $userID = $user->id;$/;"	v
 areFiends	profile.php	/^                          $areFiends = true;$/;"	v
 areFriendsOfFriends	profile.php	/^                          $areFriendsOfFriends = true;$/;"	v
@@ -950,6 +951,7 @@ age	profile.php	/^                          $age = ($age == 0) ? "Age unknown" :
 location	profile.php	/^                          $location = $user->location;$/;"	v
 location	profile.php	/^                          $location = ($location == "") ? "location unknown" : $location;$/;"	v
 isMe	profile.php	/^                          $isMe = ( $_SESSION['userID'] == $userID); \/\/Checks to see if the profile being view is the same as the currently logged in user$/;"	v
+get	profile.php	/^              $get = (is_null($u)) ? "" : "?u=$u";$/;"	v
 photos	profile.php	/^                $photos = getPhotosOwnedByUser($user, 7);$/;"	v
 photoID	profile.php	/^                  foreach ($photos as $photoID => $photo) {$/;"	v
 firstName	register_one_page.php	/^        $firstName = trim($_POST["first-name"]); \/\/ using the 'name' attribute in the <input> tags$/;"	v
@@ -969,14 +971,16 @@ sendFriendRequest	script.js	/^function sendFriendRequest(userID) {$/;"	f
 deleteFriend	script.js	/^function deleteFriend(userID) {$/;"	f
 togglePhotoAnnotation	script.js	/^function togglePhotoAnnotation(button, photoID) {$/;"	f
 page	search.php	/^$page = "search";?>$/;"	v
-searchTerm	search.php	/^                    $searchTerm = getValueFromGET("search");$/;"	v
-isSearch	search.php	/^                    $isSearch = !is_null($searchTerm);$/;"	v
+searchTerm	search.php	/^                        $searchTerm = getValueFromGET("search");$/;"	v
+isSearch	search.php	/^                        $isSearch = !is_null($searchTerm);$/;"	v
 results	search.php	/^            $results = getUsers($searchTerm);$/;"	v
 blogResults	search.php	/^            $blogResults = getBlogsFromSearchTerm($searchTerm);$/;"	v
 thisUser	search.php	/^                $thisUser = getUser();$/;"	v
 areFriends	search.php	/^                  $areFriends = areUsersFriends($thisUser, $user);$/;"	v
 sentRequest	search.php	/^                  $sentRequest = isFriendRequestPending($thisUser, $user);$/;"	v
 receivedRequest	search.php	/^                  $receivedRequest = isFriendRequestPending($user, $thisUser);$/;"	v
+blogsUser	search.php	/^                    $blogsUser = $blog -> user;$/;"	v
+blogsUserID	search.php	/^                    $blogsUserID = $blogsUser -> id;$/;"	v
 searchTerm	templates/findFriends.php	/^                    $searchTerm = getValueFromGET("search"); \/\/GET?$/;"	v
 isSearch	templates/findFriends.php	/^                    $isSearch = !is_null($searchTerm);$/;"	v
 results	templates/findFriends.php	/^        $results = getUsersCollaborativeSearch($searchTerm);$/;"	v
@@ -1157,7 +1161,7 @@ validEmail	validation.php	/^    function validEmail($email)$/;"	f
 emailClean	validation.php	/^        $emailClean = filter_var($email, FILTER_SANITIZE_EMAIL);$/;"	v
 uniqueEmail	validation.php	/^    function uniqueEmail($email){$/;"	f
 database	validation.php	/^        $database = new db();$/;"	v
-result	validation.php	/^        $result = $database->query("SELECT email FROM User ");$/;"	v
+result	validation.php	/^        $result = $database->query("SELECT email FROM user ");$/;"	v
 onlyAlphabetical	validation.php	/^    function onlyAlphabetical($name){$/;"	f
 matching	validation.php	/^    function matching($password1, $password2){$/;"	f
 password1	validation.php	/^        return $password1 === $password2;$/;"	v
