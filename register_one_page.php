@@ -34,10 +34,10 @@
             if (!validEmail($email)) {
                 $errors[] = "Please provide a valid email address.";
             }
-            //
-            if (!uniqueEmail($email)) {
-                $errors[] = "There already exists an account for this email address";
-            }
+            // //
+            // if (!uniqueEmail($email)) {
+            //     $errors[] = "There already exists an account for this email address";
+            // }
         }
         //Password
         //Only test for further errors if field is non-empty
