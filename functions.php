@@ -376,7 +376,7 @@ function getRecentActivityFeed() {
   // Gets the last 20 messages sent in the circles that the user is currently part of.
   $statement = $db -> prepare("SELECT * FROM photo WHERE isArchived=0 AND photoID IN
                               (SELECT photoID FROM photo WHERE userID IN ( $statementFriendsOf2User)
-                              UNION
+                              AND
                               SELECT photoID FROM photocollectionassignment WHERE collectionID IN (
                               SELECT collectionID FROM photocollection WHERE isVisibleToCircles = 1 AND userID IN
                               (SELECT userID FROM circlemembership WHERE circleID IN
@@ -544,13 +544,14 @@ function areUsersWithIDFriendsOfFriends(int $userID1, int $userID2){
 function areUsersFriendsWithID(int $userID1, int $userID2) : bool{
     $db = new db();
     $db->connect();
-    $statement = $db -> prepare(" SELECT (CASE
-                                WHEN (userID1 = ? and userID2 = ?) THEN 1
-                                WHEN (userID2 = ? and userID1 = ?) THEN 1
-                                ELSE 0 END) as 'result', isConfirmed
-                                FROM friendship
-                                WHERE isConfirmed = 1");
-    $statement->bind_param("iiii", $userID1, $userID2, $userID1, $userID2);
+    $statement = $db -> prepare(" SELECT (CASE    WHEN (userID1 = ? and userID2 = ?) || (userID2 = ? and userID1 = ?) THEN 1
+                                                  ELSE 0
+                                          END)
+                                  AS 'result'
+                                  FROM friendship
+                                  WHERE isConfirmed = 1
+                                  AND (userID1 = ? and userID2 = ?) || (userID2 = ? and userID1 = ?) ");
+    $statement->bind_param("iiiiiiii", $userID1, $userID2, $userID1, $userID2, $userID1, $userID2, $userID1, $userID2);
     $statement->execute();
     $result = $statement->get_result();
     // Check result. 1 means they are friends.
